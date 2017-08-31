@@ -103,7 +103,7 @@
 		                      <tr>
 		                      	 <th>Conceptos</th>
 		                      	 <th>Casos</th>
-		                      	 <th>Ocupantes</th>
+		                      	 <th>com</th>
 		                      	 <th>Mínimo</th>
 		                      	 <th>25 Perc.</th>
 		                      	 <th>Promedio</th>
@@ -331,7 +331,7 @@
 				}else{
 					$(divEfectivo).empty();
 				}
-			}else if(label == "Compensación Anual Total"){
+			}else if(label == "Compensación Anual Total" || label == "Compensación Efectiva Anual Total"){
 				if(value > 0){
 					$(divCompensacion).html('<h5>Compensación Anual</h5><canvas id="'+divChartCompensacion+'"></canvas>');
 					chart(promedio, per75, max, value, itemCompensacion);

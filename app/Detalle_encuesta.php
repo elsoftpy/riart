@@ -112,7 +112,7 @@ class Detalle_encuesta extends Model
 						$this->monto_km_recorrido +
 						$this->monto_ayuda_escolar +
 						$this->monto_comedor_interno +
-						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100)/12 +
+						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100) +
 						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 24 +
 						$this->monto_celular_corporativo +
 						$this->monto_vivienda +
@@ -123,7 +123,7 @@ class Detalle_encuesta extends Model
 
 	public function getBeneficiosNavierasAttribute(){
 		$beneficios = 	$this->refrigerio + 
-						$this->costo_seguro_medico + 
+						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
 						$this->costo_seguro_vida + 
 						//$this->costo_poliza_muerte_accidente +
 						//$this->costo_poliza_muerte_natural +
@@ -133,8 +133,8 @@ class Detalle_encuesta extends Model
 						$this->monto_km_recorrido +
 						$this->monto_ayuda_escolar +
 						$this->monto_comedor_interno +
-						$this->monto_curso_idioma * $this->cobertura_curso_idioma +
-						$this->monto_post_grado / 24 +
+						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100) +
+						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 24 +
 						$this->monto_celular_corporativo +
 						$this->monto_vivienda +
 						$this->monto_colegiatura_hijos;

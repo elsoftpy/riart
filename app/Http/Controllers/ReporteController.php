@@ -489,7 +489,7 @@ class ReporteController extends Controller
             }
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Efectiva Anual Total",
+                            "Compensación Anual Total",
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 

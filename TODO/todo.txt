@@ -1,0 +1,10 @@
+Verificar que los mensajes flash no se vuelvan a mostrar con el botón atrás
+Hacer funcionar cambiar contraseña
+Probar la captura de errores desde app/Exceptions con flash message
+
+Crear menu para abrir periodo con filtro por rubro
+Agregar filtro por rubro y periodo en listado de encuestas
+
+Cargos consultora completar resources
+Verificar funcionamiento de la edición de usuarios
+Envío de mails

@@ -1,0 +1,33 @@
+.modal-body{
+  background-color: #fafafa !important;
+
+}
+
+.modal-warning {
+  background-color: #ffc107 !important;
+  color: #ffc107 !important;
+}
+
+.modal-warning a{
+  background-color: #ffc107 !important;
+}
+
+.modal-success {
+  background-color: #009688 !important;
+  color: #009688 !important;
+}
+
+.modal-success a{
+  background-color: #009688 !important;
+}
+
+.modal-error {
+  background-color: #ee6e73 !important;
+  color: #ee6e73 !important;
+}
+
+.modal-error a{
+  background-color: #ee6e73 !important;
+}
+
+

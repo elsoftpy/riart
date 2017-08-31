@@ -66,6 +66,8 @@ class CargosClientesController extends Controller
 
             }elseif ($posPunto) {
                 $real = str_replace("%", "", str_replace(".", "", $value));         // quita los caracteres de formato numérico
+            }else{
+                $real = $value;
             }
             
             

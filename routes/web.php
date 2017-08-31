@@ -38,6 +38,10 @@ Route::group(["middleware"=>"auth"], function(){
 		'uses'=> 'EncuestasController@clonePoll', 
 		'as'=> 'encuestas.clone'
 	]);
+	Route::post('encuestas_new', [
+		'uses'=> 'EncuestasController@storeNew', 
+		'as'=> 'encuestas.storeNew'
+	]);	
 	Route::resource('encuestas', 'EncuestasController');
 
 

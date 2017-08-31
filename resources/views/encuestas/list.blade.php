@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row">
 		<div class="col l3">
-			<a href="{{ route('usuarios.create') }}" class="btn waves-effect waves-light lighten-1 white-text"><i class="material-icons left">add</i>Encuesta</a>
+			<a href="{{ route('encuestas.create') }}" class="btn waves-effect waves-light lighten-1 white-text"><i class="material-icons left">add</i>Encuesta</a>
 		</div>
 	</div>	
 		<div class="row">

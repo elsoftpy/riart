@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Cabecera_encuesta;
 use App\Encuestas_cargo;
 use App\Detalle_encuesta;
+use App\Empresa;
 
 class EncuestasController extends Controller
 {
@@ -28,7 +29,9 @@ class EncuestasController extends Controller
      */
     public function create()
     {
-        //
+        $dbEmpresas = empresa::pluck('descripcion', 'id');
+
+        return view('encuestas.new')->with('dbEmpresas', $dbEmpresas);
     }
 
     
@@ -123,6 +126,24 @@ class EncuestasController extends Controller
                 $detalle->save();
             }
         }
+
+        return redirect()->route('encuestas.index');
+
+    }
+
+    public function storeNew(Request $request)
+    {
+        $periodo = $request->periodo;
+        $empresa = $request->empresa_id;
+        $dbEmpresa = Empresa::find($empresa);
+        $dbData = new Cabecera_encuesta();
+        $dbData->empresa_id = $empresa;
+        $dbData->rubro_id =  $dbEmpresa->rubro_id;
+        $dbData->sub_rubro_id =  $dbEmpresa->sub_rubro_id;
+        $dbData->cantidad_empleados =  $dbEmpresa->cantidad_empleados;
+        $dbData->cantidad_sucursales =  $dbEmpresa->cantidad_sucursales;
+        $dbData->periodo = $periodo;
+        $dbData->save();
 
         return redirect()->route('encuestas.index');
 

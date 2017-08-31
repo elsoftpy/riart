@@ -24,7 +24,7 @@
 									<option value = {{$id}}>{{$descripcion}}</option>
 								@endforeach
 							</select>
-							<label for="cargo_id">Area</label>
+							<label for="cargo_id">Cargo</label>
 						</div>																	
 						<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>
 					</div>

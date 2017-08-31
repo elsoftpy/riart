@@ -76,10 +76,14 @@ class CargosClientesController extends Controller
         
         if(!$fields->has("car_company")){
             $fields->put("car_company", 0);
+        }else{
+            $fields->put("car_company", 1);
         }
 
         if(!$fields->has("tarjeta_flota")){
             $fields->put("tarjeta_flota", 0);
+        }else{
+            $fields->put("tarjeta_flota", 1);
         }
 
         if(!$fields->has("tipo_clase_idioma")){

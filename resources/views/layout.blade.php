@@ -46,7 +46,7 @@
                           <a class="dropdown-button" href="#!" data-activates="dropdown1">Cargos<i class="material-icons right">arrow_drop_down</i></a>
                         </li> 
 -->
-                        <li><a href="{{ route('encuestas.index') }}">Resultados</a></li>
+                        <li><a href="{{ route('resultados') }}">Resultados</a></li>
                         <li>
                           <a href="#">
                             <i class="material-icons left">account_circle</i> 

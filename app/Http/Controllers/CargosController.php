@@ -25,6 +25,12 @@ class CargosController extends Controller
 
     public function store(Request $request){
     	$dbData = new Cargo($request->all());
+        if(!is_null($request->is_temporal)){
+            $dbData->is_temporal = 1;
+        }else{
+            $dbData->is_temporal = 0;
+        }
+
     	$dbData->save();
     	return redirect()->route('cargos.index');
     }
@@ -47,6 +53,11 @@ class CargosController extends Controller
 
     	$dbData = Cargo::find($id);
     	$dbData->fill($request->all());
+        if(!is_null($request->is_temporal)){
+            $dbData->is_temporal = 1;
+        }else{
+            $dbData->is_temporal = 0;
+        }
     	$dbData->save();
 		return redirect()->route('cargos.index');
     }

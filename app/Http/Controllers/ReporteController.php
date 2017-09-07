@@ -13,6 +13,8 @@ use App\Cargo;
 use App\Rubro;
 use DB;
 use Auth;
+use Excel;
+use Session;
 
 class ReporteController extends Controller
 {
@@ -118,7 +120,12 @@ class ReporteController extends Controller
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);
         $rubro = $empresa->rubro_id;
-        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();
+        if(Session::has('periodo')){
+            $per = Session::get('periodo');
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
+        }else{
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
+        }
         $cargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)->get()->count();
         $periodo = $dbEncuesta->periodo;
         $participantes = Cabecera_encuesta::where('periodo', $periodo)->where('rubro_id', $rubro)->get()->count();
@@ -134,8 +141,12 @@ class ReporteController extends Controller
 
         
         $dbEmpresa = Empresa::find($request->empresa_id);   // datos de la empresa del cliente
-        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $request->empresa_id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $request->empresa_id.')')->first();    // datos de la encuesta actual
-
+        if(Session::has('periodo')){
+            $per = Session::get('periodo');
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw("periodo = '". $per."'")->first();
+        }else{
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')->first();            
+        }
         $periodo = $dbEncuesta->periodo;    // periodo de la encuesta actual
         $rubro = $dbEmpresa->rubro_id;      // rubro de la empresa del cliente
         // cargo oficial para el informe
@@ -200,7 +211,8 @@ class ReporteController extends Controller
                           $countCasosBono,
                           $dbClienteEnc, 
                           $rubro, 
-                          $segmento);
+                          $segmento, 
+                          $dbCargo);
         // conteo de casos encontrados nacionales
         $countCasosNac = $encuestadasNacIds->count();
         // buscamos los detalles de las encuestas
@@ -225,7 +237,8 @@ class ReporteController extends Controller
                             $countCasosBono, 
                             $dbClienteEnc, 
                             $rubro, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
         // conteo de casos encontrados internacionales
         $countCasosInt = $encuestadasInterIds->count();
@@ -252,7 +265,8 @@ class ReporteController extends Controller
                             $countCasosBono, 
                             $dbClienteEnc,
                             $rubro, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
         return view('report.report')->with('dbCargo', $dbCargo)
                                     ->with('dbEmpresa', $dbEmpresa)
                                     ->with('universo', $universo)
@@ -274,7 +288,8 @@ class ReporteController extends Controller
                                 $countCasosBono, 
                                 $dbClienteEnc, 
                                 $rubro, 
-                                $segmento){
+                                $segmento, 
+                                $dbCargo){
         if($rubro == 1 ){ // Bancos
             $salariosBase = $detalle->where('salario_base', '>', '0')->pluck('salario_base');
             $salarioMin = $salariosBase->min();
@@ -295,7 +310,8 @@ class ReporteController extends Controller
                             $salario25Per,
                             $salario75Per,
                             $dbClienteEnc->salario_base, 
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
      
             $salariosBaseAnual = $salariosBase->map(function($item){
                 return $item * 12;
@@ -317,7 +333,8 @@ class ReporteController extends Controller
                             $salarioAnual25Per,
                             $salarioAnual75Per,
                             $dbClienteEnc->salario_base * 12, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             // Gratificacion
             $gratificaciones = $detalle->where('gratificacion', '>', '0')->pluck('gratificacion');
@@ -338,7 +355,8 @@ class ReporteController extends Controller
                             $gratificacion25Per,
                             $gratificacion75Per,
                             $dbClienteEnc->gratificacion, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             //Aguinaldo
             $aguinaldos = $detalle->where('aguinaldo', '>', '0')->pluck('aguinaldo');
@@ -359,7 +377,8 @@ class ReporteController extends Controller
                             $aguinaldo25Per,
                             $aguinaldo75Per,
                             $dbClienteEnc->aguinaldo, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             // Efectivo Anual Garantizado
             $efectivoMin = 0;
@@ -390,7 +409,8 @@ class ReporteController extends Controller
                             $efectivo25Per,
                             $efectivo75Per,
                             $efectivoEmpresa, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             //Beneficios
             $beneficiosBancos = $detalle->where('beneficios_bancos', '>', '0')->pluck('beneficios_bancos');
@@ -411,7 +431,8 @@ class ReporteController extends Controller
                             $beneficios25Per * 12,
                             $beneficios75Per * 12,
                             $dbClienteEnc->beneficios_bancos * 12, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
 
             //Bono
@@ -433,7 +454,8 @@ class ReporteController extends Controller
                             $bono25Per,
                             $bono75Per,
                             $dbClienteEnc->bono_anual, 
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
          
             //Aguinaldo Impactado
@@ -466,7 +488,8 @@ class ReporteController extends Controller
                             $aguinaldoImp25Per / 12,
                             $aguinaldoImp75Per / 12,
                             $aguinaldoImpEmpresa / 12,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             //Total Compensación Efectiva anual
             $totalCompAnualMin = 0;
@@ -497,7 +520,8 @@ class ReporteController extends Controller
                             $totalCompAnual25Per, 
                             $totalCompAnual75Per, 
                             $totalCompAnualEmpresa,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
         }elseif($rubro == 2){ // Agronegocios
         }elseif($rubro == 3){
         }elseif ($rubro == 4) {  // Navieras
@@ -520,7 +544,8 @@ class ReporteController extends Controller
                             $salario25Per,
                             $salario75Per,
                             $dbClienteEnc->salario_base,
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
             // Salario Base Anual     
             $salariosBaseAnual = $salariosBase->map(function($item){
                 return $item * 12;
@@ -542,7 +567,8 @@ class ReporteController extends Controller
                             $salarioAnual25Per,
                             $salarioAnual75Per,
                             $dbClienteEnc->salario_base * 12,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
             //Aguinaldo
             $aguinaldos = $detalle->where('aguinaldo', '>', '0')->pluck('aguinaldo');
             $aguinaldoMin = $aguinaldos->min();
@@ -562,7 +588,8 @@ class ReporteController extends Controller
                             $aguinaldo25Per,
                             $aguinaldo75Per,
                             $dbClienteEnc->aguinaldo,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             // Efectivo Anual Garantizado
             $efectivoMin = 0;
@@ -593,7 +620,8 @@ class ReporteController extends Controller
                             $efectivo25Per,
                             $efectivo75Per,
                             $efectivoEmpresa,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             // Variable Anual
             $plusRendimiento = $detalle->where('plus_rendimiento', '>', '0')->pluck('plus_rendimiento');
@@ -614,7 +642,8 @@ class ReporteController extends Controller
                             $plus25Per,
                             $plus75Per,
                             $dbClienteEnc->plus_rendimiento,
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
 
             // Adicional Amarre
             $adicionalAmarre = $detalle->where('adicional_amarre', '>', '0')->pluck('adicional_amarre');
@@ -635,7 +664,8 @@ class ReporteController extends Controller
                             $amarre25Per,
                             $amarre75Per,
                             $dbClienteEnc->adicional_amarre,
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
 
 
             // Adicional Tipo de Combustible
@@ -657,7 +687,8 @@ class ReporteController extends Controller
                             $TipoCombustible25Per,
                             $TipoCombustible75Per,
                             $dbClienteEnc->adicional_tipo_combustible,
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
 
             // Adicional por disponiblidad/embarque
             $adicionalEmbarque = $detalle->where('adicional_embarque', '>', '0')->pluck('adicional_embarque');
@@ -678,7 +709,8 @@ class ReporteController extends Controller
                             $embarque25Per,
                             $embarque75Per,
                             $dbClienteEnc->adicional_embarque,
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
 
             // Adicional Carga
             $adicionalCarga = $detalle->where('adicional_carga', '>', '0')->pluck('adicional_carga');
@@ -699,7 +731,8 @@ class ReporteController extends Controller
                             $carga25Per,
                             $carga75Per,
                             $dbClienteEnc->adicional_carga,
-                            $segmento);        
+                            $segmento, 
+                            $dbCargo);        
 
             // Total Adicional 
             $totalAdicionalMin = 0;
@@ -733,7 +766,8 @@ class ReporteController extends Controller
                             $totalAdicional25Per,
                             $totalAdicional75Per,
                             $totalAdicionalEmpresa,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             //Bono
             $bonos = $detalle->where('bono_anual', '>', '0')->pluck('bono_anual');
@@ -754,7 +788,8 @@ class ReporteController extends Controller
                             $bono25Per,
                             $bono75Per,
                             $dbClienteEnc->bono_anual,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
             // Efectivo Total Anual
             $efectivoTotalMin = 0;
@@ -785,7 +820,8 @@ class ReporteController extends Controller
                             $efectivoTotal25Per,
                             $efectivoTotal75Per,
                             $efectivoTotalEmpresa,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
 
             //Beneficios
@@ -808,7 +844,8 @@ class ReporteController extends Controller
                             $beneficios25Per * 12,
                             $beneficios75Per * 12,
                             $dbClienteEnc->beneficios_bancos * 12,
-                            $segmento);
+                            $segmento, 
+                            $dbCargo);
 
 
 
@@ -842,11 +879,12 @@ class ReporteController extends Controller
                             $totalCompAnual25Per, 
                             $totalCompAnual75Per, 
                             $totalCompAnualEmpresa,
-                            $segmento);            
+                            $segmento, 
+                            $dbCargo);            
         }
 
     }
-    private function pusher(&$collection, $casos, $concepto, $min, $max, $prom, $med, $per25, $per75, $empresa, $segmento){
+    private function pusher(&$collection, $casos, $concepto, $min, $max, $prom, $med, $per25, $per75, $empresa, $segmento, $dbCargo){
         if($casos >= 4){
             $collection->push([ "concepto"=> $concepto,
                               "casos"=> $casos,
@@ -859,31 +897,45 @@ class ReporteController extends Controller
                               "empresa"=>number_format($empresa, 0, ",", "."),
                               "segmento"=>$segmento
             ]);
-        }elseif ($casos < 4 && $casos > 1 ) {
+        }elseif($casos <= 3 and $casos > 1){
             $collection->push([ "concepto"=> $concepto,
                               "casos"=> $casos,
-                              "min"=>"",
-                              "max"=>"",
+                              "min"=>"", 
+                              "max"=>"", 
                               "prom"=>number_format($prom, 0, ",", "."), 
-                              "med"=>"",
-                              "per25"=>"",
-                              "per75"=>"",
-                              "empresa"=>"",
+                              "med"=>"", 
+                              "per25"=>number_format($per25, 0, ",", "."), 
+                              "per75"=> number_format($per75, 0, ",", "."), 
+                              "empresa"=>number_format($empresa, 0, ",", "."),
                               "segmento"=>$segmento
             ]);
 
         }elseif ($casos <= 1) {
-            $collection->push([ "concepto"=> $concepto,
-                              "casos"=> $casos,
-                              "min"=>"",
-                              "max"=>"",
-                              "prom"=>"",
-                              "med"=>"",
-                              "per25"=>"",
-                              "per75"=>"",
-                              "empresa"=>"",
-                              "segmento"=>$segmento
-            ]);
+            if($dbCargo->is_temporal == '1'){
+                $collection->push([ "concepto"=> $concepto,
+                                  "casos"=> $casos,
+                                  "min"=>number_format($min, 0, ",", "."), 
+                                  "max"=>number_format($max, 0, ",", "."), 
+                                  "prom"=>number_format($prom, 0, ",", "."), 
+                                  "med"=>number_format($med, 0, ",", "."), 
+                                  "per25"=>number_format($per25, 0, ",", "."), 
+                                  "per75"=> number_format($per75, 0, ",", "."), 
+                                  "empresa"=>number_format($empresa, 0, ",", "."),
+                                  "segmento"=>$segmento
+                ]);
+            }else{
+                $collection->push([ "concepto"=> $concepto,
+                                  "casos"=> $casos,
+                                  "min"=>"",
+                                  "max"=>"",
+                                  "prom"=>"",
+                                  "med"=>"",
+                                  "per25"=>"",
+                                  "per75"=>"",
+                                  "empresa"=>"",
+                                  "segmento"=>$segmento
+                ]);
+            }
         }
     }
 
@@ -922,6 +974,121 @@ class ReporteController extends Controller
         //
     }
 
+    public function resultados(){
+        $dbData = Cabecera_encuesta::select(DB::Raw('distinct periodo'))->get();
+        return view('report.periodos')->with('dbData', $dbData);
+    }
+
+    public function resultadosExcel(Request $request){
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '512M');
+        $periodo = $request->periodo;
+        $query = "SELECT d.cabecera_encuesta_id, IF(e.incluir = 1, 'NO', 'SI') excluir,  c.periodo, 
+                         c.empresa_id, em.descripcion empresa, c.cantidad_empleados,
+                         d.encuestas_cargo_id, convert(e.descripcion using utf8) cargo_cliente, c.rubro_id, 
+                         r.descripcion rubro, ca.id, ca.descripcion cargo_oficial, cantidad_ocupantes, 
+                         d.area_id, convert(a.descripcion using utf8) area, d.nivel_id, n.descripcion nivel,
+                         salario_base, gratificacion, aguinaldo, comision, plus_rendimiento, fallo_caja,
+                         fallo_caja_ext, gratificacion_contrato, adicional_nivel_cargo, adicional_titulo,
+                         adicional_amarre, adicional_tipo_combustible, adicional_embarque, adicional_carga,
+                         bono_anual, bono_anual_salarios, incentivo_largo_plazo, refrigerio, costo_seguro_medico, 
+                         cobertura_seguro_medico, costo_seguro_vida, costo_poliza_muerte_natural,
+                         costo_poliza_muerte_accidente, aseguradora_id, car_company, movilidad_full, flota 
+                         monto_tarjeta_flota, autos_marca_id, autos_modelo_id, tarjeta_flota, monto_movil, 
+                         seguro_movil, mantenimiento_movil, monto_km_recorrido, monto_ayuda_escolar, 
+                         monto_comedor_interno, monto_curso_idioma, cobertura_curso_idioma, tipo_clase_idioma, 
+                         monto_post_grado, cobertura_post_grado, monto_celular_corporativo, monto_vivienda, 
+                         monto_colegiatura_hijos, condicion_ocupante
+                    FROM detalle_encuestas d, encuestas_cargos e, cabecera_encuestas c, cargos ca, rubros r, 
+                         areas a, niveles n, empresas em
+                   where c.periodo = '".$periodo."'
+                     and c.id = d.cabecera_encuesta_id
+                     and d.encuestas_cargo_id = e.id
+                     and e.cargo_id = ca.id
+                     and c.rubro_id = r.id
+                     and d.area_id = a.id
+                     and d.nivel_id = n.id
+                     and c.empresa_id = em.id
+                   order by 1";
+        $dbDetalle = DB::select($query);
+        $detalle = array();
+        foreach ($dbDetalle as $key => $item) {
+            $detalle[] = array( "id_encuesta"=>$item->cabecera_encuesta_id,
+                                "id_empresa"=>$item->empresa_id,
+                                "empresa"=>$item->empresa, 
+                                "cantidad_empleados"=>$item->cantidad_empleados,
+                                "excluir"=>$item->excluir,
+                                "periodo"=>$item->periodo, 
+                                "id_cargo_cliente"=>$item->encuestas_cargo_id, 
+                                "cargo_cliente"=> $item->cargo_cliente, 
+                                "id_rubro"=> $item->rubro_id, 
+                                "rubro"=> $item->rubro,
+                                "id_cargo_oficial"=> $item->id, 
+                                "cargo_oficial"=> $item->cargo_oficial, 
+                                "ocupantes"=>$item->cantidad_ocupantes, 
+                                "id_area"=>$item->area_id, 
+                                "area"=>$item->area, 
+                                "id_nivel"=>$item->nivel_id, 
+                                "nivel"=>$item->nivel,
+                                "salario_base"=>$item->salario_base, 
+                                "gratificacion"=> $item->gratificacion, 
+                                "aguinaldo"=> $item->aguinaldo, 
+                                "comision"=> $item->comision, 
+                                "plus_rendimiento" => $item->plus_rendimiento,
+                                "fallo_caja"=> $item->fallo_caja,
+                                "fallo_caja_ext"=> $item->fallo_caja_ext, 
+                                "gratificacion_contrato"=>$item->gratificacion_contrato, 
+                                "adicional_nivel_cargo"=>$item->adicional_nivel_cargo, 
+                                "adicional_titulo"=>$item->adicional_titulo,
+                                "adicional_amarre"=>$item->adicional_amarre, 
+                                "adicional_tipo_combustible"=>$item->adicional_tipo_combustible, 
+                                "adicional_embarque"=>$item->adicional_embarque, 
+                                "adicional_carga"=>$item->adicional_carga,
+                                "bono_anual"=>$item->bono_anual, 
+                                "bono_anual_salarios"=>$item->bono_anual_salarios, 
+                                "incentivo_largo_plazo"=>$item->incentivo_largo_plazo, 
+                                "refrigerio"=>$item->refrigerio, 
+                                "costo_seguro_medico"=>$item->costo_seguro_medico, 
+                                "cobertura_seguro_medico"=>$item->cobertura_seguro_medico, 
+                                "costo_seguro_vida"=>$item->costo_seguro_vida, 
+                                "costo_poliza_muerte_natural"=>$item->costo_poliza_muerte_natural,
+                                "costo_poliza_muerte_accidente"=>$item->costo_poliza_muerte_accidente,
+                                "aseguradora_id"=>$item->aseguradora_id, 
+                                "car_company"=>$item->car_company, 
+                                "movilidad_full"=>$item->movilidad_full, 
+                                "monto_tarjeta_flota"=>$item->monto_tarjeta_flota, 
+                                "autos_marca_id"=>$item->autos_marca_id, 
+                                "autos_modelo_id"=>$item->autos_modelo_id, 
+                                "tarjeta_flota"=>$item->tarjeta_flota, 
+                                "monto_movil"=>$item->monto_movil, 
+                                "seguro_movil"=>$item->seguro_movil, 
+                                "mantenimiento_movil"=>$item->mantenimiento_movil, 
+                                "monto_km_recorrido"=>$item->monto_km_recorrido, 
+                                "monto_ayuda_escolar"=>$item->monto_ayuda_escolar, 
+                                "monto_comedor_interno"=>$item->monto_comedor_interno, 
+                                "monto_curso_idioma"=>$item->monto_curso_idioma, 
+                                "cobertura_curso_idioma"=>$item->cobertura_curso_idioma, 
+                                "tipo_clase_idioma"=>$item->tipo_clase_idioma, 
+                                "monto_post_grado"=>$item->monto_post_grado, 
+                                "cobertura_post_grado"=>$item->cobertura_post_grado, 
+                                "monto_celular_corporativo"=>$item->monto_celular_corporativo, 
+                                "monto_vivienda"=>$item->monto_vivienda, 
+                                "monto_colegiatura_hijos"=>$item->monto_colegiatura_hijos, 
+                                "condicion_ocupante"=>$item->condicion_ocupante                                
+                );
+
+             
+        }
+        $periodo = implode('_', explode('/', $periodo));
+        $filename = 'Resultados_'.$periodo;
+        Excel::create($filename, function($excel) use($detalle, $periodo) {
+            $excel->sheet($periodo, function($sheet) use($detalle){
+                $sheet->fromArray($detalle);
+            });
+        })->export('xls');
+        return redirect()->route('resultados');
+
+    }
     public function panel($id){
         $dbEmpresa = $id;
         $rubro = Auth::user()->empresa->rubro_id;
@@ -980,6 +1147,11 @@ class ReporteController extends Controller
         }
 
         return $result;
+    }
+
+    public function setSession(Request $request){
+        $request->session()->put('periodo', $request->periodo); 
+        return "ok";
     }
 
 

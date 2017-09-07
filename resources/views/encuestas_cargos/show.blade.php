@@ -14,16 +14,25 @@
                   <h4>Listado de Cargos - {{$dbEmpresa or ''}} {{$dbPeriodo or ''}}</h4>
                 </div>
 
-                	<table id="listado" class="highlight responsive-table">
+                	<table id="listado_cargos" class="highlight responsive-table">
                 		<thead>
 	                      <tr>
 	                      	 <th style="width: 30%">Descripcion</th>
 	                      	 <th style="width: 10%">Cargo Oficial</th>
 	                      	 <th style="width: 5%">Salario</th>
 	                      	 <th style="width: 5%">Incluir</th>
+	                      	 <th style="width: 20%" colspan="2">Opciones</th>
+	                      	 <th style="display: none;"></th>
+	                      </tr>
+	                      <tr>
+	                      	 <th style="width: 30%" class="searchable-column">Descripcion</th>
+	                      	 <th style="width: 10%" class="searchable-column">Cargo Oficial</th>
+	                      	 <th style="width: 5%" class="searchable-column">Salario</th>
+	                      	 <th style="width: 5%"></th>
 	                      	 <th style="width: 20%"></th>
 	                      	 <th style="width: 20%"></th>
-	                      	 <th style="display: none"></th>
+	                      	 <th style="display: none;"></th>
+	                      </tr>
 	                    </thead>
 	                    <tbody id="details">
 	                    	@foreach($dbData as $est) 
@@ -37,7 +46,6 @@
 		                    					@else
 													<option value={{$key}}>{{$cargo}}</option>
 		                    					@endif
-		                    					
 		                    				@endforeach
 		                    			</select>
 		                    		</td>
@@ -65,7 +73,7 @@
 		                    				<i class="material-icons left">save</i>Guardar
 		                    			</a>		                    			
 		                    		</td>
-		                    		<td><input type="hidden" name="cargo_id" value="{{$est->id}}"></td>
+		                    		<td style="display: none;"><input type="hidden" name="cargo_id" value="{{$est->id}}"></td>
 	                    		</tr>
 	                    	@endforeach
 	                    </tbody>
@@ -93,40 +101,63 @@
 @push('scripts')
 	<script type="text/javascript">
    		$(function(){
-	   		$('select').select2();
+	   		//$('select').select2();
+	   		// Setup - add a text input to each footer cell
+		    $('#listado_cargos thead .searchable-column').each( function () {
+		        var title = $(this).text();
+		        $(this).html( '<input type="text" placeholder="Buscar '+title+'" />' );
+		    } );
 	   		
-	   		$('#listado').DataTable({
-   				"scrollX": false,
-            	"scrollCollapse": false,
-            	"lengthChange": false,
-   	           	"columnDefs": [
-        			{	"targets": [3], 
-        				"width":"10%" 
-        			},
-        			{	"targets":[2], 
-        			    "render": $.fn.dataTable.render.number( ".", ",", 0),
-        			    "width":"10%" 					
-						
-        			},
-        			{	"targets":[4,5], 
-        			    "width":"15%", 					
-        				"orderable": false, 
-        				"searchable": false,
-        			}
+	   		var table = $('#listado_cargos').DataTable({
+			   				"scrollX": false,
+			            	"scrollCollapse": false,
+			            	"lengthChange": false,
+			            	"aaSorting": [],
+			   	           	"columnDefs": [
+			        			{	"targets": [0,1],
+			        				"orderable": false
+			        			},
+			        			{	"targets": [3], 
+			        				"width":"10%" 
+			        			},
+			        			{	"targets":[2], 
+			        			    "render": $.fn.dataTable.render.number( ".", ",", 0),
+			        			    "width":"10%" 					
+									
+			        			},
+			        			{	"targets":[4,5], 
+			        			    "width":"15%", 					
+			        				"orderable": false, 
+			        				"searchable": false,
+			        			}
 
-        			
-        		],
+			        			
+			        		],
 
-	            "language": {
-	                "decimal": ",",
-	                "thousands": ".",
-	                "zeroRecords": "No hay registros - Lo sentimos",
-	                "info": "Página _PAGE_ de _PAGES_",
-	                "infoEmpty": "No hay registros disponibles",
-	                "infoFiltered": "(Filtrado de un total de _MAX_ registros)"	        
-	            }
+				            "language": {
+				                "decimal": ",",
+				                "thousands": ".",
+				                "zeroRecords": "No hay registros - Lo sentimos",
+				                "info": "Página _PAGE_ de _PAGES_",
+				                "infoEmpty": "No hay registros disponibles",
+				                "infoFiltered": "(Filtrado de un total de _MAX_ registros)"	        
+				            }, 
+							 drawCallback: function() {
+							     $('.select2').select2();
+							  }
 
-	    	});
+	    				});
+
+	   		table.columns().every(function(){
+        		var that = this;
+ 		        $('input', this.header()).on('keyup change', function(){
+		            if ( that.search() !== this.value ) {
+		                that
+		                    .search( this.value )
+		                    .draw();
+		            }
+		    });
+    } );
 	    	
    		});
 
@@ -136,7 +167,7 @@
 			input.val(id);
 		});*/
 
-		$("#listado").on('click', '.guardar', function(e){
+		$("#listado_cargos").on('click', '.guardar', function(e){
 			e.preventDefault();
 			var id = $(this).closest("tr").find("input[name=cargo_id]").val();
 			var cargoId = $(this).closest("tr").find("#cargos").val();

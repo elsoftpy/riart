@@ -16,8 +16,8 @@
 					<div class="card-tabs">
 				      <ul class="tabs tabs-fixed-width">
 				       
-				        <li class="tab teal"><a href="#test4">Vigencia de la Información/Corte</a></li>
-				        <li class="tab teal"><a class="active" href="#test5">Cantidad de Cargos</a></li>
+				        <li class="tab teal"><a class="active" href="#test4">Vigencia de la Información/Corte</a></li>
+				        <li class="tab teal"><a href="#test5">Cantidad de Cargos</a></li>
 				        <li class="tab teal"><a href="#test6">Cantidad Participantes</a></li>
 				      </ul>
 					</div>

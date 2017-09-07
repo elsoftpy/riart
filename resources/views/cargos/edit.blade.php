@@ -49,6 +49,15 @@
 							<textarea name="detalle" id="detalle" class="materialize-textarea">{{$dbData->detalle}}</textarea> 
 						</div>
 					</div>
+					<div class="row">
+						@if ($dbData->is_temporal == "1")
+							<input name="is_temporal" id="is_temporal" checked="checked" type="checkbox" class="with-gap"  />
+							<label for="is_temporal">Temporal</label>
+						@else	
+							<input name="is_temporal" id="is_temporal" type="checkbox" class="with-gap"  />
+							<label for="is_temporal">Temporal</label>
+						@endif
+					</div> 
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					{{ method_field('PUT') }}
 					<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar

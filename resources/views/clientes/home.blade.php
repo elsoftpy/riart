@@ -43,9 +43,16 @@
                     			<a href="{{ route('empresas.edit', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;">
                     				<i class="material-icons left">edit</i>Editar
                     			</a><br/>
-                    			<a href="{{ route('encuestas.show', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;">
-                    				<i class="material-icons left">dashboard</i>Reportes
-                    			</a>                    			
+                    			@if($dbEmpresa->rubro_id == 4)
+                        			<a href="#" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" id="select_encuesta">
+                    					<i class="material-icons left">dashboard</i>Reportes
+                    				</a>                    			
+                    			@else
+	                    			<a href="{{ route('encuestas.show', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;">
+	                    				<i class="material-icons left">dashboard</i>Reportes
+	                    			</a>                    			
+                    			@endif
+
 								<a href="{{ route('encuestas.update', $dbEncuesta->id) }}" class="btn waves-effect waves-light lighten-1 red white-text" style="margin-bottom: 1em;" onclick="update_row({{$dbEncuesta->id}})">
 									<i class="material-icons left">exit_to_app</i>Finalizar
 								</a>
@@ -61,6 +68,23 @@
 	        </div>
 		</div>
 	</div>
+	<div class="modal" id="modal-options">
+		<div class="modal-content">
+			<h5>Eligir Encuesta</h5>
+				<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
+					{{$dbEncuestaAnt->periodo}}
+				</a>	
+				<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
+					{{$dbEncuesta->periodo}}
+				</a>	
+				<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
+				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
+		</div>
+		<div class="modal-footer">
+			<a class="waves-light waves-effect btn " id="close-modal">Cerrar</a>
+		</div>
+	</div>
+
 @stop
 @push('scripts')
 	<script type="text/javascript">
@@ -72,5 +96,28 @@
 				return false;
 			}
 		}
+
+		$("#select_encuesta").click(function(){
+			$("#modal-options").openModal();	
+		});
+
+		$('#close-modal').click(function(e){
+			$("#modal-options").closeModal();	
+		});
+
+		$("#encuesta-actual").click(function(e){
+			e.preventDefault();
+			var periodo = $("#periodo").val();
+			$.post('{{route('periodo')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
+				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
+			});
+		});
+		$("#encuesta-anterior").click(function(e){
+			e.preventDefault();
+			var periodo = $("#periodo_ant").val();
+			$.post('{{route('periodo')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
+				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
+			});
+		});		
 	</script>
 @endpush

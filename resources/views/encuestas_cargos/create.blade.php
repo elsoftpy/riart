@@ -324,9 +324,6 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 		    $('select').material_select();
-		    
-
-
 		    var check = true;
 		    $("input").on("focusout", function(e) {
 		      var id = "#"+e.target.id;
@@ -358,7 +355,6 @@
 		        var val = $(element).val();
 		        var numeric = false;
 
-		        console.log("val", val);
 		        if ($(element).attr("must") !== undefined){
 		        	must = true;
 		        }

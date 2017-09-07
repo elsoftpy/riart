@@ -184,6 +184,9 @@ return [
         * Packages Service Providers
         */
         elsoftpy\Utiles\Flash\elsoftpyFlashProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+
 
     ],
 
@@ -234,6 +237,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'MaterializeCSS' => Skydiver\LaravelMaterializeCSS\MaterializeCSS::class,
 		'flash'     => elsoftpy\Utiles\Flash\Flash::class,
+        'Excel' => 'Maatwebsite\Excel\Facades\Excel',
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+
 
     ],
 

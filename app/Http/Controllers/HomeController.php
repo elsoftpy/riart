@@ -29,8 +29,12 @@ class HomeController extends Controller
             return view('home');    
         }else{
             $dbEmpresa = Auth::user()->empresa;
-            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')->first();
-            return view('clientes.home')->with('dbEmpresa', $dbEmpresa)->with('dbEncuesta', $dbEncuesta);    
+            $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
+            $dbEncuesta = $dbEncuestas->first();
+            $dbEncuestaAnt = $dbEncuestas->get(1);
+            return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
+                                        ->with('dbEncuesta', $dbEncuesta)
+                                        ->with('dbEncuestaAnt' , $dbEncuestaAnt);    
         }
         
     }

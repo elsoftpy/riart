@@ -39,6 +39,11 @@
 							<textarea name="detalle" id="detalle" class="materialize-textarea"></textarea> 
 						</div>
 					</div>
+					<div class="row">
+						<input name="is_temporal" id="is_temporal" value="0" type="checkbox" class="with-gap"  />
+						<label for="is_temporal">Temporal</label>
+					</div> 
+
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar
     					<i class="material-icons left">save</i>

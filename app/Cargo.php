@@ -8,7 +8,7 @@ class Cargo extends Model
 {
     protected $table = "cargos";
 
-    protected $fillable = ["descripcion", "area_id", "nivel_id", "detalle"];
+    protected $fillable = ["descripcion", "area_id", "nivel_id", "is_temporal", "detalle"];
 
     public function encuestasCargo(){
         return $this->hasMany("App\Encuestas_cargo");

@@ -21,7 +21,7 @@
       <div class="container" style="width: 90% !important">
           <nav>
               <div class="nav-wrapper teal">
-                   <a href="{{route('reportes.show', $dbEmpresa)}}" class="brand-logo"><i class="material-icons left">poll</i>S&B</a> 
+                   <a href="{{route('home.page')}}" class="brand-logo"><i class="material-icons left">poll</i>S&B</a> 
                   @if(Auth::check())
                       <ul id="nav-mobile" class="right hide-on-med-and-down">
                         <li>

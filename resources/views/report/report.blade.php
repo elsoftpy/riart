@@ -103,7 +103,7 @@
 		                      <tr>
 		                      	 <th>Conceptos</th>
 		                      	 <th>Casos</th>
-		                      	 <th>com</th>
+		                      	 <th>Ocupantes</th>
 		                      	 <th>Mínimo</th>
 		                      	 <th>25 Perc.</th>
 		                      	 <th>Promedio</th>

@@ -67,6 +67,10 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('reportes_ficha/{id}', 'ReporteController@ficha')->name('reportes.ficha');
 	Route::resource('reportes', 'ReporteController');
 
+	Route::get('resultados', 'ReporteController@resultados')->name('resultados');
+	Route::post('resultados_excel', 'ReporteController@resultadosExcel')->name('resultados.excel');
+	Route::post('periodo', 'ReporteController@setSession')->name('periodo');
+
 	Route::get('panel_empresas/{id}', 'ReporteController@panel')->name('reportes.panel');
 
 });

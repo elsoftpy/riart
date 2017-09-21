@@ -55,7 +55,7 @@
 			$.post('{{route('reportes.getcargos')}}', {"nivel_id": nivelId, "_token": "{{csrf_token()}}"}, 
 				function(json){
 					var data = $.map(json, function(text, id){
-                    	return {text:text, id:id};
+                    	return {text:id, id:text};
                     });
 					selectCargo.append($("<option></option>").attr("value", 0).text("Elija una Opción"));            		
             		for(i = 0; i < data.length; i++){

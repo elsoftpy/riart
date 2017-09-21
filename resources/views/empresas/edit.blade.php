@@ -40,7 +40,7 @@
 						</div>					
 						<div class="input-field col s4">
 							<input id="cantidad_empleados" type="number" class="validate" name="cantidad_empleados" value="{{ $dbData->cantidad_empleados}}">
-							<label for="cantidad_empleados">Cant. Suc.</label>
+							<label for="cantidad_empleados">Cant. Emp.</label>
 						</div>					
 						<div class="input-field col s4">
 							<select id="tipo"  name="tipo">

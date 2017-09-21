@@ -28,10 +28,10 @@
                           <a href="{{ route('reportes.panel', $dbEmpresa) }}">Panel de Empresas</a>
                         </li>
                         <li>
-                          <a href="{{ route('usuarios.index') }}">Conceptos Técnicos</a>
+                          <a href="{{ route('reportes.conceptos', $dbEmpresa) }}">Conceptos Técnicos</a>
                         </li>                      
                         <li>
-                          <a href="{{ route('empresas.index') }}">Metodología</a>
+                          <a href="{{ route('reportes.metodologia', $dbEmpresa) }}">Metodología</a>
                         </li>
                         <li>
                           <a href="{{ route('reportes.ficha', $dbEmpresa) }}">Ficha Técnica</a>

@@ -107,6 +107,7 @@ class Detalle_encuesta extends Model
 						//$this->costo_poliza_muerte_accidente +
 						//$this->costo_poliza_muerte_natural +
 						$this->monto_movil / 60 +
+						$this->gratificacion_contrato +
 						$this->flota+
 						$this->seguro_movil +
 						$this->monto_km_recorrido +

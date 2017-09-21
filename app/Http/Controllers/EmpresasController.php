@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Empresa;
 use App\Rubro;
 use App\Sub_rubro;
+use Auth;
 use flash;
 
 class EmpresasController extends Controller
@@ -88,7 +89,12 @@ class EmpresasController extends Controller
         $dbData->fill($request->all());
         $dbData->save();
 
-        return redirect()->route('empresas.index');
+        if(Auth::user()->is_admin){
+            return redirect()->route('empresas.index');    
+        }else{
+            return redirect()->route('home');
+        }
+        
     }
 
     /**

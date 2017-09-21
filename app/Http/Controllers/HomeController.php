@@ -28,13 +28,23 @@ class HomeController extends Controller
         if(Auth::user()->is_admin){
             return view('home');    
         }else{
-            $dbEmpresa = Auth::user()->empresa;
-            $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
-            $dbEncuesta = $dbEncuestas->first();
-            $dbEncuestaAnt = $dbEncuestas->get(1);
-            return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
-                                        ->with('dbEncuesta', $dbEncuesta)
-                                        ->with('dbEncuestaAnt' , $dbEncuestaAnt);    
+            if(Auth::user()->is_benefit){
+                $dbEmpresa = Auth::user()->empresa;
+                $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
+                $dbEncuesta = $dbEncuestas->first();
+                $dbEncuestaAnt = $dbEncuestas->get(1);
+                return view('beneficios.home')->with('dbEncuesta', $dbEncuesta)
+                                              ->with('dbEmpresa', $dbEmpresa);    
+
+            }else{
+                $dbEmpresa = Auth::user()->empresa;
+                $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
+                $dbEncuesta = $dbEncuestas->first();
+                $dbEncuestaAnt = $dbEncuestas->get(1);
+                return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
+                                            ->with('dbEncuesta', $dbEncuesta)
+                                            ->with('dbEncuestaAnt' , $dbEncuestaAnt);                    
+            }
         }
         
     }

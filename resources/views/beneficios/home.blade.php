@@ -4,7 +4,7 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>{{ $dbEmpresa->rubro->descripcion}}</h4>
+	          <h4>{{ $dbEmpresa->rubro->descripcion}} holo</h4>
 	        </div>
 	        <div class="content">
 	        	<table id="Listado" class="highlight">
@@ -30,7 +30,7 @@
                     		<td>{{ $dbEmpresa->subrubro->descripcion}}</td>
                     		<td>{{ $dbEmpresa->cantidad_sucursales}}</td>
                     		<td>{{ $dbEmpresa->cantidad_empleados}}</td>
-                    		<td>@if($dbEmpresa->tipo == 0)
+                    		<td>@if($dbEmpresa->tipo === 0)
                     				{{"Nacional"}}
                     			@else
                     				{{"Internacional"}}
@@ -68,23 +68,6 @@
 	        </div>
 		</div>
 	</div>
-	<div class="modal" id="modal-options">
-		<div class="modal-content">
-			<h5>Eligir Encuesta</h5>
-				<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
-					{{$dbEncuestaAnt->periodo}}
-				</a>	
-				<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
-					{{$dbEncuesta->periodo}}
-				</a>	
-				<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
-				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
-		</div>
-		<div class="modal-footer">
-			<a class="waves-light waves-effect btn " id="close-modal">Cerrar</a>
-		</div>
-	</div>
-
 @stop
 @push('scripts')
 	<script type="text/javascript">
@@ -96,28 +79,5 @@
 				return false;
 			}
 		}
-
-		$("#select_encuesta").click(function(){
-			$("#modal-options").openModal();	
-		});
-
-		$('#close-modal').click(function(e){
-			$("#modal-options").closeModal();	
-		});
-
-		$("#encuesta-actual").click(function(e){
-			e.preventDefault();
-			var periodo = $("#periodo").val();
-			$.post('{{route('periodo')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
-				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
-			});
-		});
-		$("#encuesta-anterior").click(function(e){
-			e.preventDefault();
-			var periodo = $("#periodo_ant").val();
-			$.post('{{route('periodo')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
-				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
-			});
-		});		
 	</script>
 @endpush

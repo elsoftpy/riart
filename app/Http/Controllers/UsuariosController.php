@@ -21,12 +21,19 @@ class UsuariosController extends Controller
     }
 
     public function store(Request $request){
-    	$dbData = new User();
+        $dbData = new User();
     	$dbData->username = $request->username;
         $dbData->password = Hash::make($request->password);
     	$dbData->email = $request->email;
         $dbData->empresa_id = $request->empresa_id;
-        $dbData->is_admin = $request->is_admin;
+        if ($request->is_admin == '2') {
+            $dbData->is_benefit = 1;
+            $dbData->is_admin = 0;
+        }else{
+            $dbData->is_benefit = 0;
+            $dbData->is_admin = $request->is_admin;    
+        }
+        
     	
     	$dbData->save();
     	return redirect()->route('usuarios.index');
@@ -51,7 +58,14 @@ class UsuariosController extends Controller
         $dbData->password = Hash::make($request->password);
         $dbData->email = $request->email;
         $dbData->empresa_id = $request->empresa_id;
-        $dbData->is_admin = $request->is_admin;
+        if ($request->is_admin == '2') {
+            $dbData->is_benefit = 1;
+            $dbData->is_admin = 0;
+        }else{
+            $dbData->is_benefit = 0;
+            $dbData->is_admin = $request->is_admin;    
+        }
+
 
     	
     	$dbData->save();

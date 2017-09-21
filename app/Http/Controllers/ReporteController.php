@@ -11,6 +11,8 @@ use App\Empresa;
 use App\Nivel;
 use App\Cargo;
 use App\Rubro;
+use App\User;
+use Hash;
 use DB;
 use Auth;
 use Excel;
@@ -111,7 +113,7 @@ class ReporteController extends Controller
     public function filter($id)
     {
         $dbNiveles = Nivel::pluck('descripcion', 'id');
-        $dbCargos = Cargo::pluck('descripcion', 'id');
+        $dbCargos = Cargo::orderBy('descripcion')->pluck('descripcion', 'id');
         $dbEmpresa = $id;
         return view('report.filter')->with('dbNiveles', $dbNiveles)->with('dbCargos', $dbCargos)->with('dbEmpresa', $dbEmpresa);
     }
@@ -127,6 +129,14 @@ class ReporteController extends Controller
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
         }
         $cargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)->get()->count();
+        if ($rubro == 4){
+            if($per == "12/2016"){
+                $cargos = 160;
+            }else{
+                $cargos = 174;
+            }
+        }
+        
         $periodo = $dbEncuesta->periodo;
         $participantes = Cabecera_encuesta::where('periodo', $periodo)->where('rubro_id', $rubro)->get()->count();
         $club = $this->club($empresa->rubro_id);
@@ -135,6 +145,22 @@ class ReporteController extends Controller
                                    ->with('periodo', $periodo)
                                    ->with('club', $club)
                                    ->with('participantes', $participantes);
+    }
+
+    public function conceptos($id){
+        $dbEmpresa = $id;
+        $empresa = Empresa::find($id);
+        $rubro = $empresa->rubro_id;
+        $club = $this->club($empresa->rubro_id);
+        return view('report.conceptos')->with('club', $club)->with('dbEmpresa', $dbEmpresa);
+    }
+
+    public function metodologia($id){
+        $dbEmpresa = $id;
+        $empresa = Empresa::find($id);
+        $rubro = $empresa->rubro_id;
+        $club = $this->club($empresa->rubro_id);
+        return view('report.metodologia')->with('club', $club)->with('dbEmpresa', $dbEmpresa);
     }
 
     public function cargoReport(Request $request){
@@ -1103,7 +1129,7 @@ class ReporteController extends Controller
 
     public function getCargos(Request $request){
         $id = $request->nivel_id;
-        $dbData = Cargo::where('nivel_id', $id)->pluck('descripcion', 'id');
+        $dbData = Cargo::orderBy('descripcion')->where('nivel_id', $id)->pluck('id', 'descripcion');
 
         return $dbData;        
     }

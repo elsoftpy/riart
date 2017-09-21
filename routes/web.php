@@ -65,6 +65,8 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::post('reportes_cargo_niveles', 'ReporteController@getCargos')->name('reportes.getcargos');
 	Route::get('reportes_filter/{id}', 'ReporteController@filter')->name('reportes.filter');
 	Route::get('reportes_ficha/{id}', 'ReporteController@ficha')->name('reportes.ficha');
+	Route::get('reportes_conceptos/{id}', 'ReporteController@conceptos')->name('reportes.conceptos');
+	Route::get('reportes_metodologia/{id}', 'ReporteController@metodologia')->name('reportes.metodologia');
 	Route::resource('reportes', 'ReporteController');
 
 	Route::get('resultados', 'ReporteController@resultados')->name('resultados');

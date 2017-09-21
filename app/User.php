@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'password', 'email', 'empresa_id', 'estado'
+        'username', 'password', 'email', 'empresa_id', 'estado', 'is_benefit'
     ];
 
     /**
@@ -27,7 +27,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    protected $casts = ["is_admin" => "boolean"];
+    protected $casts = ["is_admin" => "boolean", "is_benefit"=>"boolean"];
 
     // Accesors
     public function empresa()

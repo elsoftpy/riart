@@ -39,6 +39,7 @@
 							<select id="is_admin" name="is_admin">
 								<option value="0">Cliente</option>
 								<option value="1">Consultora</option>
+								<option value="2">Beneficios</option>
 							</select>
 							<label for="is_admin">Tipo de Usuario</label>
 						</div>

@@ -18,9 +18,7 @@ use flash;
 class CargosClientesController extends Controller
 {
     public function index(){
-    	$dbData = Encuestas_cargo::where('');
-
-
+        $dbData = Encuestas_cargo::where('');
     	return view('cargos_clientes.list')->with('dbData', $dbData);
     }
 
@@ -29,16 +27,20 @@ class CargosClientesController extends Controller
 		$dbAseguradora = Aseguradora::get()->pluck('descripcion', 'id');
 		$dbZona = Zona::get()->pluck('descripcion', 'id');
         $dbMarca = Autos_marca::get()->pluck('descripcion', 'id');
+        $idMarca =$dbMarca->keys()->first();
+        $dbModelo = Autos_modelo::where('autos_marca_id', $idMarca)->get()->pluck('descripcion', 'id');
         $dbArea = Area::get()->pluck('descripcion', 'id');
     	return view('cargos_clientes.create')->with('dbNivel', $dbNivel)
     								->with('dbArea', $dbArea)
                                     ->with('dbMarca', $dbMarca)
+                                    ->with('dbModelo', $dbModelo)
                                     ->with('dbZona', $dbZona)
     								->with('dbAseguradora', $dbAseguradora);
     }
 
     public function store(Request $request){
         //dd($request->server('HTTP_ACCEPT_LANGUAGE'));
+
         if(Auth::user()->is_admin){
             $id = Auth::user()->empresa_id;    // cambiar para permitir crear empleado desde consultora
         }else{
@@ -77,13 +79,22 @@ class CargosClientesController extends Controller
         if(!$fields->has("car_company")){
             $fields->put("car_company", 0);
         }else{
-            $fields->put("car_company", 1);
+            if($fields["car_company"] == "S"){
+                $fields["car_company"] = 1;
+            }else{
+                $fields["car_company"] = 0;
+            }
         }
+
 
         if(!$fields->has("tarjeta_flota")){
             $fields->put("tarjeta_flota", 0);
         }else{
-            $fields->put("tarjeta_flota", 1);
+            if($fields["tarjeta_flota"] == "S"){
+                $fields["tarjeta_flota"] = 1;
+            }else{
+                $fields["tarjeta_flota"] = 0;
+            }
         }
 
         if(!$fields->has("tipo_clase_idioma")){
@@ -116,6 +127,7 @@ class CargosClientesController extends Controller
             $dbDetalle = null;
         }
 
+
         $dbEmpresa = $dbEncuesta->empresa->descripcion;
         $dbPeriodo = $dbEncuesta->periodo;
 
@@ -135,18 +147,28 @@ class CargosClientesController extends Controller
         $dbAseguradora = Aseguradora::get()->pluck('descripcion', 'id');
         $dbZona = Zona::get()->pluck('descripcion', 'id');
         $dbMarca = Autos_marca::get()->pluck('descripcion', 'id');
+        $idMarca =$dbDetalle->autos_marca_id;
+        $dbModelo = Autos_modelo::where('autos_marca_id', $idMarca)->get()->pluck('descripcion', 'id');
         $dbArea = Area::get()->pluck('descripcion', 'id');
-       	return view('cargos_clientes.edit')->with('dbData', $dbData) 
+
+        if($dbData->cabeceraEncuestas->finalizada == "N"){
+            $view = 'cargos_clientes.edit';
+        }else{
+            $view = 'cargos_clientes.sheet';
+        }
+        
+        return view($view)->with('dbData', $dbData) 
                                            ->with('dbDetalle', $dbDetalle)
                                            ->with('dbNivel', $dbNivel)
                                            ->with('dbArea', $dbArea)
                                            ->with('dbMarca', $dbMarca)
+                                           ->with('dbModelo', $dbModelo)
                                            ->with('dbZona', $dbZona)
                                            ->with('dbAseguradora', $dbAseguradora);;
     }
 
     public function update(Request $request, $id){
-
+        
     	$dbData = Encuestas_cargo::find($id);
         $dbDetalle = Detalle_encuesta::find($dbData->DetalleEncuestas->id);
     	$fields = collect();
@@ -163,13 +185,22 @@ class CargosClientesController extends Controller
         if(!$fields->has("car_company")){
             $fields->put("car_company", 0);
         }else{
-            $fields->put("car_company", 1);
+            if($fields["car_company"] == "S"){
+                $fields["car_company"] = 1;
+            }else{
+                $fields["car_company"] = 0;
+            }
         }
+
 
         if(!$fields->has("tarjeta_flota")){
             $fields->put("tarjeta_flota", 0);
         }else{
-            $fields->put("tarjeta_flota", 1);
+            if($fields["tarjeta_flota"] == "S"){
+                $fields["tarjeta_flota"] = 1;
+            }else{
+                $fields["tarjeta_flota"] = 0;
+            }
         }
 
         if(!$fields->has("tipo_clase_idioma")){

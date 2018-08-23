@@ -10,7 +10,7 @@
 					<div class="row">
 						<div class="input-field col s12">
 							<input id="descripcion" type="text" class="validate" name="descripcion" >
-							<label for="nombres">Descripción</label>
+							<label for="descripcion">Descripción</label>
 						</div>					
 					</div>
 					<div class="row">
@@ -21,7 +21,7 @@
 									<option value = {{$id}}>{{$descripcion}}</option>
 								@endforeach
 							</select>
-							<label for="rubro_id">Rubro</label>
+							<label for="rubro_id" class="active">Rubro</label>
 						</div>																	
 						<div class="input-field col s6">
 							<select id="sub_rubro_id"  name="sub_rubro_id">
@@ -30,7 +30,7 @@
 									<option value = {{$id}}>{{$descripcion}}</option>
 								@endforeach
 							</select>
-							<label for="sub_rubro_id">Sub Rubro</label>
+							<label for="sub_rubro_id" class="active">Sub Rubro</label>
 						</div>																	
 
 
@@ -42,7 +42,7 @@
 						</div>					
 						<div class="input-field col s4">
 							<input id="cantidad_empleados" type="number" class="validate" name="cantidad_empleados">
-							<label for="cantidad_empleados">Cant. Suc.</label>
+							<label for="cantidad_empleados">Cant. Empleados</label>
 						</div>					
 						<div class="input-field col s4">
 							<select id="tipo"  name="tipo">
@@ -50,7 +50,7 @@
 								<option value="0">Nacional</option>
 								<option value="1">Internacional</option>
 							</select>
-							<label for="tipo">Origen</label>
+							<label for="tipo" class="active">Origen</label>
 						</div>																	
 					</div>
 
@@ -66,7 +66,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(function(){
-			$("select").material_select();
+			$("select").select2();
 		});
 
 		

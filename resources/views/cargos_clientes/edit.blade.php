@@ -26,7 +26,7 @@
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
 						    </select>
-					    	<label for="area_id">Area</label>
+					    	<label for="area_id" class="active">Area</label>
 							
 						</div>
 					</div>
@@ -39,7 +39,7 @@
 						        @endforeach
 
 						     </select>
-						 	<label for="nivel_id">Nivel</label>
+						 	<label for="nivel_id" class="active">Nivel</label>
 						 </div>
 					</div>
 					<div class="row">
@@ -159,26 +159,43 @@
 						        @endforeach
 
 						     </select>
-						     <label for="aseguradora_id">Aseguradora</label>
+						     <label for="aseguradora_id" class="active">Aseguradora</label>
 						</div>
 					</div>
 					<div class="row"> 
-						<div class="input-field col s4">
-					    	<label>Automóvil Empresa (Car Company)</label><br>
-
-					        <input name="car_company" id="car_company_si" value="S" type="radio" class="with-gap" {{ $dbDetalle->car_company == 1 ? 'checked' : '' }} />
-					        <label for="car_company_si">Sí</label>
-
-					        <input name="car_company" id="car_company_no" value="N" type="radio" class="with-gap"  {{ $dbDetalle->car_company == 0 ? 'checked' : '' }}/>
-					        <label for="car_company_no">No</label>
+						<div class="col s4">
+					    	<div class="row">
+					    		<label>Automóvil Empresa (Car Company)</label>
+					    	</div>
+					    	<div class="col s6">
+					    		<label for="car_company_si">
+							        <input name="car_company" id="car_company_si" value="S" type="radio" class="with-gap" {{ $dbDetalle->car_company == 1 ? 'checked' : '' }} />
+					    			<span>Sí</span>
+					    		</label>
+					    	</div>
+					    	<div class="col s6">
+					    		<label for="car_company_no">
+							        <input name="car_company" id="car_company_no" value="N" type="radio" class="with-gap"  {{ $dbDetalle->car_company == 0 ? 'checked' : '' }}/>
+					    			<span>No</span>
+					    		</label>
+					    	</div>
 						</div>
-						<div class="input-field col s4">
-							<label>Tarjeta Flota</label><br>
-						    <input name="tarjeta_flota" id="tarjeta_flota_si" value="S" type="radio" class="with-gap"  {{ $dbDetalle->tarjeta_flota == 1 ? 'checked' : '' }} />
-						    <label for="tarjeta_flota_si">Sí</label>
-
-						    <input name="tarjeta_flota" id="tarjeta_flota_no" value="N" type="radio" class="with-gap" {{ $dbDetalle->tarjeta_flota == 0 ? 'checked' : '' }} />
-						    <label for="tarjeta_flota_no">No</label>
+						<div class="col s4">
+							<div class="row">
+								<label>Tarjeta Flota</label>	
+							</div>
+							<div class="col s6">
+								<label for="tarjeta_flota_si">
+						    		<input name="tarjeta_flota" id="tarjeta_flota_si" value="S" type="radio" class="with-gap"  {{ $dbDetalle->tarjeta_flota == 1 ? 'checked' : '' }} />
+									<span>Sí</span>
+								</label>
+							</div>
+							<div class="col s6">
+								<label for="tarjeta_flota_no">
+								    <input name="tarjeta_flota" id="tarjeta_flota_no" value="N" type="radio" class="with-gap" {{ $dbDetalle->tarjeta_flota == 0 ? 'checked' : '' }} />
+									<span>No</span>
+								</label>								
+							</div>
 						</div>
 						<div class="input-field col s4">
 					        <input type="text"  class="validate"   id="flota" name="flota"  value="{{$dbDetalle->flota}}"/>
@@ -194,25 +211,25 @@
 						        @endforeach
 
 						     </select>
-						     <label for="autos_marca_id">Marca del Automóvil</label>
+						     <label for="autos_marca_id" class="active">Marca del Automóvil</label>
 						</div>
 					</div>
 					<div class="row">				        
 						 <div class="input-field col s12">
 							 <select name="autos_modelo_id" id="autos_modelo_id"> 
 						      	<option value="" disabled selected>Elija una opción</option>
-						        @foreach($dbMarca as $id=>$descripcion)	
+						        @foreach($dbModelo as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
 
 						     </select>
-						     <label for="autos_modelo_id">Modelo del Automóvil</label>
+						     <label for="autos_modelo_id" class="active">Modelo del Automóvil</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s4">
 					        <input type="text"  class="validate"   id="monto_movil" name="monto_movil" value="{{$dbDetalle->monto_movil}}" />
-					        <label  for="monto_movil" >Valor del Automóvil</label>
+					        <label  for="monto_movil">Valor del Automóvil</label>
 					    </div>        
 
 						<div class="input-field col s4">
@@ -232,12 +249,12 @@
 					</div>
 					<div class="row">
 						<div class="input-field col s4">
-					        <input type="text"  class="validate"   id="ayuda_escolar" name="ayuda_escolar"  value="{{$dbDetalle->ayuda_escolar}}"/>
+					        <input type="text"  class="validate"   id="monto_ayuda_escolar" name="monto_ayuda_escolar"  value="{{$dbDetalle->monto_ayuda_escolar}}"/>
 					        <label  for="ayuda_escolar" >Ayuda Escolar</label>
 					    </div>        
 
 						<div class="input-field col s4">
-					        <input type="text"  class="validate"   id="comedor_interno" name="comedor_interno" value="{{$dbDetalle->comedor_interno}}"  />
+					        <input type="text"  class="validate"   id="monto_comedor_interno" name="monto_comedor_interno" value="{{$dbDetalle->monto_comedor_interno}}"  />
 					        <label  for="comedor_interno" >Comedor Interno</label>
 					    </div>
 						<div class="input-field col s4">
@@ -255,14 +272,22 @@
 					        <input type="text"  class="validate"   id="cobertura_curso_idioma" name="cobertura_curso_idioma" value="{{$dbDetalle->cobertura_curso_idioma}}" />
 					        <label  for="cobertura_curso_idioma" >Cobertura del curso de idiomas</label>
 					    </div>
-						<div class="input-field col s4">
-					    	<label>Tipo de Curso de Idioma</label><br>
-
-					        <input name="tipo_clase_idioma" id="tipo_clase_si" value="G" type="radio" class="with-gap" {{ $dbDetalle->tipo_clase_idioma == 'G' ? 'checked' : '' }} />
-					        <label for="tipo_clase_si">Grupal</label>
-
-							<input name="tipo_clase_idioma" id="tipo_clase_no" value="I" type="radio" class="with-gap" {{ $dbDetalle->tipo_clase_idioma == 'I' ? 'checked' : '' }} />
-					        <label for="tipo_clase_no">Individual</label>
+						<div class="col s4">
+					    	<div class="row">
+					    		<label>Tipo de Curso de Idioma</label>
+					    	</div>
+					    	<div class="col s6">
+					        	<label for="tipo_clase_si">
+					        		<input name="tipo_clase_idioma" id="tipo_clase_si" value="G" type="radio" class="with-gap" {{ $dbDetalle->tipo_clase_idioma == 'G' ? 'checked' : '' }} />
+					        		<span>Grupal</span>
+					    		</label>
+					    	</div>
+					    	<div class="col s6">
+					    		<label for="tipo_clase_no">
+					    			<input name="tipo_clase_idioma" id="tipo_clase_no" value="I" type="radio" class="with-gap" {{ $dbDetalle->tipo_clase_idioma == 'I' ? 'checked' : '' }} />
+					    			<span>Individual</span>
+					    		</label>
+					    	</div>
 					    </div>
 					</div>
 					<div class="row">
@@ -284,16 +309,26 @@
 
 						<div class="input-field col s4">
 					        <input type="text"  class="validate"   id="monto_colegiatura_hijos" name="monto_colegiatura_hijos" value="{{$dbDetalle->monto_colegiatura_hijos}}" />
-					        <label  for="monto_colegiatura_hijos" >Importe por Cobertura de Colegiatura</label>
+					        <label  for="monto_colegiatura_hijos" >Importe - Cobertura: Colegio hijos</label>
 					    </div>
-						<div class="input-field col s4">
-					    	<label class="select-label">Condición del Ocupante</label><br>
-
-					        <input name="condicion_ocupante" id="condicion_si" value="L" type="radio" class="with-gap"  {{ $dbDetalle->condicion_ocupante == 'L' ? 'checked' : '' }} />
-					        <label for="condicion_si">Local</label>
-
-					        <input name="condicion_ocupante" id="condicion_no" value="E" type="radio" class="with-gap"  {{ $dbDetalle->condicion_ocupante == 'E' ? 'checked' : '' }} />
-					        <label for="condicion_no">Expatriado</label>
+						<div class="col s4">
+					    	<div class="row">
+					    		<label>Condición del Ocupante</label></br>	
+					    	</div>
+					    	
+					        <div class="col s6">
+						        <label for="condicion_si">
+						        	<input name="condicion_ocupante" id="condicion_si" value="L" type="radio" class="with-gap"  {{ $dbDetalle->condicion_ocupante == 'L' ? 'checked' : '' }}/>
+						        	<span>Local</span>
+						    	</label>
+					        </div>
+					        <div class="col s6">
+								<label for="condicion_no">
+						        	<input name="condicion_ocupante" id="condicion_no" value="E" type="radio" class="with-gap"  {{ $dbDetalle->condicion_ocupante == 'E' ? 'checked' : '' }}/>
+						        	<span>Expatriado</span>
+						    	</label>
+					        	
+					        </div>
 					    </div>
 					</div>
 					<div class="row">
@@ -305,12 +340,14 @@
 						        @endforeach
 
 						    </select>
-						    <label for="zona_id">Región</label><br>
+						    <label for="zona_id" class="active">Región</label><br>
 					    </div>
 					</div>
 					<div class="row">
-						<input ng-model="carCompany" name="excluir" id="excluir" value="1" type="checkbox" class="with-gap"  />
-						<label for="excluir">Excluir</label>
+						<label for="excluir">
+							<input name="excluir" id="excluir" value="1" type="checkbox">
+							<span>Excluir</span>
+						</label>
 					</div> 
 					<div class="row">
 						<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
@@ -328,7 +365,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(document).ready(function() {
-   			 $('select').material_select();
+   			 $('select').select2();
 		});
 
 	 	$('#area_id').val('{{ $dbDetalle->area_id}}');
@@ -337,5 +374,26 @@
 	 	$('#autos_marca_id').val('{{ $dbDetalle->autos_marca_id}}');
 	 	$('#autos_modelo_id').val('{{ $dbDetalle->autos_modelo_id}}');
 	 	$('#zona_id').val('{{ $dbDetalle->zona_id}}');
+
+	    $("#autos_marca_id").change(function(){
+	      var selectModelos = $("#autos_modelo_id");
+	      var id = $(this).val();
+	      selectModelos.empty();
+	      $.post('{{route('autos.modelos')}}', {"marca_id": id, "_token": "{{csrf_token()}}"}, 
+	        function(json){
+	          var data = $.map(json, function(id, text){
+	                      return {text:id, id:text};
+	                    });
+	                for(i = 0; i < data.length; i++){
+	                  selectModelos.append(
+	                    $("<option></option>").attr("value", data[i].id)
+	                                    .text(data[i].text));
+	          }
+
+	          selectModelos.select2();
+	        }
+	      );
+	    });
+
 	</script>
 @endpush

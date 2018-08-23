@@ -8,7 +8,7 @@ class Detalle_encuesta extends Model
 {
     protected $table = "detalle_encuestas";
 
-    protected $fillable = ['encuesta_cabecera_id',
+    protected $fillable = ['cabecera_encuesta_id',
 							'encuestas_cargo_id',
 							'cantidad_ocupantes',
 							'area_id',
@@ -100,6 +100,27 @@ class Detalle_encuesta extends Model
 		return $this->belongsTo("App\Zonas");
 	}
 
+	public function getAdicionalesBancosAttribute(){
+		$adicionales = $this->fallo_caja +
+					   $this->fallo_caja_ext +
+					   $this->comision +
+					   $this->gratificacion_contrato +
+					   $this->adicional_nivel_cargo +
+					   $this->adicional_titulo;
+		return $adicionales;
+	}
+
+	public function getAdicionalesRestoAttribute(){
+		$adicionales = $this->fallo_caja +
+					   $this->fallo_caja_ext +
+					   $this->gratificacion_contrato +
+					   $this->adicional_nivel_cargo +
+					   $this->adicional_titulo;
+
+		return $adicionales;
+
+	}
+
 	public function getBeneficiosBancosAttribute(){
 		$beneficios = 	$this->refrigerio + 
 						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
@@ -122,6 +143,7 @@ class Detalle_encuesta extends Model
 		return $beneficios;
 	}
 
+
 	public function getBeneficiosNavierasAttribute(){
 		$beneficios = 	$this->refrigerio + 
 						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
@@ -138,8 +160,30 @@ class Detalle_encuesta extends Model
 						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 24 +
 						$this->monto_celular_corporativo +
 						$this->monto_vivienda +
-						$this->monto_colegiatura_hijos;
+						$this->monto_colegiatura_hijos /12;
 
 		return $beneficios;
 	}	
+
+	public function getBeneficiosRestoAttribute(){
+		$beneficios = 	$this->refrigerio + 
+						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
+						$this->costo_seguro_vida + 
+						//$this->costo_poliza_muerte_accidente +
+						//$this->costo_poliza_muerte_natural +
+						$this->monto_movil / 60 +
+						$this->flota+
+						$this->seguro_movil +
+						$this->monto_km_recorrido +
+						$this->monto_ayuda_escolar +
+						$this->monto_comedor_interno +
+						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100) +
+						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 24 +
+						$this->monto_celular_corporativo +
+						$this->monto_vivienda +
+						$this->monto_colegiatura_hijos/12;
+
+		return $beneficios;
+	}	
+
 }

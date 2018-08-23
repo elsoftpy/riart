@@ -11,6 +11,7 @@ use App\Nivel;
 use App\Aseguradora;
 use App\Zona;
 use App\Autos_marca;
+use App\Autos_modelo;
 use App\Area;
 class EncuestasCargosController extends Controller
 {
@@ -53,8 +54,8 @@ class EncuestasCargosController extends Controller
      */
     public function show($id)
     {
+        ini_set('memory_limit', '1020M');
         $EncuestaId = Cabecera_encuesta::where('empresa_id', $id)->max('id');
-        dd("holo");
         $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $EncuestaId)->get();
         $dbCargos = Cargo::pluck('descripcion', 'id');
         $dbCargos->prepend("Elija una opción", "0");
@@ -71,7 +72,7 @@ class EncuestasCargosController extends Controller
      */
     public function showHistory($id)
     {
-        
+        ini_set('memory_limit', '1020M');
         $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $id)->get();
         $dbEncuesta = Cabecera_encuesta::find($id);
         $dbEmpresa = $dbEncuesta->empresa->descripcion;
@@ -100,10 +101,13 @@ class EncuestasCargosController extends Controller
         $dbAseguradora = Aseguradora::get()->pluck('descripcion', 'id');
         $dbZona = Zona::get()->pluck('descripcion', 'id');
         $dbMarca = Autos_marca::get()->pluck('descripcion', 'id');
+        $marcaId = $dbMarca->keys()->first();
+        $dbModelo = Autos_modelo::where('autos_marca_id', $marcaId)->pluck('descripcion', 'id');
         $dbArea = Area::get()->pluck('descripcion', 'id');
         return view('cargos_clientes.add')->with('dbNivel', $dbNivel)
                                           ->with('dbArea', $dbArea)
                                           ->with('dbMarca', $dbMarca)
+                                          ->with('dbModelo', $dbModelo)
                                           ->with('dbZona', $dbZona)
                                           ->with('id', $id)
                                           ->with('dbAseguradora', $dbAseguradora);
@@ -120,7 +124,7 @@ class EncuestasCargosController extends Controller
     public function update(Request $request, $id)
     {
         $dbEncuesta = Cabecera_encuesta::find($id);
-        
+
         $dbCargo = new Encuestas_cargo();
         $dbCargo->descripcion = $request->descripcion;
         $dbCargo->cabecera_encuesta_id = $dbEncuesta->id;
@@ -131,17 +135,61 @@ class EncuestasCargosController extends Controller
                 $value = 0;
             }
 
-            $real = str_replace("%", "", str_replace(".", "", $value));         // quita los caracteres de formato numérico
+            $posComa = strpos($value, ",");
+            $posPunto = strpos($value, ".");
 
+            if ($posComa){
+                $real = str_replace("%", "", str_replace(",", "", $value));         // quita los caracteres de formato numérico
+
+            }elseif ($posPunto) {
+                $real = str_replace("%", "", str_replace(".", "", $value));         // quita los caracteres de formato numérico
+            }else{
+                $real = str_replace("%", "", $value);
+            }
+            
+            
             $fields->put($key,$real);
         }
-        
+                foreach ($request->all() as $key => $value) {
+            if(($key !== "area_id" || $key !== "nivel_id" || $key !== "aseguradora_id" || $key !== "autos_marca_id" || $key !==  "autos_modelo_id" || $key !== "zona_id") && $value == ""){
+                $value = 0;
+            }
+
+            $posComa = strpos($value, ",");
+            $posPunto = strpos($value, ".");
+
+            if ($posComa){
+                $real = str_replace("%", "", str_replace(",", "", $value));         // quita los caracteres de formato numérico
+
+            }elseif ($posPunto) {
+                $real = str_replace("%", "", str_replace(".", "", $value));         // quita los caracteres de formato numérico
+            }else{
+                $real = str_replace("%", "", $value);
+            }
+            
+            
+            $fields->put($key,$real);
+        }
+       
+
         if(!$fields->has("car_company")){
             $fields->put("car_company", 0);
+        }else{
+            if($fields["car_company"] == "S"){
+                $fields["car_company"] = 1;
+            }else{
+                $fields["car_company"] = 0;
+            }
         }
 
         if(!$fields->has("tarjeta_flota")){
             $fields->put("tarjeta_flota", 0);
+        }else{
+            if($fields["tarjeta_flota"] == "S"){
+                $fields["tarjeta_flota"] = 1;
+            }else{
+                $fields["tarjeta_flota"] = 0;
+            }
         }
 
         if(!$fields->has("tipo_clase_idioma")){

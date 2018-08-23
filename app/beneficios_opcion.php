@@ -10,8 +10,12 @@ class beneficios_opcion extends Model
 
     protected $fillable = ["beneficios_pregunta_id", "opcion"];
 
-    public function beneficioPregunta(){
+    public function beneficiosPregunta(){
     	return $this->belongsTo('App\beneficios_pregunta');
+    }
+
+    public function beneficiosRespuesta(){
+    	return $this->hasMany('App\beneficios_respuesta');    	
     }
 
 }

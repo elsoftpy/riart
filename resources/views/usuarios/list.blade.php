@@ -21,8 +21,7 @@
 	                      	 <th>Email</th>
 	                      	 <th>Rol</th>
 	                      	 <th>Estado</th>
-	                      	 <th></th>
-							 <th></th>
+	                      	 <th>Acciones</th>
 	                      </tr>
 	                    </thead>
 	                    <tbody>
@@ -36,7 +35,12 @@
 		                    			@if ($est->is_admin)
 		                    				{{"Consultora"}}
 		                    			@else
-		                    				{{"Cliente"}}
+		                    				@if($est->is_benefit)
+		                    					{{"Beneficios"}}
+		                    				@else
+												{{"Cliente"}}
+		                    				@endif
+		                    				
 		                    			@endif
 		                    		</td>	
 		                    		<td>{{ $est->estado}}</td>
@@ -73,5 +77,31 @@
 				return false;
 			}
 		}
+		
+		$(function(){
+	   		$('#Listado').DataTable({
+   				"scrollX": false,
+            	"scrollCollapse": false,
+            	"lengthChange": false,
+
+   	           	"columnDefs": [
+        			{	"targets": [6], 
+        				"orderable": false, 
+        				"searchable": false 
+        			}
+        			
+        		],
+
+	            "language": {
+	                "decimal": ",",
+	                "thousands": ".",
+	                "zeroRecords": "No hay registros - Lo sentimos",
+	                "info": "Página _PAGE_ de _PAGES_",
+	                "infoEmpty": "No hay registros disponibles",
+	                "infoFiltered": "(Filtrado de un total de _MAX_ registros)"	        
+	            }
+	    	});
+   		});		
+
 	</script>
 @endpush

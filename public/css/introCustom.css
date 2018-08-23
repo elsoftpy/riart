@@ -1,0 +1,80 @@
+.customIntro .introjs-tooltip{
+	max-width: 600px;
+}
+
+.intro-title{
+  background-color: #b9f6ca; 
+  padding: 10px;
+}
+.customIntro .introjs-skipbutton {
+  border: none;
+  border-radius: 2px;
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  outline: 0;
+  padding: 0 2rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #009688;  
+  background-image: none;
+  text-shadow: none;
+  color: white;
+
+}
+
+
+
+.customIntro .introjs-skipbutton:hover {
+  box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+  background-color: #2bbbad;
+}
+
+.customIntro .introjs-progressbar{
+	background-color: #009688;
+}
+
+.customIntro .introjs-prevButton, .customIntro .introjs-nextButton{
+  border: none;
+  border-radius: 2px;
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  outline: 0;
+  padding: 0 2rem;
+  margin-left: 0.1rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #ffc107;  
+  background-image: none;
+  text-shadow: none;
+  color: white;
+
+}
+
+.customIntro .introjs-disabled{
+  border: none;
+  border-radius: 2px;
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  outline: 0;
+  padding: 0 2rem;
+  text-transform: uppercase;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #f4f4f4;  
+  background-image: none;
+  text-shadow: none;
+  color: #9a9a9a;
+
+}
+/*.btn{
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.btn:hover{
+  box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+}*/

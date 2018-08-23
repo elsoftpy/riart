@@ -33,15 +33,27 @@
 									<option value="{{$id}}">{{$descripcion}}</option>
 								@endforeach
 							</select>
-							<label for="empresa_id">Empresa</label>
+							<label for="empresa_id" class="active">Empresa</label>
 						</div>
 						<div class="input-field col s6">
 							<select id="is_admin" name="is_admin">
-								<option value="0">Cliente</option>
-								<option value="1">Consultora</option>
-								<option value="2">Beneficios</option>
+								@if ($dbData->is_admin)
+									<option value="0">Cliente</option>
+									<option value="1" selected>Consultora</option>
+									<option value="2">Beneficios</option>
+								@else
+									@if ($dbData->is_benefit)
+										<option value="2" selected="true">Beneficios</option>
+										<option value="1">Consultora</option>
+										<option value="0">Cliente</option>
+									@else
+										<option value="0" selected>Cliente</option>
+										<option value="1">Consultora</option>
+										<option value="2">Beneficios</option>
+									@endif
+								@endif
 							</select>
-							<label for="is_admin">Tipo de Usuario</label>
+							<label for="is_admin" class="active">Tipo de Usuario</label>
 						</div>
 					</div>					<div class="row">
 						<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
@@ -59,10 +71,10 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(document).ready(function() {
-   			 $('select').material_select();
+   			 $('select').select2();
 		});
 		$("#empresa_id").val("{{$dbData->empresa_id}}");
-		$("#is_admin").val("{{$dbData->is_admin}}");
+		//$("#is_admin").val("{{$dbData->is_admin}}");
 	</script>
 
 @endpush

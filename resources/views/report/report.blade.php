@@ -8,22 +8,61 @@
     }
 </style>
 @section('content')
-	<div class="row">
+	<div class="row" data-intro="" data-step="19">
+		<div class="col s2" data-intro="" data-step="12">
+			<form id="excel_form" action="{{ route('reportes.cargoExcel') }}" method="POST">
+				<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+				<input type="hidden" name="empresa_id" value="{{$dbEmpresa->id}}"/>
+				<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
+				<button class="btn waves-effect waves-light lighten-1 white-text" type="submit" name="submit">
+					<i class="material-icons left">add</i>Excel
+				</button>
+			</form>		
+		</div>
+		<div class="col s2" data-intro="<p class='intro-title'><strong>MONEDA DE VISUALIZACION</strong></p>Click para cambiar la visualización en moneda local o Dólares Americanos" data-step="18">
+			<form id="filter_form" action="{{route('reportes.cargos')}}" method="POST">
+				@if ($convertir)
+					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+					<input type="hidden" name="empresa_id" value="{{$dbEmpresa->id}}"/>
+					<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
+					<input type="hidden" name="moneda" value="local"/>
+					<input type="hidden" name="periodo" value="{{$periodo}}"/>
+					<button class="btn waves-effect waves-light lighten-1 red white-text" type="submit" name="submitFilter" id="submitFilter">
+						<i class="material-icons left">monetization_on</i>Ver en Gs.
+					</button>
+				@else
+					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+					<input type="hidden" name="empresa_id" value="{{$dbEmpresa->id}}"/>
+					<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
+					<input type="hidden" name="moneda" value="extranjera"/>
+					<input type="hidden" name="periodo" value="{{$periodo}}"/>
+					<button class="btn waves-effect waves-light lighten-1 red white-text" type="submit" name="submitFilter" id="submitFilter">
+						<i class="material-icons left">monetization_on</i>Ver en U$D
+					</button>
+
+				@endif
+		</div>
 		<div class="col s12">
 			<h4>{{$dbCargo->descripcion}}</h4>
+			@if ($convertir)
+				<p style="color: red;">Los montos están en Dólares Americanos</p>
+			@else
+				<p style="color: red;">Los montos están en miles de Guaraníes</p>
+			@endif
+			
 			<div class="row">
 				<ul class="tabs teal lighten-5">
-					<li class="tab col s3">
+					<li class="tab col s3" data-intro="<p class='intro-title'><strong>UNIVERSO</strong></p>Se observan los resultados del cargo en todos los segmentos" data-step="13">
 						<a href="#universo">
 							Universo
 						</a>
 					</li>
-					<li class="tab col s3">
+					<li class="tab col s3" data-intro="<p class='intro-title'><strong>UNIVERSO</strong></p>Se observan los resultados del cargo en el segmento nacional" data-step="14">
 						<a href="#nacional">
 							Nacional
 						</a>
 					</li>					
-					<li class="tab col s3">
+					<li class="tab col s3" data-intro="<p class='intro-title'><strong>UNIVERSO</strong></p>Se observan los resultados del cargo en el segmento internacional" data-step="15">
 						<a href="#internacional">
 							Internacional
 						</a>
@@ -48,7 +87,7 @@
 		                      	 <th>75 Perc.</th>
 		                      	 <th>Máximo</th>
 		                      	 <th>{{$dbEmpresa->descripcion}}</th>
-								<th>Comparación Promedio</th>
+								 <th>Comparación Promedio</th>
 		                      	 <th>Comparación Mediana</th>
 		                      	 <th>Comparación 75 Percentil</th>
 		                      	 <th>Comparación Máximo</th>
@@ -58,18 +97,111 @@
 			                <tbody>
 			                	@foreach ($universo as $item)
 		                    		<tr>
-			                    		<td>{{ $item['concepto'] }}</td>
-			                    		<td>{{ $item['casos'] }}</td>
-			                    		<td> {{$countOcupantes}}</td>
-			                    		<td>{{ $item['min'] }}</td>
-			                    		<td>{{ $item['per25'] }}</td>
-			                    		<td>{{ $item['prom'] }}</td>
-			                    		<td>{{ $item['med'] }}</td>
-			                    		<td>{{ $item['per75'] }}</td>
-			                    		<td>{{ $item['max'] }}</td>
-			                    		<td>
-			                    			<input type="text" name="" value="{{ $item['empresa'] }}" id="empresa">
-			                    		</td>
+				                    		<td>{{ $item['concepto'] }}</td>
+				                    		<td>{{ $item['casos'] }}</td>
+				                    		<td> {{$countOcupantes}}</td>
+			                    		@if (!$convertir)
+				                   			@php
+				                   				if($item['min'] == ""){
+				                   					$min = "";
+				                   				}else{
+				                   					$min = number_format($item['min'], 0, ",", ".");
+				                   				}
+				                   				if($item['per25'] == ""){
+				                   					$per25 = "";
+				                   				}else{
+				                   					$per25 = number_format($item['per25'], 0, ",", ".");
+				                   				}
+				                   				if($item['prom'] == ""){
+				                   					$prom = "";
+				                   				}else{
+				                   					$prom = number_format($item['prom'], 0, ",", ".");
+				                   				}
+				                   				if($item['med'] == ""){
+				                   					$med = "";
+				                   				}else{
+				                   					$med = number_format($item['med'] , 0, ",", ".");
+				                   				}								
+				                   				if($item['per75'] == ""){
+				                   					$per75 = "";
+				                   				}else{
+				                   					$per75 = number_format($item['per75'] , 0, ",", ".");
+				                   				}   
+				                   				if($item['max'] == ""){
+				                   					$max = "";
+				                   				}else{
+				                   					$max = number_format($item['max'] , 0, ",", ".");
+				                   				}   
+				                   				if($item['empresa'] == ""){
+				                   					$empresa = "";
+				                   				}else{
+				                   					$empresa = number_format($item['empresa'] , 0, ",", ".");
+				                   				}   
+				                   			@endphp
+				                    		<td>{{ $min }} </td>
+				                    		<td>{{ $per25 }}</td>
+				                    		<td>{{ $prom }}</td>
+				                    		<td>{{ $med }}</td>
+				                    		<td>{{ $per75 }}</td>
+				                    		<td>{{ $max }}</td>
+				                    		<td>
+				                    			<input type="text" name="" value="{{ $empresa }}" id="empresa{{$loop->iteration}}">
+				                    		</td>
+			                    		@else
+				                    		@php
+				                    			if($item['min'] == ""){
+				                   					$min = "";
+				                   				}else{
+				                    				$min = $item['min'] * 1000 / $tipoCambio;
+				                    				$min = number_format($min, 2, ",", ".");
+				                    			}
+				                    			if($item['per25'] == ""){
+				                   					$per25 = "";
+				                   				}else{
+				                    				$per25 = $item['per25'] * 1000 / $tipoCambio;
+				                    				$per25 = number_format($per25, 2, ",", ".");
+				                    			}
+				                    			if($item['prom'] == ""){
+				                   					$prom = "";
+				                   				}else{
+				                    				$prom = $item['prom'] * 1000 / $tipoCambio;
+				                    				$prom = number_format($prom, 2, ",", ".");
+				                    			}
+				                    			if($item['med'] == ""){
+				                   					$med = "";
+				                   				}else{
+				                    				$med = $item['med'] * 1000 / $tipoCambio;
+				                    				$med = number_format($med, 2, ",", ".");
+				                    			}
+				                    			if($item['per75'] == ""){
+				                   					$per75 = "";
+				                   				}else{
+				                    				$per75 = $item['per75'] * 1000 / $tipoCambio;
+				                    				$per75 = number_format($per75, 2, ",", ".");
+				                    			}
+				                    			if($item['max'] == ""){
+				                   					$max = "";
+				                   				}else{
+				                   					$max = $item['max'] * 1000 / $tipoCambio;
+				                   					$max = number_format($max, 2, ",", ".");
+				                   				}
+				                   				if($item['empresa'] == ""){
+				                   					$empresa = "";
+				                   				}else{
+				                    				$empresa = $item['empresa'] * 1000 / $tipoCambio;
+				                    				$empresa = number_format($empresa, 2, ",", ".");
+				                    			}
+				                    		@endphp
+				                    		<td>{{ $min }} </td>
+				                    		<td>{{ $per25 }}</td>
+				                    		<td>{{ $prom }}</td>
+				                    		<td>{{ $med }}</td>
+				                    		<td>{{ $per75 }}</td>
+				                    		<td>{{ $max }}</td>
+				                    		<td>
+				                    			<input type="text" name="" value="{{ $empresa }}" id="empresa{{$loop->iteration}}">
+				                    		</td>
+			                    		@endif
 			                    		<td></td>
 			                    		<td></td>
 			                    		<td></td>
@@ -79,19 +211,20 @@
 			                	@endforeach
 		                    </tbody>
 		                </table>
-						<div class="col s4" id="salario-universo">
+						<div class="col s4" id="salario-universo" data-step="17" data-intro="<p class='intro-title'><strong>GRAFICOS COMPARATIVOS</strong></p>Gráficos comparativos de su cargo vs. mercado">
 							<h5>Salario Base</h5>
 							<canvas id="salario-base"></canvas>
 						</div>
-						<div class="col s4" id="efectivo-universo">
+						<div class="col s4" id="efectivo-universo" >
 							<h5>Efectivo Anual Garantizado</h5>
 							<canvas id="efectivo-anual"></canvas>
 						</div>
-						<div class="col s4" id="compensacion-universo">
+						<div class="col s4" id="compensacion-universo" >
 							<h5>Compensación Anual Total</h5>
 							<canvas id="compensacion-anual"></canvas>
 						</div>
-	                </div>
+					</div>
+
 				</div>
 				<div class="browser-window" id="nacional">
 					<div class="top-bar">
@@ -125,15 +258,108 @@
 			                    		<td>{{ $item['concepto'] }}</td>
 			                    		<td>{{ $item['casos'] }}</td>
 			                    		<td> {{$countOcupantesNac}}</td>
-			                    		<td>{{ $item['min'] }}</td>
-			                    		<td>{{ $item['per25'] }}</td>
-			                    		<td>{{ $item['prom'] }}</td>
-			                    		<td>{{ $item['med'] }}</td>
-			                    		<td>{{ $item['per75'] }}</td>
-			                    		<td>{{ $item['max'] }}</td>
-			                    		<td>
-			                    			<input type="text" name="" value="{{ $item['empresa'] }}" id="empresa">
-			                    		</td>
+			                    		@if (!$convertir)
+				                   			@php
+				                   				if($item['min'] == ""){
+				                   					$min = "";
+				                   				}else{
+				                   					$min = number_format($item['min'], 0, ",", ".");
+				                   				}
+				                   				if($item['per25'] == ""){
+				                   					$per25 = "";
+				                   				}else{
+				                   					$per25 = number_format($item['per25'], 0, ",", ".");
+				                   				}
+				                   				if($item['prom'] == ""){
+				                   					$prom = "";
+				                   				}else{
+				                   					$prom = number_format($item['prom'], 0, ",", ".");
+				                   				}
+				                   				if($item['med'] == ""){
+				                   					$med = "";
+				                   				}else{
+				                   					$med = number_format($item['med'] , 0, ",", ".");
+				                   				}								
+				                   				if($item['per75'] == ""){
+				                   					$per75 = "";
+				                   				}else{
+				                   					$per75 = number_format($item['per75'] , 0, ",", ".");
+				                   				}   
+				                   				if($item['max'] == ""){
+				                   					$max = "";
+				                   				}else{
+				                   					$max = number_format($item['max'] , 0, ",", ".");
+				                   				}   
+				                   				if($item['empresa'] == ""){
+				                   					$empresa = "";
+				                   				}else{
+				                   					$empresa = number_format($item['empresa'] , 0, ",", ".");
+				                   				}   
+				                   			@endphp
+				                    		<td>{{ $min }} </td>
+				                    		<td>{{ $per25 }}</td>
+				                    		<td>{{ $prom }}</td>
+				                    		<td>{{ $med }}</td>
+				                    		<td>{{ $per75 }}</td>
+				                    		<td>{{ $max }}</td>
+				                    		<td>
+				                    			<input type="text" name="" value="{{ $empresa }}" id="empresa{{$loop->iteration}}">
+				                    		</td>
+			                    		@else
+				                    		@php
+				                    			if($item['min'] == ""){
+				                   					$min = "";
+				                   				}else{
+				                    				$min = $item['min'] * 1000 / $tipoCambio;
+				                    				$min = number_format($min, 2, ",", ".");
+				                    			}
+				                    			if($item['per25'] == ""){
+				                   					$per25 = "";
+				                   				}else{
+				                    				$per25 = $item['per25'] * 1000 / $tipoCambio;
+				                    				$per25 = number_format($per25, 2, ",", ".");
+				                    			}
+				                    			if($item['prom'] == ""){
+				                   					$prom = "";
+				                   				}else{
+				                    				$prom = $item['prom'] * 1000 / $tipoCambio;
+				                    				$prom = number_format($prom, 2, ",", ".");
+				                    			}
+				                    			if($item['med'] == ""){
+				                   					$med = "";
+				                   				}else{
+				                    				$med = $item['med'] * 1000 / $tipoCambio;
+				                    				$med = number_format($med, 2, ",", ".");
+				                    			}
+				                    			if($item['per75'] == ""){
+				                   					$per75 = "";
+				                   				}else{
+				                    				$per75 = $item['per75'] * 1000 / $tipoCambio;
+				                    				$per75 = number_format($per75, 2, ",", ".");
+				                    			}
+				                    			if($item['max'] == ""){
+				                   					$max = "";
+				                   				}else{
+				                   					$max = $item['max'] * 1000 / $tipoCambio;
+				                   					$max = number_format($max, 2, ",", ".");
+				                   				}
+				                   				if($item['empresa'] == ""){
+				                   					$empresa = "";
+				                   				}else{
+				                    				$empresa = $item['empresa'] * 1000 / $tipoCambio;
+				                    				$empresa = number_format($empresa, 2, ",", ".");
+				                    			}
+				                    		@endphp
+				                    		<td>{{ $min }} </td>
+				                    		<td>{{ $per25 }}</td>
+				                    		<td>{{ $prom }}</td>
+				                    		<td>{{ $med }}</td>
+				                    		<td>{{ $per75 }}</td>
+				                    		<td>{{ $max }}</td>
+				                    		<td>
+				                    			<input type="text" name="" value="{{ $empresa }}" id="empresa{{$loop->iteration}}">
+				                    		</td>
+			                    		@endif
 			                    		<td></td>
 			                    		<td></td>
 			                    		<td></td>
@@ -190,15 +416,108 @@
 			                    		<td>{{ $item['concepto'] }}</td>
 			                    		<td>{{ $item['casos'] }}</td>
 			                    		<td> {{$countOcupantesInt}}</td>
-			                    		<td>{{ $item['min'] }}</td>
-			                    		<td>{{ $item['per25'] }}</td>
-			                    		<td>{{ $item['prom'] }}</td>
-			                    		<td>{{ $item['med'] }}</td>
-			                    		<td>{{ $item['per75'] }}</td>
-			                    		<td>{{ $item['max'] }}</td>
-			                    		<td>
-			                    			<input type="text" name="" value="{{ $item['empresa'] }}" id="empresa">
-			                    		</td>
+			                    		@if (!$convertir)
+				                   			@php
+				                   				if($item['min'] == ""){
+				                   					$min = "";
+				                   				}else{
+				                   					$min = number_format($item['min'], 0, ",", ".");
+				                   				}
+				                   				if($item['per25'] == ""){
+				                   					$per25 = "";
+				                   				}else{
+				                   					$per25 = number_format($item['per25'], 0, ",", ".");
+				                   				}
+				                   				if($item['prom'] == ""){
+				                   					$prom = "";
+				                   				}else{
+				                   					$prom = number_format($item['prom'], 0, ",", ".");
+				                   				}
+				                   				if($item['med'] == ""){
+				                   					$med = "";
+				                   				}else{
+				                   					$med = number_format($item['med'] , 0, ",", ".");
+				                   				}								
+				                   				if($item['per75'] == ""){
+				                   					$per75 = "";
+				                   				}else{
+				                   					$per75 = number_format($item['per75'] , 0, ",", ".");
+				                   				}   
+				                   				if($item['max'] == ""){
+				                   					$max = "";
+				                   				}else{
+				                   					$max = number_format($item['max'] , 0, ",", ".");
+				                   				}   
+				                   				if($item['empresa'] == ""){
+				                   					$empresa = "";
+				                   				}else{
+				                   					$empresa = number_format($item['empresa'] , 0, ",", ".");
+				                   				}   
+				                   			@endphp
+				                    		<td>{{ $min }} </td>
+				                    		<td>{{ $per25 }}</td>
+				                    		<td>{{ $prom }}</td>
+				                    		<td>{{ $med }}</td>
+				                    		<td>{{ $per75 }}</td>
+				                    		<td>{{ $max }}</td>
+				                    		<td>
+				                    			<input type="text" name="" value="{{ $empresa }}" id="empresa{{$loop->iteration}}">
+				                    		</td>	                    		
+			                    		@else
+				                    		@php
+				                    			if($item['min'] == ""){
+				                   					$min = "";
+				                   				}else{
+				                    				$min = $item['min'] * 1000 / $tipoCambio;
+				                    				$min = number_format($min, 2, ",", ".");
+				                    			}
+				                    			if($item['per25'] == ""){
+				                   					$per25 = "";
+				                   				}else{
+				                    				$per25 = $item['per25'] * 1000 / $tipoCambio;
+				                    				$per25 = number_format($per25, 2, ",", ".");
+				                    			}
+				                    			if($item['prom'] == ""){
+				                   					$prom = "";
+				                   				}else{
+				                    				$prom = $item['prom'] * 1000 / $tipoCambio;
+				                    				$prom = number_format($prom, 2, ",", ".");
+				                    			}
+				                    			if($item['med'] == ""){
+				                   					$med = "";
+				                   				}else{
+				                    				$med = $item['med'] * 1000 / $tipoCambio;
+				                    				$med = number_format($med, 2, ",", ".");
+				                    			}
+				                    			if($item['per75'] == ""){
+				                   					$per75 = "";
+				                   				}else{
+				                    				$per75 = $item['per75'] * 1000 / $tipoCambio;
+				                    				$per75 = number_format($per75, 2, ",", ".");
+				                    			}
+				                    			if($item['max'] == ""){
+				                   					$max = "";
+				                   				}else{
+				                   					$max = $item['max'] * 1000 / $tipoCambio;
+				                   					$max = number_format($max, 2, ",", ".");
+				                   				}
+				                   				if($item['empresa'] == ""){
+				                   					$empresa = "";
+				                   				}else{
+				                    				$empresa = $item['empresa'] * 1000 / $tipoCambio;
+				                    				$empresa = number_format($empresa, 2, ",", ".");
+				                    			}
+				                    		@endphp
+				                    		<td>{{ $min }} </td>
+				                    		<td>{{ $per25 }}</td>
+				                    		<td>{{ $prom }}</td>
+				                    		<td>{{ $med }}</td>
+				                    		<td>{{ $per75 }}</td>
+				                    		<td>{{ $max }}</td>
+				                    		<td>
+				                    			<input type="text" name="" value="{{ $empresa }}" id="empresa{{$loop->iteration}}">
+				                    		</td>
+			                    		@endif
 			                    		<td></td>
 			                    		<td></td>
 			                    		<td></td>
@@ -245,7 +564,8 @@
 		var compMax = 0;	
 		
 		$(document).ready(function(){
-    		$('ul.tabs').tabs();
+    		$('.tabs').tabs();
+
     		setTimeout(function(){
 	    		$('input[type="text').each(function(){
 	    			if($(this).val() != ""){
@@ -257,11 +577,29 @@
   		});
 
 		$("#listado-universo").on('change', 'tbody td :input[type="text"]', function(e){
-			calculation($(this));			
+				calculation($(this));			
+			}
+		);
+
+		$("#listado-internacional").on('change', 'tbody td :input[type="text"]',
+			function(e){
+				calculation($(this));
+			}
+		);
+
+		$("#listado-nacional").on('change', 'tbody td :input[type="text"]',
+			function(e){
+				calculation($(this));
+			}
+		);
+
+		$("#submitFilter").click(function(){
+			$("#filter_form").submit();
 		});
 
 		function calculation(element){
-			var table = $("#listado-universo");
+			//var table = $("#listado-universo");
+			var table = element;
 			var row = element.closest('tr');
 			valueStr = element.val();
 			value = parseInt(valueStr.replace(".", ""));
@@ -273,14 +611,38 @@
 			per75 = parseInt(per75Str.replace(".", ""));
 			maxStr = row.find('td:nth-child(9)').text();
 			max = parseInt(maxStr.replace(".", ""));
-			 compProm = value/promedio*100 - 100;
+			// promedio
+			if(promedio > 0){
+				compProm = value/promedio*100 - 100;
+			}else{
+				compProm = 0;
+			}
 			row.find('td:nth-child(11)').text(compProm.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%');
-			compMed = value/mediana*100 - 100;
+
+			// mediana
+			if(mediana > 0){
+				compMed = value/mediana*100 - 100;
+			}else{
+				compMed = 0;
+			}
 			row.find('td:nth-child(12)').text(compMed.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%');
-			comp75 = value/per75*100 - 100;
+
+			// percentil 75
+			if(per75 > 0){
+				comp75 = value/per75*100 - 100;
+			}else{
+				comp75 = 0;
+			}
 			row.find('td:nth-child(13)').text(comp75.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%');
-			compMax = value/max*100 - 100;
+
+			// Maximo
+			if(max > 0){
+				compMax = value/max*100 - 100;
+			}else{
+				compMax = 0;
+			}
 			row.find('td:nth-child(14)').text(compMax.toLocaleString(undefined, { maximumFractionDigits: 2 }) + '%');
+			
 			var label = row.find('td:nth-child(1)').text();
 			var segmento = row.find('td:nth-child(15)').text();
 			if(segmento == "universo"){
@@ -333,7 +695,7 @@
 				}
 			}else if(label == "Compensación Anual Total" || label == "Compensación Efectiva Anual Total"){
 				if(value > 0){
-					$(divCompensacion).html('<h5>Compensación Anual</h5><canvas id="'+divChartCompensacion+'"></canvas>');
+					$(divCompensacion).html('<h5>Compensación Anual Total</h5><canvas id="'+divChartCompensacion+'"></canvas>');
 					chart(promedio, per75, max, value, itemCompensacion);
 				}else{
 					$(divCompensacion).empty();	
@@ -372,6 +734,27 @@
 				}	*/			
 			});
 		}
+
+		// tour
+     	$("#empresa1").attr("data-step", "16").attr("data-intro", "<p class='intro-title'><strong>COMPARATIVOS</strong></p>Le permite visualizar la brecha del cargo en su organización con respecto al mercado o bien, simule su escenario deseado.").attr("data-position", "left");
+     	@if($tour)
+			if ({{$tour}}) {
+			    tour.goToStepNumber(13).start();
+		    }
+		@endif
+     	tour.onafterchange(function(step){
+      		if($(step).attr("data-step") == 19){
+  				window.location.href="{{route('reportes.show', $dbEmpresa->id)}}?multipage=3";
+  				tour.exit();
+      		}      		
+
+      		if($(step).attr("data-step") == 12){
+      			window.location.href="{{ URL::route('reportes.filter', $dbEmpresa) }}?multipage=back";
+      			tour.exit();	
+      		}
+
+      	});    		    
+
 		
 	</script>
 @endpush

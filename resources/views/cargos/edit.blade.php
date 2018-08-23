@@ -23,10 +23,9 @@
 									@else
 										<option value = {{$id}}>{{$descripcion}}</option>
 									@endif
-									
 								@endforeach
 							</select>
-							<label for="rubro_id">Area</label>
+							<label for="rubro_id" class="active">Area</label>
 						</div>																	
 						<div class="input-field col s6">
 							<select id="nivel_id"  name="nivel_id">
@@ -37,10 +36,9 @@
 									@else
 										<option value = {{$id}}>{{$descripcion}}</option>
 									@endif
-
 								@endforeach
 							</select>
-							<label for="nivel_id">Nivel</label>
+							<label for="nivel_id" class="active">Nivel</label>
 						</div>																	
 					</div>
 					<div class="row">
@@ -71,7 +69,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(function(){
-			$("select").material_select();
+			$("select").select2();
 		});
 
 		

@@ -1,9 +1,9 @@
 @extends('report.layout')
 
 @section('content')
+	@include('report.title')
 	<div class="row">
 		<div class="col s12">
-			<h5>Club de {{$club}}</h5>
 			<div class="hoverable bordered">
 				<div class="card">
 					<div class="card-content">
@@ -53,3 +53,19 @@
 		</div>
 	</div>
 @stop
+@push('scripts')
+	<script type="text/javascript">
+		if (RegExp('multipage=true', 'gi').test(window.location.search)) {
+		    tour.goToStepNumber(26).start();
+	    }
+
+     	tour.onafterchange(function(step){
+			if($(step).attr("data-step") == 27){
+				window.location.href="{{URL::route('reportes.panel', $dbEmpresa)}}?multipage=true";
+			}
+      	});    		    	    
+
+
+
+	</script>
+@endpush

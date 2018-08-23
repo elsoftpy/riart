@@ -1,70 +1,27 @@
 @extends('layout')
-
+@include('includes.benefit_nav')
+@section('breadcrumbs')
+  <nav>
+    <div class="nav-wrapper teal lighten-3">
+      <div class="col s12">
+        <a href="{{route('home')}}" class="breadcrumb"><i class="material-icons left">home</i>Inicio</a>
+      </div>
+    </div>
+  </nav>
+@endsection
 @section('content')
 	<div class="row">
-		<div class="browser-window">
+		<div class="browser-window" data-intro="" data-step="2">
 			<div class="top-bar">
-	          <h4>{{ $dbEmpresa->rubro->descripcion}} holo</h4>
+	          <h4>{{ $dbEmpresa->rubro->descripcion}}</h4>
 	        </div>
 	        <div class="content">
-	        	<table id="Listado" class="highlight">
-	        		<thead>
-	                  <tr>
-	                  	 <th>Id</th>
-	                  	 <th>Descripcion</th>
-	                  	 <th>Rubro</th>
-	                  	 <th>Segmento</th>
-	                  	 <th>Nro. Suc.</th>
-	                  	 <th>Nro. Emp.</th>
-	                  	 <th>Origen</th>
-	                  	 <th></th>
-						 <th></th>
-	                  </tr>
-	                </thead>
-	                <tbody>
-                		@if(!is_null($dbEmpresa))
-                		<tr>
-                    		<td>{{ $dbEmpresa->id }}</td>
-                    		<td>{{ $dbEmpresa->descripcion}}</td>
-                    		<td>{{ $dbEmpresa->rubro->descripcion}}</td>
-                    		<td>{{ $dbEmpresa->subrubro->descripcion}}</td>
-                    		<td>{{ $dbEmpresa->cantidad_sucursales}}</td>
-                    		<td>{{ $dbEmpresa->cantidad_empleados}}</td>
-                    		<td>@if($dbEmpresa->tipo === 0)
-                    				{{"Nacional"}}
-                    			@else
-                    				{{"Internacional"}}
-                    			@endif
-                    		</td>
-                    		<td>
-                    			<a href="{{ route('cargos_clientes.show', $dbEmpresa->id) }}" class="btn waves-light waves-effect white-text" style="margin-bottom: 1em;">
-                    				<i class="material-icons left">list</i>Listar
-                    			</a>
-                    			<a href="{{ route('empresas.edit', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;">
-                    				<i class="material-icons left">edit</i>Editar
-                    			</a><br/>
-                    			@if($dbEmpresa->rubro_id == 4)
-                        			<a href="#" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" id="select_encuesta">
-                    					<i class="material-icons left">dashboard</i>Reportes
-                    				</a>                    			
-                    			@else
-	                    			<a href="{{ route('encuestas.show', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;">
-	                    				<i class="material-icons left">dashboard</i>Reportes
-	                    			</a>                    			
-                    			@endif
-
-								<a href="{{ route('encuestas.update', $dbEncuesta->id) }}" class="btn waves-effect waves-light lighten-1 red white-text" style="margin-bottom: 1em;" onclick="update_row({{$dbEncuesta->id}})">
-									<i class="material-icons left">exit_to_app</i>Finalizar
-								</a>
-								<form id="update-form{{$dbEncuesta->id}}" action="{{ route('encuestas.update', $dbEncuesta->id) }}" method="POST" style="display: none;">
-					                {{ csrf_field() }}
-					                {{ method_field('PUT') }}
-					            </form>
-                    		</td>
-                		</tr>
-                		@endif
-	                </tbody>
-	            </table>
+				<div class="hoverable bordered">
+	        		<div class="row center">
+	        			<img src="{{asset('/images/benefit-cover.png')}}">	
+	        		</div>
+	        		
+	        	</div>
 	        </div>
 		</div>
 	</div>
@@ -79,5 +36,18 @@
 				return false;
 			}
 		}
+
+      	$("#tour").click(function(e){
+        	e.preventDefault();
+        	tour.start();
+      	});
+
+      	tour.onafterchange(function(step){
+      		if($(step).attr("data-step") == 2){
+				window.location.href ="{{ route('beneficios.show', $dbEmpresa->id)}}?multipage=true";
+	      		tour.exit();      			
+      		}
+      	})
+
 	</script>
 @endpush

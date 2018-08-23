@@ -8,7 +8,9 @@ class Empresa extends Model
 {
     protected $table = "empresas";
 
-    protected $fillable = ["descripcion", "cantidad_empleados", "cantidad_sucursales", "tipo", "rubro_id", "sub_rubro_id"];
+    protected $fillable = ["descripcion", "cantidad_empleados", "cantidad_sucursales", "tipo", "rubro_id", "sub_rubro_id", "listable"];
+
+    protected $casts = ["listable"=>"boolean"];
 
 
     public function rubro(){

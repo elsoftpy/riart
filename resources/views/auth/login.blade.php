@@ -12,7 +12,7 @@
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <div class="input-field col-md-6">
-                                <input id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus/>
+                                <input id="username" type="text" class="validate" name="username" value="{{ old('username') }}" required autofocus/>
 
                                 <label for="username" class="col-md-4 control-label">Usuario</label>                                
                                 @if ($errors->has('username'))

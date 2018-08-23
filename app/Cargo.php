@@ -14,11 +14,16 @@ class Cargo extends Model
         return $this->hasMany("App\Encuestas_cargo");
     }
 
+    public function cargosRubro(){
+        return $this->hasMany("App\Cargos_rubro");
+    }
+
     public function area(){
     	return $this->belongsTo("App\Area");
     }
 
     public function nivel(){
     	return $this->belongsTo("App\Nivel");
-    }    
+    }
+
 }

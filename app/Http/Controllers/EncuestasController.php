@@ -60,6 +60,7 @@ class EncuestasController extends Controller
 
         
         $oldCargos = Encuestas_cargo::where('cabecera_encuesta_id', $id)->get();
+
         foreach ($oldCargos as $key => $value) {
             $cargo = new Encuestas_cargo();
             $cargo->descripcion = $value->descripcion;
@@ -68,7 +69,8 @@ class EncuestasController extends Controller
             $cargo->save();
            
             $oldDetalle = Detalle_encuesta::where('encuestas_cargo_id', $value->id)->get();
-            //dd($oldDetalle);
+
+            //dd($oldDetalle, $oldCargos);
             foreach ($oldDetalle as $index => $det) {
                 //dd($det);
                 $detalle = new Detalle_encuesta();

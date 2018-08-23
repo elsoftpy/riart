@@ -3,9 +3,7 @@
 @section('content')
 		<div class="row">
 			<div class="browser-window">
-				<div class="top-bar">
-                  <h4>{{$club}} Participantes</h4>
-                </div>
+					@include('report.title')
                 <div class="content col s12">
                 	<table id="Listado" class="highlight">
                 		<thead>
@@ -66,5 +64,16 @@
 				return false;
 			}
 		}
+
+		if (RegExp('multipage=true', 'gi').test(window.location.search)) {
+		    tour.goToStepNumber(27).start();
+	    }
+
+     	tour.onafterchange(function(step){
+			if($(step).attr("data-step") == 28){
+				window.location.href="{{URL::route('reportes.metodologia', $dbEmpresa)}}?multipage=true";
+			}
+      	});    		    	    
+
 	</script>
 @endpush

@@ -45,6 +45,9 @@
 		                    			<a href="{{ route('empresas.edit', $est->id) }}" class="btn waves-light waves-effect amber white-text ">
 		                    				<i class="material-icons left">edit</i> Editar
 		                    			</a>
+										<a href="{{ route('reportes.lista', $est->id) }}" class="btn waves-light waves-effect blue white-text ">
+		                    				<i class="material-icons left">list</i> Listar
+		                    			</a>		                    			
 										<a href="{{ route('empresas.destroy', $est->id) }}" class="btn waves-effect waves-light lighten-1 red white-text" onclick="delete_row({{$est->id}})">
 											<i class="material-icons left">delete</i>Borrar
 										</a>

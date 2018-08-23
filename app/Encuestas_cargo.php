@@ -13,7 +13,7 @@ class Encuestas_cargo extends Model
     protected $casts = ["incluir" => "boolean", "revisado"=>"boolean"];
 
     public function cabeceraEncuestas(){
-    	return $this->belongsTo("App\Cabecera_encuesta");
+    	return $this->belongsTo("App\Cabecera_encuesta", "cabecera_encuesta_id");
     }
 
     public function cargo(){

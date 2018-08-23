@@ -328,7 +328,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(document).ready(function() {
-   			 $('select').material_select();
+   			 $('select').select2();
 		});
 
 	 	$('#area_id').val('{{ $dbDetalle->area_id}}');

@@ -64,14 +64,8 @@ class CargosController extends Controller
 
     public function destroy($id){
 		$dbData = Cargo::find($id);
-        $dbFuncionario = $dbData->funcionario;
+        $dbData->delete();            
 
-        if($dbFuncionario->count() > 0 ){
-            Flash::elsoftMessage(3015, true);
-        }else{
-            Flash::elsoftMessage(2015, true);
-            $dbData->delete();            
-        }        
 		return redirect()->route('cargos.index');    	
     }
 

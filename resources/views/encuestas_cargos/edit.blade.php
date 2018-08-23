@@ -201,7 +201,7 @@
 						 <div class="input-field col s12">
 							 <select name="autos_modelo_id" id="autos_modelo_id"> 
 						      	<option value="" disabled selected>Elija una opción</option>
-						        @foreach($dbMarca as $id=>$descripcion)	
+						        @foreach($dbModelo as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
 
@@ -237,7 +237,7 @@
 					    </div>        
 
 						<div class="input-field col s4">
-					        <input type="text"  class="validate"   id="comedor_interno" name="comedor_interno" value="{{$dbDetalle->comedor_interno}}"  />
+					        <input type="text"  class="validate"   id="comedor_interno" name="comedor_interno" value="{{$dbDetalle->monto_comedor_interno}}"  />
 					        <label  for="comedor_interno" >Comedor Interno</label>
 					    </div>
 						<div class="input-field col s4">
@@ -284,7 +284,7 @@
 
 						<div class="input-field col s4">
 					        <input type="text"  class="validate"   id="monto_colegiatura_hijos" name="monto_colegiatura_hijos" value="{{$dbDetalle->monto_colegiatura_hijos}}" />
-					        <label  for="monto_colegiatura_hijos" >Importe por Cobertura de Colegiatura</label>
+					        <label  for="monto_colegiatura_hijos" >Importe - Cobertura: Colegio hijos</label>
 					    </div>
 						<div class="input-field col s4">
 					    	<label class="select-label">Condición del Ocupante</label><br>
@@ -328,7 +328,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(document).ready(function() {
-   			 $('select').material_select();
+   			 $('select').select2();
 		});
 
 	 	$('#area_id').val('{{ $dbDetalle->area_id}}');
@@ -337,5 +337,26 @@
 	 	$('#autos_marca_id').val('{{ $dbDetalle->autos_marca_id}}');
 	 	$('#autos_modelo_id').val('{{ $dbDetalle->autos_modelo_id}}');
 	 	$('#zona_id').val('{{ $dbDetalle->zona_id}}');
+
+	    $("#autos_marca_id").change(function(){
+	      var selectModelos = $("#autos_modelo_id");
+	      var id = $(this).val();
+	      selectModelos.empty();
+	      $.post('{{route('autos.modelos')}}', {"marca_id": id, "_token": "{{csrf_token()}}"}, 
+	        function(json){
+	          var data = $.map(json, function(id, text){
+	                      return {text:id, id:text};
+	                    });
+	                for(i = 0; i < data.length; i++){
+	                  selectModelos.append(
+	                    $("<option></option>").attr("value", data[i].id)
+	                                    .text(data[i].text));
+	          }
+
+	          selectModelos.select2();
+	        }
+	      );
+	    });
+
 	</script>
 @endpush

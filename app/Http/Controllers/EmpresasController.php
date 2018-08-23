@@ -87,6 +87,16 @@ class EmpresasController extends Controller
     {
         $dbData = empresa::find($id);
         $dbData->fill($request->all());
+        if($request->listable){
+            $dbData->listable = 1;
+        }else{
+            $dbData->listable = 0;
+        }
+        if($request->listable_beneficios){
+            $dbData->listable_beneficios = 1;
+        }else{
+            $dbData->listable_beneficios = 0;
+        }
         $dbData->save();
 
         if(Auth::user()->is_admin){

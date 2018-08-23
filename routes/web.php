@@ -63,11 +63,20 @@ Route::group(["middleware"=>"auth"], function(){
 
 	Route::post('reportes_cargo', 'ReporteController@cargoReport')->name('reportes.cargos');
 	Route::post('reportes_cargo_niveles', 'ReporteController@getCargos')->name('reportes.getcargos');
+	Route::get('cargos_club/{id}', 'ReporteController@showCargosClub')->name('reportes.cargosRubro');
+	Route::get('cargos_lista/{id}', 'ReporteController@lista')->name('reportes.lista');
 	Route::get('reportes_filter/{id}', 'ReporteController@filter')->name('reportes.filter');
 	Route::get('reportes_ficha/{id}', 'ReporteController@ficha')->name('reportes.ficha');
 	Route::get('reportes_conceptos/{id}', 'ReporteController@conceptos')->name('reportes.conceptos');
 	Route::get('reportes_metodologia/{id}', 'ReporteController@metodologia')->name('reportes.metodologia');
+	Route::post('reportes_cargo_excel', 'ReporteController@cargoReportExcel')->name('reportes.cargoExcel');
+	Route::post('reportes_cargos_club_excel', 'ReporteController@cargoReportClubExcel')->name('reportes.cargosClubExcel');	
 	Route::resource('reportes', 'ReporteController');
+
+	Route::post('import_export/download', 'ImportExportController@download')->name('import_export.download');
+	Route::post('import_export/upload', 'ImportExportController@upload')->name('import_export.upload');
+	Route::post('import_export/periodos', 'ImportExportController@getPeriodos')->name('import_export.periodos');
+	Route::resource('import_export', 'ImportExportController');
 
 	Route::get('resultados', 'ReporteController@resultados')->name('resultados');
 	Route::post('resultados_excel', 'ReporteController@resultadosExcel')->name('resultados.excel');
@@ -75,9 +84,44 @@ Route::group(["middleware"=>"auth"], function(){
 
 	Route::get('panel_empresas/{id}', 'ReporteController@panel')->name('reportes.panel');
 
+	Route::post('autos_modelos', 'BeneficiosController@getModelos')->name('autos.modelos');
+
+	//Beneficios 
+	Route::post('beneficios/reportes', 'BeneficiosController@report')->name('beneficios.reportes');
+
+	Route::post('beneficios/reportes_ajax', 'BeneficiosController@getChartData')->name("beneficios.data");
+
+	Route::post('beneficios/reportes_composicion', 'BeneficiosController@compositionReport')->name("beneficios.reportes.composicion");
+
+	Route::resource('beneficios', 'BeneficiosController');
+
+	Route::resource('beneficios_admin', 'BeneficiosAdminController');
+
+	Route::resource('beneficios_preguntas', 'BeneficiosPreguntasController');
+
+	Route::get('beneficios/panel_empresas/{id}', 'BeneficiosAdminController@panel')->name('beneficios.panel');
+	
+	Route::get('beneficios_admin_resultados', 'BeneficiosAdminController@resultados')->name('beneficios.admin.resultados');
+
+	Route::post('beneficios_resultados_excel', 'BeneficiosAdminController@resultadosExcel')->name('beneficios.admin.resultados.excel');
+
+	Route::get('beneficios_admin_conclusiones/create', 'BeneficiosAdminController@createConclusion')->name('beneficios.admin.conclusion');
+
+	Route::post('beneficios_admin_conclusiones', 'BeneficiosAdminController@storeConclusion')->name('beneficios.admin.conclusion.store');	
+
+	Route::post('beneficios_admin_conclusiones/get', 'BeneficiosAdminController@getConclusion')->name('beneficios.admin.conclusion.get');	
+	Route::get('admin_reportes_filter', 'Admin\ReportController@index')->name('admin.reporte.filter');
+
+	Route::resource('admin_ficha', 'FichasController');
+
+
 });
 
 
 Auth::routes();
+Route::get('reset', 'ResetPasswordController@showResetForm')->name('reset.form');
+Route::post('reset', 'ResetPasswordController@resetPassword')->name('reset.action');
+Route::get('generate', 'ResetPasswordController@generate')->name('generate');
+
 
 

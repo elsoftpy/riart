@@ -10,9 +10,16 @@
         <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         
         <!-- Datatables css -->
-        <link href="{{ asset('/plugins/datatables/dataTables.bootstrap.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('/plugins/datatables/dataTables-materialize.css') }}" rel="stylesheet"/>
         <!-- Select 2 Materialize -->
         <link href="{{ asset('/plugins/select2/select2-materialize.css') }}" rel="stylesheet"/>
+        <!-- Selectize -->
+        <link href="{{ asset('/plugins/selectize/selectize.css') }}" rel="stylesheet"/>   
+        <!-- Auxiliar -->
+        <link href="{{ asset('/css/auxiliar.css') }}" rel="stylesheet">   
+        <!-- Intro JS -->
+        <link href="{{ asset('/plugins/intro.js-2.7.0/introjs.css') }}" rel="stylesheet"/>     
+        <link rel="stylesheet" href="{{asset('css/introCustom.css')}}" rel="stylesheet"/>
     </head>
  
     <body>
@@ -22,6 +29,22 @@
               <li><a href="{{ route('cargos.index')}}">Formulario</a></li>
 
           </ul>
+          <ul id="dropdown2" class="dropdown-content">
+              <li><a href="{{route('reset.form')}}">Cambiar Contraseña</a></li>
+              <li><a href="{{route('generate')}}">Generar contraseñas</a></li>
+          </ul>
+          <ul id="dropdown3" class="dropdown-content">
+              <li><a href="{{ route('beneficios_admin.index') }}">Encuestas</a></li>
+              <li><a href="{{ route('beneficios_preguntas.index') }}">Preguntas</a></li>
+              <li><a href="{{ route('beneficios.admin.resultados') }}">Resultados</a></li>
+              <li><a href="{{ route('beneficios.admin.conclusion') }}">Conclusiones</a></li>
+          </ul>
+          <ul id="dropdown4" class="dropdown-content">
+              <li><a href="{{route('resultados')}}">Excel</a></li>
+              <li><a href="{{route('admin.reporte.filter')}}">Reporte - Cargos</a></li>
+          </ul>
+
+
           <nav>
               <div class="nav-wrapper teal">
                    <a href="{{route('home.page')}}" class="brand-logo"><i class="material-icons left">poll</i>S&B</a> 
@@ -38,21 +61,33 @@
                           <a href="{{ route('encuestas.index') }}">Encuestas</a>
                         </li>
                         <li>
+                          <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
+                        </li>                        
+                        <li>
+                          <a href="{{ route('admin_ficha.index') }}">Ficha</a>
+                        </li>                        
+                        <li>  
                           <a href="{{ route('cargos.index') }}">Cargos Oficiales</a>
                         </li>
-
-<!--
                         <li>
-                          <a class="dropdown-button" href="#!" data-activates="dropdown1">Cargos<i class="material-icons right">arrow_drop_down</i></a>
+                          <a href="#!" class="dropdown-trigger" data-target="dropdown4">
+                            Resultados
+                            <i class="material-icons right">arrow_drop_down</i>
+                          </a>
+                        </li>
+                        <li>
+                            <a href="#!" class="dropdown-trigger" data-target="dropdown3">
+                              Beneficios
+                              <i class="material-icons right">arrow_drop_down</i>
+                            </a>
                         </li> 
--->
-                        <li><a href="{{ route('resultados') }}">Resultados</a></li>
                         <li>
-                          <a href="#">
+                          <a href="#!" class="dropdown-trigger" data-target="dropdown2">
                             <i class="material-icons left">account_circle</i> 
                             {{ Auth::user()->username }}
+                            <i class="material-icons right">arrow_drop_down</i>
                           </a>
-                        </li> 
+                        </li>                         
                         <li>
                           <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout
                           </a>
@@ -61,12 +96,20 @@
                           </form>                    
                         </li>
                       </ul>
+                    @elseif(Auth::user()->is_benefit)
+                      @yield('nav')
                     @else
                       <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        @if(\Request::is('home'))
+                          <li>
+                            <a href="#" id="tour">Tour</a>
+                          </li>
+                        @endif
                         <li>
-                          <a href="#">
+                          <a href="#!" class="dropdown-trigger" data-target="dropdown2">
                             <i class="material-icons left">account_circle</i> 
                             {{ Auth::user()->username }}
+                            <i class="material-icons right">arrow_drop_down</i>
                           </a>
                         </li> 
                         <li>
@@ -87,7 +130,8 @@
               </div>
           </nav>
          <!-- End TOP MENU -->
-         
+         <!-- Breadcrumbs -->
+         @yield("breadcrumbs")
          <!-- BODY OF PAGE -->
           <div class="row">
                 @include('flash::message') 
@@ -114,18 +158,36 @@
 
     <!-- Select 2 -->
     <script src="{{ asset('/plugins/select2/select2.min.js') }}" type="text/javascript"></script>
-
+    <!-- Selectize -->
+    <script src="{{ asset('/plugins/selectize/selectize.js') }}" type="text/javascript"></script>    
+    <!-- ChartJs -->
+    <script src="{{ asset('/plugins/chartjs/Chart.bundle.js') }}" type="text/javascript"></script>   
+    <!-- Intro JS -->
+    <script src="{{ asset('/plugins/intro.js-2.7.0/intro.js') }}" type="text/javascript"></script>   
+ <!-- InputMask -->
+    <script src="{{ asset('plugins/input-mask/jquery.inputmask.bundle.js') }}"></script>
     
     <script type="text/javascript">
-       $(document).ready(function(){
-          $('#dropmenu').dropdown({belowOrigin: false});
+      var tour = introJs().setOptions({ "skipLabel": "Lo tengo", 
+                                        "nextLabel": "Continue", 
+                                        "prevLabel": "Anterior", 
+                                        "doneLabel": "Gracias", 
+                                        "showBullets": false, 
+                                        "showProgress": true, 
+                                        "tooltipClass": "customIntro"
+                                     });
+      
+      $('.modal').modal();
+
+      $(document).ready(function(){
+          $('.dropdown-trigger').dropdown();
           $('div.alert').delay(5000).slideUp(300);
           if ($('#flash-overlay-modal').length){
-            $('#flash-overlay-modal').openModal();  
+            $('#flash-overlay-modal').modal('open');  
           }
           
 
-        });
+      });
     </script>
     @stack('scripts')
 </html>

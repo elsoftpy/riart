@@ -54,7 +54,7 @@ class UsuariosController extends Controller
     public function update(Request $request, $id){
 
     	$dbData = User::find($id);
-
+        //dd($request->all());
         $dbData->password = Hash::make($request->password);
         $dbData->email = $request->email;
         $dbData->empresa_id = $request->empresa_id;
@@ -63,7 +63,7 @@ class UsuariosController extends Controller
             $dbData->is_admin = 0;
         }else{
             $dbData->is_benefit = 0;
-            $dbData->is_admin = $request->is_admin;    
+            //$dbData->is_admin = $request->is_admin;    
         }
 
 

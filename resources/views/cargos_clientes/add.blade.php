@@ -12,10 +12,8 @@
 						<div class="input-field col s12">
 							<input type="text" class="validate" id="descripcion" name="descripcion" must/>
 							<label for="descripcion">Cargo</label>
-
 						</div>	
 					</div>
-
 					<div class="row">
 						<div class="input-field col s12">
 							<select name="area_id" id="area_id"> 
@@ -24,8 +22,7 @@
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
 						    </select>
-					    	<label for="area_id">Area</label>
-							
+					    	<label for="area_id" class="active">Area</label>						
 						</div>
 					</div>
 					<div class="row">
@@ -36,9 +33,8 @@
 						        @foreach($dbNivel as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
-
-						     </select>
-						 	 <label for="nivel_id">Nivel</label>
+						    </select>
+						 	<label for="nivel_id" class="active">Nivel</label>
 						 </div>
 					</div>
 					<div class="row">
@@ -139,7 +135,6 @@
 					        <input type="text"  class="validate number"   id="costo_seguro_medico" name="costo_seguro_medico"  />
 					        <label  for="costo_seguro_medico" >Seguro Médico</label>
 					    </div>        
-
 						<div class="input-field col s4">
 					        <input type="text"  class="validate porcentaje"   id="cobertura_seguro_medico" name="cobertura_seguro_medico"  />
 					        <label  for="cobertura_seguro_medico" >Cobertura del Seguro</label>
@@ -156,28 +151,45 @@
 						        @foreach($dbAseguradora as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
-
-						     </select>
-						     <label for="aseguradora_id">Aseguradora</label>
+						    </select>
+						    <label for="aseguradora_id" class="active">Aseguradora</label>
 						</div>
 					</div>
 					<div class="row"> 
-						<div class="input-field col s4">
-					    	<label>Automóvil Empresa (Car Company)</label><br>
-
-					        <input name="car_company" id="car_company_si" value="S" type="radio" class="with-gap"  />
-					        <label for="car_company_si">Sí</label>
-
-					        <input name="car_company" id="car_company_no" value="N" type="radio" class="with-gap"  />
-					        <label for="car_company_no">No</label>
+					<div class="row"> 
+						<div class="col s4">
+					    	<div class="row">
+					    		<label>Automóvil Empresa (Car Company)</label>
+					    	</div>
+					    	<div class="col s6">
+					    		<label for="car_company_si">
+					        		<input name="car_company" id="car_company_si" value="S" type="radio" class="with-gap"  />
+					    			<span>Sí</span>
+					    		</label>
+					    	</div>
+					    	<div class="col s6">
+					    		<label for="car_company_no">
+							        <input name="car_company" id="car_company_no" value="N" type="radio" class="with-gap"  />
+					    			<span>No</span>
+					    		</label>
+					    	</div>
 						</div>
 						<div class="input-field col s4">
-							<label>Tarjeta Flota</label><br>
-						    <input name="tarjeta_flota" id="tarjeta_flota_si" value="S" type="radio" class="with-gap"  />
-						    <label for="tarjeta_flota_si">Sí</label>
-
-						    <input name="tarjeta_flota" id="tarjeta_flota_no" value="N" type="radio" class="with-gap"  />
-						    <label for="tarjeta_flota_no">No</label>
+							<div class="row">
+								<label>Tarjeta Flota</label><br>	
+							</div>
+					    	<div class="col s6">
+					    		<label for="tarjeta_flota_si">
+								    <input name="tarjeta_flota" id="tarjeta_flota_si" value="S" type="radio" class="with-gap"  />
+					    			<span>Sí</span>
+					    		</label>
+					    	</div>
+					    	<div class="col s6">
+					    		<label for="tarjeta_flota_no">
+								    <input name="tarjeta_flota" id="tarjeta_flota_no" value="N" type="radio" class="with-gap"  />
+					    			<span>No</span>
+					    		</label>
+					    	</div>
 						</div>
 						<div class="input-field col s4">
 					        <input type="text"  class="validate number"   id="flota" name="flota"  />
@@ -186,26 +198,24 @@
 					</div>
 					<div class="row">
 						 <div class="input-field col s12">
-							 <select name="autos_marca_id" id="autos_marca_id"> 
+							<select name="autos_marca_id" id="autos_marca_id"> 
 						      	<option value="" disabled selected>Elija una opción</option>
 						        @foreach($dbMarca as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
-
-						     </select>
-						     <label for="autos_marca_id">Marca del Automóvil</label>
+					     	</select>
+						    <label for="autos_marca_id" class="active">Marca del Automóvil</label>
 						</div>
 					</div>
 					<div class="row">				        
 						 <div class="input-field col s12">
-							 <select name="autos_modelo_id" id="autos_modelo_id"> 
+							<select name="autos_modelo_id" id="autos_modelo_id"> 
 						      	<option value="" disabled selected>Elija una opción</option>
-						        @foreach($dbMarca as $id=>$descripcion)	
+						        @foreach($dbModelo as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
-
-						     </select>
-						     <label for="autos_modelo_id">Modelo del Automóvil</label>
+						    </select>
+						    <label for="autos_modelo_id" class="active">Modelo del Automóvil</label>
 						</div>
 					</div>
 					<div class="row">
@@ -213,7 +223,6 @@
 					        <input type="text"  class="validate number"   id="monto_movil" name="monto_movil"  />
 					        <label  for="monto_movil" >Valor del Automóvil</label>
 					    </div>        
-
 						<div class="input-field col s4">
 					        <input type="text"  class="validate number"   id="seguro_movil" name="seguro_movil"  />
 					        <label  for="seguro_movil" >Seguro del Automóvil</label>
@@ -234,9 +243,8 @@
 					        <input type="text"  class="validate number"   id="ayuda_escolar" name="ayuda_escolar"  />
 					        <label  for="ayuda_escolar" >Ayuda Escolar</label>
 					    </div>        
-
 						<div class="input-field col s4">
-					        <input type="text"  class="validate number"   id="comedor_interno" name="comedor_interno"  />
+					        <input type="text"  class="validate number"   id="monto_comedor_interno" name="monto_comedor_interno"  />
 					        <label  for="comedor_interno" >Comedor Interno</label>
 					    </div>
 						<div class="input-field col s4">
@@ -249,19 +257,26 @@
 					        <input type="text"  class="validate number"   id="monto_curso_idioma" name="monto_curso_idioma"  />
 					        <label  for="monto_curso_idioma" >Curso de Idiomas</label>
 					    </div>        
-
 						<div class="input-field col s4">
 					        <input type="text"  class="validate porcentaje"   id="cobertura_curso_idioma" name="cobertura_curso_idioma"  />
 					        <label  for="cobertura_curso_idioma" >Cobertura del curso de idiomas</label>
 					    </div>
 						<div class="input-field col s4">
-					    	<label>Tipo de Curso de Idioma</label><br>
-
-					        <input name="tipo_clase_idioma" id="tipo_clase_si" value="G" type="radio" class="with-gap"  />
-					        <label for="tipo_clase_si">Grupal</label>
-
-							<input name="tipo_clase_idioma" id="tipo_clase_no" value="I" type="radio" class="with-gap"  />
-					        <label for="tipo_clase_no">Individual</label>
+					    	<div class="row">
+					    		<label>Tipo de Curso de Idioma</label><br>	
+					    	</div>
+							<div class="col s6">
+								<label for="tipo_clase_si">
+							        <input name="tipo_clase_idioma" id="tipo_clase_si" value="G" type="radio" class="with-gap"  />
+									<span>Grupal</span>
+								</label>
+							</div>
+							<div class="col s6">
+								<label for="tipo_clase_no">
+									<input name="tipo_clase_idioma" id="tipo_clase_no" value="I" type="radio" class="with-gap"  />									
+									<span>Individual</span>
+								</label>
+							</div>
 					    </div>
 					</div>
 					<div class="row">
@@ -269,7 +284,6 @@
 					        <input type="text"  class="validate number"   id="monto_post_grado" name="monto_post_grado"  />
 					        <label  for="monto_post_grado" >Post Grado o Maestría</label>
 					    </div>        
-
 						<div class="input-field col s6">
 					        <input type="text"  class="validate porcentaje"   id="cobertura_post_grado" name="cobertura_post_grado"  />
 					        <label  for="cobertura_post_grado" >Cobertura de la Maestría</label>
@@ -280,19 +294,26 @@
 					        <input type="text"  class="validate number"   id="monto_vivienda" name="monto_vivienda"  />
 					        <label  for="monto_vivienda" >Importe de Cobertura por Vivienda</label>
 					    </div>        
-
 						<div class="input-field col s4">
 					        <input type="text"  class="validate number"   id="monto_colegiatura_hijos" name="monto_colegiatura_hijos"  />
 					        <label  for="monto_colegiatura_hijos" >Importe por Cobertura de Colegiatura</label>
 					    </div>
 						<div class="input-field col s4">
-					    	<label class="select-label">Condición del Ocupante</label><br>
-
-					        <input name="condicion_ocupante" id="condicion_si" value="L" type="radio" class="with-gap"  />
-					        <label for="condicion_si">Local</label>
-
-					        <input name="condicion_ocupante" id="condicion_no" value="E" type="radio" class="with-gap"  />
-					        <label for="condicion_no">Expatriado</label>
+					    	<div class="row">
+					    		<label>Condición del Ocupante</label>	
+					    	</div>
+							<div class="col s6">
+								<label for="condicion_si">
+							        <input name="condicion_ocupante" id="condicion_si" value="L" type="radio" class="with-gap"  />
+									<span>Local</span>
+								</label>						
+							</div>					    	
+							<div class="col s6">
+								<label for="condicion_no">
+							        <input name="condicion_ocupante" id="condicion_no" value="E" type="radio" class="with-gap"  />
+									<span>Expatriado</span>
+								</label>						
+							</div>					    	
 					    </div>
 					</div>
 					<div class="row">
@@ -304,13 +325,9 @@
 						        @endforeach
 
 						    </select>
-						    <label for="zona_id">Región</label><br>
+						    <label for="zona_id" class="active">Región</label><br>
 					    </div>
 					</div>
-				<!--	<div class="row">
-						<input ng-model="carCompany" name="excluir" id="excluir" value="1" type="checkbox" class="with-gap"  />
-						<label for="excluir">Excluir</label>
-					</div> -->
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					{{ method_field('PUT') }}
 					<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar
@@ -324,7 +341,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(document).ready(function() {
-		    $('select').material_select();
+		    $('select').select2();
 		    
 
 
@@ -510,6 +527,25 @@
 				}
 			});
 			// end number format
+		    $("#autos_marca_id").change(function(){
+		      var selectModelos = $("#autos_modelo_id");
+		      var id = $(this).val();
+		      selectModelos.empty();
+		      $.post('{{route('autos.modelos')}}', {"marca_id": id, "_token": "{{csrf_token()}}"}, 
+		        function(json){
+		          var data = $.map(json, function(id, text){
+		                      return {text:id, id:text};
+		                    });
+		                for(i = 0; i < data.length; i++){
+		                  selectModelos.append(
+		                    $("<option></option>").attr("value", data[i].id)
+		                                    .text(data[i].text));
+		          }
+
+		          selectModelos.select2();
+		        }
+		      );
+		    });
 
 
 	</script>

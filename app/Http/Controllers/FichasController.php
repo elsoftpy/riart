@@ -12,6 +12,7 @@ use flash;
 class FichasController extends Controller
 {
     public function index(){
+        dd("holo");
     	$dbData = Ficha_dato::get();
     	return view('fichas.list')->with('dbData', $dbData);
     }

@@ -6,13 +6,13 @@
           </li>
         @endif
 		<li>
-		  <a href="{{route('beneficios.edit', $dbEmpresa->id)}}">Completar</a>
+		  <a href="{{route('beneficios.edit', $dbEmpresa->id)}}">@lang('layout.menu_complete')</a>
 		</li>
 		<li>
-		  <a href="{{route('beneficios.panel', $dbEmpresa->id)}}">Panel de Empresas</a>
+		  <a href="{{route('beneficios.panel', $dbEmpresa->id)}}">@lang('layout.menu_panel')</a>
 		</li>
 		<li data-intro="<p class='intro-title'><strong>REPORTE</strong><p>Click aquí para visualizar los resultados de la Encuesta de Prácticas y Beneficios" data-step="1">
-		  <a href="{{ route('beneficios.show', $dbEmpresa->id) }}">Reporte</a>
+		  <a href="{{ route('beneficios.show', $dbEmpresa->id) }}">@lang('layout.menu_report')</a>
 		</li>
 		<li>
 		  <a href="#!" class="dropdown-trigger" data-target="dropdown2">

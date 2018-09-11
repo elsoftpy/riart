@@ -5,13 +5,13 @@
     <div class="nav-wrapper teal lighten-3" data-intro=""  data-step="10">
       <div class="col s12">
         <a href="{{route('home')}}" class="breadcrumb">
-        	<i class="material-icons left">home</i>Inicio
+        	<i class="material-icons left">home</i>@lang('beneficiosReportCharts.breadcrumb_home')
         </a>
         <a href="{{ route('beneficios.show', $dbEmpresa->id) }}" class="breadcrumb">
-        	Reporte
+        	@lang('beneficiosReportCharts.breadcrumb_report')
         </a>
         <a class="breadcrumb">
-        	Resultados
+        	@lang('beneficiosReportCharts.breadcrumb_results')
         </a>
       </div>
     </div>
@@ -41,7 +41,7 @@
 				<ul class="collapsible popout" data-collapsible="accordion" id="indicadores-ul">
 					<li data-intro="<p class='intro-title'><strong>INDICADORES</strong></p>Click aquí para desplegar las diferentes prácticas" data-step="8" data-position="top">
 						<div class="collapsible-header center">
-							<h5><strong>Prácticas</strong></h5>
+							<h5><strong>@lang('beneficiosReportCharts.title_practices')</strong></h5>
 						</div>
 						<div class="collapsible-body teal lighten-4">
 							<ul class="items">

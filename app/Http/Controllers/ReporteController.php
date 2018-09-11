@@ -18,6 +18,7 @@ use DB;
 use Auth;
 use Excel;
 use Session;
+use Lang;
 
 class ReporteController extends Controller
 {
@@ -329,7 +330,6 @@ class ReporteController extends Controller
                 switch ($key) {
                     
                     case 'detalle_universo':
-                        //dd($item, $itemArray);    
                         $this->CargaDetalle($item, $itemArray);            
                         break;
 
@@ -743,25 +743,25 @@ class ReporteController extends Controller
                 
             }*/
             switch ($value["Concepto"]) {
-                case "Salario Base":
+                case Lang::get('reportReport.concept_salary'):
                     $this->cargador($value, $itemArray, true);
                     $salarioEmpresa = intval(str_replace(".", "", $value["Empresa"]));
                     break;
-                case "Efectivo Anual Garantizado":
+                case Lang::get('reportReport.concept_concept_annual_cash'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case "Variable Anual":
+                case Lang::get('reportReport.variable_pay'):
                     $variableAnual = true;
                     $this->cargador($value, $itemArray, false);
                     $variableAnualEmp = $value["Empresa"];
                     break;
-                case "Total Adicional Anual":
+                case Lang::get('reportReport.concept_total_incentives'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case "Bono Anual":
+                case Lang::get('reportReport.concept_bonus'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case "Compensación Anual Total":
+                case Lang::get('reportReport.concept_total_comp'):
                     $this->cargador($value, $itemArray, false);
                     break;
             }
@@ -795,6 +795,7 @@ class ReporteController extends Controller
         }else{
             $compMedSal = 0;
         }
+
         if($itemArray[8] > 0){
             $comp75PercSal = round($salarioEmpresa/$itemArray[8] - 1, 2); 
         }else{
@@ -895,7 +896,7 @@ class ReporteController extends Controller
             // Salario Base y Anual
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base",
+                            Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
                             $salarioProm,
@@ -918,7 +919,7 @@ class ReporteController extends Controller
             $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base Anual",
+                            Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
                             $salarioAnualProm,
@@ -940,7 +941,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosGratif, 
-                            "Gratificación Anual Garantizada",
+                            Lang::get('reportReport.concept_annual_gratif.'),
                             $gratificacionMin,
                             $gratificacionMax,
                             $gratificacionProm,
@@ -962,7 +963,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAguinaldo, 
-                            "Aguinaldo",
+                            Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
                             $aguinaldoProm,
@@ -998,7 +999,7 @@ class ReporteController extends Controller
                                                 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Anual Garantizado",
+                            Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,
@@ -1022,7 +1023,7 @@ class ReporteController extends Controller
  
             $this->pusher(  $collection, 
                             $casosAdicionalesBancos, 
-                            "Total Adicional Anual",
+                            Lang::get('reportReport.concept_total_incentives'),
                             $adicionalesMin * 12,
                             $adicionalesMax * 12,
                             $adicionalesProm * 12,
@@ -1045,7 +1046,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBono, 
-                            "Bono Anual",
+                            Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
                             $bonoProm,
@@ -1091,7 +1092,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Aguinaldo Impactado por Adicional, Gratificación y Bono",
+                            Lang::get('reportReport.concept_13month_impacted'),
                             $aguinaldoImpMin, 
                             $aguinaldoImpMax, 
                             $aguinaldoImpProm,
@@ -1130,7 +1131,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Anual Total",
+                            Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 
@@ -1153,7 +1154,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base",
+                            Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
                             $salarioProm,
@@ -1176,7 +1177,7 @@ class ReporteController extends Controller
             $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base Anual",
+                            Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
                             $salarioAnualProm,
@@ -1197,7 +1198,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAguinaldo, 
-                            "Aguinaldo",
+                            Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
                             $aguinaldoProm,
@@ -1232,7 +1233,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Anual Garantizado",
+                            Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,
@@ -1254,7 +1255,7 @@ class ReporteController extends Controller
             $countCasosPlus = $detalle->where('plus_rendimiento', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosPlus, 
-                            "Variable Anual",
+                            Lang::get('reportReport.concept_variable_pay'),
                             $plusMin,
                             $plusMax,
                             $plusProm,
@@ -1276,7 +1277,7 @@ class ReporteController extends Controller
             $countCasosAmarre = $detalle->where('adicional_amarre', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosAmarre, 
-                            "Adicional por Amarre",
+                            Lang::get('reportReport.concept_mooring'),
                             $amarreMin,
                             $amarreMax,
                             $amarreProm,
@@ -1299,7 +1300,7 @@ class ReporteController extends Controller
             $countCasosTipoCombustible = $detalle->where('adicional_tipo_combustible', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosTipoCombustible, 
-                            "Adicional por Tipo de Combustible",
+                            Lang::get('reportReport.concept_fuel_type'),
                             $TipoCombustibleMin,
                             $TipoCombustibleMax,
                             $TipoCombustibleProm,
@@ -1321,7 +1322,7 @@ class ReporteController extends Controller
             $countCasosEmbarque = $detalle->where('adicional_embarque', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosEmbarque, 
-                            "Adicional por Disponibilidad/Embarque",
+                            Lang::get('reportReport.concept_shipping'),
                             $embarqueMin,
                             $embarqueMax,
                             $embarqueProm,
@@ -1343,7 +1344,7 @@ class ReporteController extends Controller
             $countCasosCarga = $detalle->where('adicional_carga', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosCarga, 
-                            "Adicional por Carga",
+                            Lang::get('reportReport.concept_load'),
                             $cargaMin,
                             $cargaMax,
                             $cargaProm,
@@ -1382,7 +1383,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $casosAdicionales, 
-                            "Total Adicional Anual",
+                            Lang::get('reportReport.concept_total_incentives'),
                             $totalAdicionalMin,
                             $totalAdicionalMax,
                             $totalAdicionalProm,
@@ -1404,7 +1405,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBono, 
-                            "Bono Anual",
+                            Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
                             $bonoProm,
@@ -1441,7 +1442,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Total Anual",
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
                             $efectivoTotalProm,
@@ -1465,7 +1466,7 @@ class ReporteController extends Controller
             $casosBeneficiosNavieras = $detalle->where('beneficios_navieras', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $casosBeneficiosNavieras, 
-                            "Total Beneficios Anual",
+                            Lang::get('reportReport.concept_total_benefits'),
                             $beneficiosMin * 12,
                             $beneficiosMax * 12,
                             $beneficiosProm * 12,
@@ -1504,7 +1505,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Anual Total",
+                            Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 
@@ -1526,7 +1527,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base",
+                            Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
                             $salarioProm,
@@ -1549,7 +1550,7 @@ class ReporteController extends Controller
             $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base Anual",
+                            Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
                             $salarioAnualProm,
@@ -1570,7 +1571,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosGratif, 
-                            "Gratificación Anual Garantizada",
+                            Lang::get('reportReport.concept_annual_gratif.'),
                             $gratificacionMin,
                             $gratificacionMax,
                             $gratificacionProm,
@@ -1592,7 +1593,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAguinaldo, 
-                            "Aguinaldo",
+                            Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
                             $aguinaldoProm,
@@ -1635,7 +1636,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Anual Garantizado",
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,
@@ -1658,7 +1659,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosComision, 
-                            "Comisión Anual",
+                            Lang::get('reportReport.concept_annual_commission'),
                             $comisionMin*12,
                             $comisionMax*12,
                             $comisionProm*12,
@@ -1681,7 +1682,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAdicionales, 
-                            "Total Adicional Anual",
+                            Lang::get('reportReport.concept_total_additional'),
                             $adicionalesMin * 12,
                             $adicionalesMax * 12,
                             $adicionalesProm * 12,
@@ -1703,7 +1704,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBono, 
-                            "Bono Anual",
+                            Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
                             $bonoProm,
@@ -1740,7 +1741,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Total Anual",
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
                             $efectivoTotalProm,
@@ -1763,7 +1764,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBeneficios, 
-                            "Total Beneficios Anual",
+                            Lang::get('reportReport.concept_total_benefits'),
                             $beneficiosMin * 12,
                             $beneficiosMax * 12,
                             $beneficiosProm * 12,
@@ -1804,7 +1805,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Anual Total",
+                            Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 
@@ -2456,6 +2457,7 @@ class ReporteController extends Controller
     }
 
     private function cargoReportAll(Request $request, $tipo){
+        //dd($request->all());
         $dbEmpresa = Empresa::find($request->empresa_id);   // datos de la empresa del cliente
         if(Session::has('periodo')){
             $per = Session::get('periodo');
@@ -2671,47 +2673,9 @@ class ReporteController extends Controller
             $periodo = implode('_', explode('/', $periodo));
             $cargoFileName = str_replace("-", "_", str_replace(" ", "_", $dbCargo->descripcion));
             $filename = 'Resultados_'.$periodo.'_'.$cargoFileName;
-            $detalleUniverso = array();
-            $detalleNacional = array();
-            $detalleInternacional = array();
-            foreach ($universo as $value) {
-                $detalleUniverso[] = array( "Concepto"=>$value["concepto"], 
-                                            "Casos"=>$value["casos"], 
-                                            "Min"=>$value["min"], 
-                                            "25 Percentil"=>$value["per25"], 
-                                            "Promedio"=>$value["prom"], 
-                                            "Mediana"=>$value["med"], 
-                                            "75 Percentil"=>$value["per75"], 
-                                            "Max"=>$value["max"], 
-                                            "Empresa"=>$value["empresa"] 
-                                          );
-            }
-            foreach ($nacional as $value) {
-                $detalleNacional[] = array( "Concepto"=>$value["concepto"], 
-                                            "Casos"=>$value["casos"], 
-                                            "Min"=>$value["min"], 
-                                            "25 Percentil"=>$value["per25"], 
-                                            "Promedio"=>$value["prom"], 
-                                            "Mediana"=>$value["med"], 
-                                            "75 Percentil"=>$value["per75"], 
-                                            "Max"=>$value["max"], 
-                                            "Empresa"=>$value["empresa"] 
-                                          );
-            }
-
-            foreach ($internacional as $value) {
-                $detalleInternacional[] = array( "Concepto"=>$value["concepto"], 
-                                            "Casos"=>$value["casos"], 
-                                            "Min"=>$value["min"], 
-                                            "25 Percentil"=>$value["per25"], 
-                                            "Promedio"=>$value["prom"], 
-                                            "Mediana"=>$value["med"], 
-                                            "75 Percentil"=>$value["per75"], 
-                                            "Max"=>$value["max"], 
-                                            "Empresa"=>$value["empresa"] 
-                                          );
-            }
-
+            $detalleUniverso = $this->segmentArrayFactory($universo);
+            $detalleNacional = $this->segmentArrayFactory($nacional);
+            $detalleInternacional = $this->segmentArrayFactory($internacional);
 
             Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional ) {
                 $excel->sheet("universo", function($sheet) use($detalleUniverso){
@@ -2776,11 +2740,31 @@ class ReporteController extends Controller
             $resultado = collect([  
                                     "detalle_universo"=> $detalleUniverso, 
                                     "detalle_nacional"=> $detalleNacional, 
-                                    "detalleInternacional"=>$detalleInternacional]);
+                                    "detalleInternacional"=>$detalleInternacional
+                                ]);
 
             return $resultado;         
         }
+
     }
 
+    private function segmentArrayFactory($segmentArray){
+        foreach ($segmentArray as $value) {
 
+            $response[] = array(    Lang::get('reportReport.table_concepts')  => $value["concepto"], 
+                                    Lang::get('reportReport.table_occupants') => $value["casos"],
+                                    Lang::get('reportReport.table_cases')     => $value["casos"], 
+                                    Lang::get('reportReport.table_min')       => $value["min"], 
+                                    Lang::get('reportReport.table_perc25')    => $value["per25"], 
+                                    Lang::get('reportReport.table_average')   => $value["prom"], 
+                                    Lang::get('reportReport.table_median')    => $value["med"], 
+                                    Lang::get('reportReport.table_perc75')    => $value["per75"], 
+                                    Lang::get('reportReport.table_max')       => $value["max"], 
+                                    Lang::get('reportReport.table_company')   => $value["empresa"] 
+                                );
+        }
+
+        return $response;
+    } 
+            
 }

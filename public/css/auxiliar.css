@@ -60,29 +60,22 @@
 	 
 	  
 	  box-shadow: 2px 5px 10px var(--color-smoke);
-
-	  &:hover {
+	}
+	.flat:hover {
 	    transition: all 150ms linear;
     	color: #202129;
 	    background-color: #e1e2e2;
 	    opacity: 1;
 	    opacity: .85;
-	  }
-	  
-	  &:active {
+	}
+	.flat:active {
 	    transition: all 150ms linear;
 	    opacity: .75;
     	background-color: #d5d6d6;
     	opacity: 1;
 
-	  }
-	  
-	  &:focus {
-	    outline: 1px dotted #959595;
-	    outline-offset: -4px;
-	  }
-
 	}
+
   	.items li:last-child{
   		padding-bottom: 0.5em !important;
   	}

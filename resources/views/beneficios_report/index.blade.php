@@ -5,10 +5,10 @@
     <div class="nav-wrapper teal lighten-3">
       <div class="col s12">
         <a href="{{route('home')}}" class="breadcrumb">
-        	<i class="material-icons left">home</i>Inicio
+        	<i class="material-icons left">home</i>@lang('beneficiosReportIndex.breadcrumb_home')
         </a>
         <a href="{{ route('beneficios.show', $dbEmpresa->id) }}" class="breadcrumb">
-        	Reporte
+        	@lang('beneficiosReportIndex.breadcrumb_report')
         </a>
       </div>
     </div>
@@ -23,12 +23,12 @@
 	@endif
 	<div class="row" id="content" data-intro="" data-step="8">
 		<div class="col s12">
-			<h4>Listado de Indicadores</h4>
+			<h4>@lang('beneficiosReportIndex.title_list')</h4>
 			<div class="hoverable bordered" data-intro="<p class='intro-title'><strong>LISTADO DE INDICADORES</strong></p>Las diferentes tarjetas despliegan el listado de Beneficios/Prácticas referentes a cada grupo." data-step="5">
 				<!-- first row benefits -->
-				<div class="row">
+				<div class="row" style="display:flex; flex-wrap:wrap;">
 					@foreach ($dbCategorias as $element)
-						<div class="col s12 m3">
+						<div class="col s12 m3" style="display:flex";>
 							<div class="card">
 								<div class="card-image">
 									<img src="{{asset($element->file_path.$element->file_name)}}">
@@ -39,7 +39,7 @@
 								<div class="card-action">
 									<ul class="collapsible collapsible-inCard" data-collapsible="expandable" id="collapsible_{{$element->id}}">
 										<li>
-											<div class="collapsible-header">
+											<div class="collapsible-header" style="height:5em;">
 												<strong>{{$element->titulo}}</strong>
 											</div>
 											<div class="collapsible-body teal lighten-4">
@@ -86,7 +86,7 @@
 								<input type="hidden" name="item_id" value="1"/>
 								<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 								<button class="btn waves-light waves-effect teal" type="submit" data-intro="<p class='intro-title'><strong>COMPOSICION DE LA MUESTRA</strong></p>Click para ver los datos de la composición de la muestra" data-step="2" data-position="left">
-									Composición de la muestra
+									@lang('beneficiosReportIndex.button_sample')
 								</button>	
 							</form>
 
@@ -95,7 +95,7 @@
 								<input type="hidden" name="item_id" value="1"/>
 								<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 								<button class="btn waves-light waves-effect teal" type="submit">
-									Composición de la muestra
+									@lang('beneficiosReportIndex.button_sample')
 								</button>	
 							</form>
 						@endif

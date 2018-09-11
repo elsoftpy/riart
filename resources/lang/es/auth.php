@@ -15,5 +15,6 @@ return [
 
     'failed' => 'Los datos no corresponden a nuestros registros',
     'throttle' => 'Demasiados intentos de autenticación. Por favor intétalo en :seconds segundos.',
-
+    'user_label' => 'Usuario',
+    'password_label' => 'Contraseña',
 ];

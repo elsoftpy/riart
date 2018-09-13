@@ -78,6 +78,12 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::post('import_export/periodos', 'ImportExportController@getPeriodos')->name('import_export.periodos');
 	Route::resource('import_export', 'ImportExportController');
 
+	//file attachment
+	Route::get('file_attachment', 'FileAttachmentController@index')->name('file_attachment');
+	Route::post('file_attachment/upload', 'FileAttachmentController@upload')->name('file_attachment.upload');
+	Route::get('file_attachment/download', 'FileAttachmentController@download')->name('file_attachment.download');
+	Route::post('file_attachment/periodos', 'FileAttachmentController@getPeriodosAjax')->name('file_attachment.periodos');
+
 	Route::get('resultados', 'ReporteController@resultados')->name('resultados');
 	Route::post('resultados_excel', 'ReporteController@resultadosExcel')->name('resultados.excel');
 	Route::post('periodo', 'ReporteController@setSession')->name('periodo');

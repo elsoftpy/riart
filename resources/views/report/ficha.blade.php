@@ -26,7 +26,7 @@
 					    <div id="test4"><h1> {{$periodo}} </h1></div>
 					    <div id="test5"><h1> {{$cargos}} </h1></div>
 					    <div id="test6"><h1> {{$participantes}} </h1></div>
-					    <div id="test7"><h1> Gs. 5.600 </h1></div>
+					    <div id="test7"><h1> Gs. {{ number_format($tipoCambio, 0, ',', '.') }} </h1></div>
 					</div>					
 				</div>
 

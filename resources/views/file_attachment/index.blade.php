@@ -3,11 +3,11 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Configurar nuevo periodo</h4>
-	        </div>
-	        <div class="content">
-				<form class="col s12" action="{{route('admin_ficha.store')}}" method="POST">
-					<div class="row">
+				<h4>Subir Archivo</h4>
+			</div>
+			<div class="content">
+				 <form action="{{route('file_attachment.upload')}}" method="POST" id="upload_form"  enctype="multipart/form-data">
+				    <div class="row">
 						<div class="input-field col s6">
 							<select id="rubro_id"  name="rubro_id">
 								@foreach($rubros as $id => $descripcion)
@@ -23,48 +23,44 @@
 								@endforeach
 							</select>
 							<label for="periodo" class="active">Periodo</label>
-						</div>																	
-					</div>
-					<div class="row">
-						<div class="input-field col s6">
-							<label for="cargos_emergentes" id="cargos_emergentes">Cargos Emergentes</label>
-							<input type="number" name="cargos_emergentes" id="cargos_emergentes" class="validate"/>
 						</div>
+						<div class="file-field input-field col s6">
+					      <div class="btn">
+					        <span>Archivo<i class="material-icons left">attach_file</i></span>
+					        <input type="file" name="file">
+					      </div>
+					      <div class="file-path-wrapper">
+					        <input class="file-path validate" type="text">
+					        <input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+					      </div>
+					    </div>
+				    </div>
+				    <div class="row">
+						<button class="btn waves-effect waves-light" type="submit" name="submit_up" id="btn_up">Subir
+	    					<i class="material-icons left">cloud_upload</i>
+	      				</button>
+				    </div>
 
-						<div class="input-field col s6">
-							<label for="tipo_cambio" id="tipo_cambio">Tipo de Cambio</label>
-							<input type="text" name="tipo_cambio" id="tipo_cambio" class="validate"/>
-						</div>
-					</div>
-
-					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
-					<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar
-    					<i class="material-icons left">save</i>
-      				</button>
-				</form>
-	        </div>
+				  </form>
+			</div>
 		</div>
 	</div>
+
+	@if($toast)
+		<div id="toast"></div>
+	@endif
+	@if ($errorUploading)
+	<div id="toast_error"></div>
+	@endif
+
 @stop
 @push('scripts')
 	<script type="text/javascript">
 		$(function(){
 			$("select").select2();
 
-			/*$("#tipo_cambio").inputmask("decimal", {
-	          placeholder: "0",
-	          digitsOptional: true,
-	          radixPoint: ",",
-	          groupSeparator: ".",
-	          autoGroup: true,
-	          allowPlus: false,
-	          allowMinus: false,
-	          clearMaskOnLostFocus: false,
-	          removeMaskOnSubmit: true,
-	          //autoUnmask: true,
-			});*/
+		});	
 
-		});
 		$("#rubro_id").change(function(){
 			var selectPeriodo = $("#periodo");
 			var rubroId = $(this).val();
@@ -85,6 +81,13 @@
 			);
 		});
 
+		if($("#toast").length > 0){
+			M.toast({html: 'Archivo Procesado'});	
+		}
+
+		if($("#toast_error").length > 0){
+			M.toast({html: 'Error al subir archivo'});
+		}
 		
 	</script>
 @endpush

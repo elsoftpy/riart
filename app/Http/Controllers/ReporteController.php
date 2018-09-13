@@ -9,6 +9,7 @@ use App\Encuestas_cargo;
 use App\Detalle_encuesta;
 use App\Cargos_rubro;
 use App\Empresa;
+use App\Ficha_dato;
 use App\Nivel;
 use App\Cargo;
 use App\Rubro;
@@ -230,21 +231,28 @@ class ReporteController extends Controller
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
         }
         $cargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)->get()->count();
-        if ($rubro == 4){
-            if($per == "12/2016"){
-                $cargos = 160;
-            }else{
-                $cargos = 174;
+        $periodo = $dbEncuesta->periodo;
+        $dbFicha = Ficha_dato::where('rubro_id', $rubro)->where('periodo', $periodo)->first();
+        if($dbFicha){
+            $cargos = $dbFicha->cargos_emergentes;
+            $tipoCambio = $dbFicha = $dbFicha->tipo_cambio;
+        }else{
+            if ($rubro == 4){
+                if($per == "12/2016"){
+                    $cargos = 160;
+                }else{
+                    $cargos = 174;
+                }
+            }elseif($rubro == 1){
+                $cargos = 400;
+            }elseif($rubro == 2){
+                $cargos = 172;
+            }elseif($rubro == 3){
+                $cargos = 175;
             }
-        }elseif($rubro == 1){
-            $cargos = 400;
-        }elseif($rubro == 2){
-            $cargos = 172;
-        }elseif($rubro == 3){
-            $cargos = 175;
+            $tipoCambio = 5600;
         }
         
-        $periodo = $dbEncuesta->periodo;
         $participantes = Cabecera_encuesta::where('periodo', $periodo)->where('rubro_id', $rubro)->get();
 
         $participantes = $participantes->map(function($item){
@@ -260,6 +268,7 @@ class ReporteController extends Controller
                                    ->with('cargos', $cargos)
                                    ->with('periodo', $periodo)
                                    ->with('club', $club)
+                                   ->with('tipoCambio', $tipoCambio)
                                    ->with('participantes', $participantes);
     }
 

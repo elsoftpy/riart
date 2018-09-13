@@ -43,6 +43,9 @@
                           <a href="{{ route('reportes.ficha', $dbEmpresa) }}" data-intro="Ficha Técnica" data-step="21">Ficha Técnica</a>
                         </li>
                         <li>
+                            <a href="{{ route('file_attachment.download') }}">Informe Adjunto</a>
+                        </li>
+                        <li>
                           <a href="#!" class="dropdown-trigger" data-target="dropdown1" id="intro-cargos">
                             Indicadores por Cargo
                             <i class="material-icons right">arrow_drop_down</i>

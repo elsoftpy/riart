@@ -44,6 +44,9 @@
                           <a href="{{ route('reportes.ficha', $dbEmpresa) }}" data-intro="Ficha Técnica" data-step="21">@lang('reportLayout.menu_sheet')</a>
                         </li>
                         <li>
+                            <a href="{{ route('file_attachment.download') }}">Informe Adjunto</a>
+                        </li>
+                        <li>
                           <a href="#!" class="dropdown-trigger" data-target="dropdown1" id="intro-cargos">
                             @lang('reportLayout.menu_indicators')
                             <i class="material-icons right">arrow_drop_down</i>

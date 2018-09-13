@@ -48,57 +48,67 @@
           </ul>
 
 
-          <nav>
+          <nav class="nav-extended">
               <div class="nav-wrapper teal">
                    <a href="{{route('home.page')}}" class="brand-logo"><i class="material-icons left">poll</i>S&B</a> 
                   @if(Auth::check())
                     @if(Auth::user()->is_admin)
-                      <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li>
-                          <a href="{{ route('usuarios.index') }}">Usuarios</a>
-                        </li>                      
-                        <li>
-                          <a href="{{ route('empresas.index') }}">Empresas</a>
-                        </li>
-                        <li>
-                          <a href="{{ route('encuestas.index') }}">Encuestas</a>
-                        </li>
-                        <li>
-                          <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
-                        </li>                        
-                        <li>
-                          <a href="{{ route('admin_ficha.index') }}">Ficha</a>
-                        </li>                        
-                        <li>  
-                          <a href="{{ route('cargos.index') }}">Cargos Oficiales</a>
-                        </li>
-                        <li>
-                          <a href="#!" class="dropdown-trigger" data-target="dropdown4">
-                            Resultados
-                            <i class="material-icons right">arrow_drop_down</i>
-                          </a>
-                        </li>
-                        <li>
-                            <a href="#!" class="dropdown-trigger" data-target="dropdown3">
-                              Beneficios
+                      <div class="row" style="margin-bottom:0px !important;">
+                        <ul id="nav-mobile" class="right hide-on-med-and-down">
+                          <li>
+                            <a href="{{ route('usuarios.index') }}">Usuarios</a>
+                          </li>                      
+                          <li>
+                            <a href="{{ route('empresas.index') }}">Empresas</a>
+                          </li>
+                          <li>
+                            <a href="{{ route('encuestas.index') }}">Encuestas</a>
+                          </li>
+                          <li>
+                            <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
+                          </li>                        
+                          <li>
+                            <a href="{{ route('admin_ficha.index') }}">Ficha</a>
+                          </li>
+                          <li>
+                          <a href="{{ route('file_attachment') }}">Attachment</a>
+                          </li>                        
+                          <li>  
+                            <a href="{{ route('cargos.index') }}">Cargos Oficiales</a>
+                          </li>
+                          <li>
+                            <a href="#!" class="dropdown-trigger" data-target="dropdown4">
+                              Resultados
                               <i class="material-icons right">arrow_drop_down</i>
                             </a>
-                        </li> 
-                        <li>
-                          <a href="#!" class="dropdown-trigger" data-target="dropdown2">
-                            <i class="material-icons left">account_circle</i> 
-                            {{ Auth::user()->username }}
-                            <i class="material-icons right">arrow_drop_down</i>
-                          </a>
-                        </li>                         
-                        <li>
-                          <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout
-                          </a>
-                          <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            {{ csrf_field() }}
-                          </form>                    
-                        </li>
-                      </ul>
+                          </li>
+                          <li>
+                              <a href="#!" class="dropdown-trigger" data-target="dropdown3">
+                                Beneficios
+                                <i class="material-icons right">arrow_drop_down</i>
+                              </a>
+                          </li> 
+
+                        </ul>
+                      </div>
+                      <div class="row">
+                        <ul class="right hide-on-med-and-down">
+                          <li>
+                            <a href="#!" class="dropdown-trigger" data-target="dropdown2">
+                              <i class="material-icons left">account_circle</i> 
+                              {{ Auth::user()->username }}
+                              <i class="material-icons right">arrow_drop_down</i>
+                            </a>
+                          </li>                         
+                          <li>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout
+                            </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                              {{ csrf_field() }}
+                            </form>                    
+                          </li>
+                        </ul>
+                      </div>
                     @elseif(Auth::user()->is_benefit)
                       @yield('nav')
                     @else

@@ -2476,6 +2476,7 @@ class ReporteController extends Controller
                 $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                                ->whereRaw("periodo = '". $request->periodo."'")
                                                ->first();
+                //dd($dbEncuesta, $request->periodo);
             }else{
                 $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                                ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')

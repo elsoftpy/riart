@@ -14,6 +14,7 @@
 				<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 				<input type="hidden" name="empresa_id" value="{{$dbEmpresa->id}}"/>
 				<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
+			<input type="hidden" name="periodo" value="{{$periodo}}"/>
 				<button class="btn waves-effect waves-light lighten-1 white-text" type="submit" name="submit">
 					<i class="material-icons left">add</i>Excel
 				</button>

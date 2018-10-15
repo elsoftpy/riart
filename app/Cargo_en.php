@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Cargo extends Model
+class Cargo_en extends Model
 {
-    protected $table = "cargos";
+    protected $table = "cargos_en";
 
     protected $fillable = ["descripcion", "area_id", "nivel_id", "is_temporal", "detalle"];
 
@@ -23,11 +23,7 @@ class Cargo extends Model
     }
 
     public function nivel(){
-    	return $this->belongsTo("App\Nivel");
-    }
-
-    public function cargoEn(){
-        return $this->hasOne('App\Cargo_en', 'id', 'id');
+    	return $this->belongsTo("App\Nivel_en");
     }
 
 }

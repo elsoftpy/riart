@@ -8,11 +8,11 @@
                 	<table id="Listado" class="highlight">
                 		<thead>
 	                      <tr>
-	                      	 <th>Nro.</th>
-	                      	 <th>Descripcion</th>
-	                      	 <th>Cant. Suc.</th>
-	                      	 <th>Cant. Emp.</th>
-	                      	 <th>Origen</th>
+	                      	 <th>@lang('reportPanel.table_id')</th>
+	                      	 <th>@lang('reportPanel.table_description')</th>
+	                      	 <th>@lang('reportPanel.table_branches')</th>
+	                      	 <th>@lang('reportPanel.table_employees')</th>
+	                      	 <th>@lang('reportPanel.table_origin')</th>
 	                      </tr>
 	                    </thead>
 	                    <tbody>
@@ -23,9 +23,9 @@
 		                    		<td>{{ $est->cantidad_sucursales}}</td>
 		                    		<td>{{ $est->cantidad_empleados}}</td>
 		                    		<td>@if($est->tipo == "0")
-		                    				{{"Nacional"}}
+											@lang('reportPanel.label_origin_national')
 		                    			@else
-		                    				{{"Internacional"}}
+											@lang('reportPanel.label_origin_international')
 		                    			@endif
 		                    		</td>
 	                    		</tr>
@@ -38,21 +38,42 @@
 @endsection
 @push('scripts')
 	<script type="text/javascript">
-   		$(function(){
-	   		$('#Listado').DataTable({
-   				"scrollX": false,
-            	"scrollCollapse": false,
-            	"lengthChange": false,
-            	pageLength: 20,
-	            "language": {
-	                "decimal": ",",
-	                "thousands": ".",
-	                "zeroRecords": "No hay registros - Lo sentimos",
-	                "info": "Página _PAGE_ de _PAGES_",
-	                "infoEmpty": "No hay registros disponibles",
-	                "infoFiltered": "(Filtrado de un total de _MAX_ registros)"	        
-	            }
-	    	});
+   		var locale = '{{$locale}}';
+		console.log(locale);
+		$(function(){
+			if(locale == "es"){
+				$('#Listado').DataTable({
+					"scrollX": false,
+					"scrollCollapse": false,
+					"lengthChange": false,
+					pageLength: 20,
+					"language": {
+						"decimal": ",",
+						"thousands": ".",
+						"zeroRecords": "No hay registros - Lo sentimos",
+						"info": "Página _PAGE_ de _PAGES_",
+						"infoEmpty": "No hay registros disponibles",
+						"infoFiltered": "(Filtrado de un total de _MAX_ registros)"	        
+					}
+				});
+			}else{
+				$('#Listado').DataTable({
+					"scrollX": false,
+					"scrollCollapse": false,
+					"lengthChange": false,
+					pageLength: 20,
+					"language": {
+						"decimal": ".",
+						"thousands": ",",
+						"zeroRecords": "No records found - We're sorry",
+						"info": "Page _PAGE_ of _PAGES_",
+						"infoEmpty": "No records found",
+						"infoFiltered": "(Filtered out of _MAX_ rows)",
+						"search": "Search"        
+					}
+				});
+			}
+		   
    		});
 
 

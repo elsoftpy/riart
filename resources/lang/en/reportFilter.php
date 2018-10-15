@@ -1,10 +1,10 @@
 <?php
 return [
-    "label_filter"      => "Filter Position",
+    "label_filter"      => "Filter by Job",
     "label_level"       => "Level",
-    "label_position"    => "Position",
-    "label_description" => "Description of Position", 
-    "button_report"     => "Report",
-    "select_option"     => "Select a position",
+    "label_position"    => "Particular Position",
+    "label_description" => "Position Summary", 
+    "button_report"     => "Salary Report",
+    "select_option"     => "Select a Job",
     "select_level"      => "Select a level",
 ];

@@ -7,4 +7,5 @@ return [
     "menu_indicators"   => "Indicadores por Cargo",
     "menu_search"       => "Buscar por Cargo",
     "menu_universe"     => "Universo de Cargos",
+    "menu_attachment"   =>  "Archivo Adjunto"
 ];

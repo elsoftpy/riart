@@ -656,33 +656,30 @@
 
 
 			}
-			if(label == "Salario Base"){
+			if(label == "Salario Base" || label == "Monthly Base Salary"){
 				if(value > 0){
-					$(divSalario).html('<h5>Salario Base</h5><canvas id="'+divChartSalario+'"></canvas>');
+					$(divSalario).html(`<h5>${label}</h5><canvas id="${divChartSalario}"></canvas>`);
 					chart(promedio, per75, max, value, itemSalario);	
 				}else{
 					$(divSalario).empty();
 				}
 				
-			}else if(label == "Efectivo Anual Garantizado"){
+			}else if(label == "Efectivo Anual Garantizado" || label == "Annual Guaranteed Cash"){
 				if(value > 0){
-					$(divEfectivo).html('<h5>Efectivo Anual Garantizado</h5><canvas id="'+divChartEfectivo+'"></canvas>');
+					$(divEfectivo).html(`<h5>${label}</h5><canvas id="${divChartEfectivo}"></canvas>`);
 					chart(promedio, per75, max, value, itemEfectivo);
 				}else{
 					$(divEfectivo).empty();
 				}
-			}else if(label == "Compensación Anual Total" || label == "Compensación Efectiva Anual Total"){
+			}else if(label == "Compensación Anual Total" || label == "Compensación Efectiva Anual Total" ||
+					 label == "Annual Total Compensation"){
 				if(value > 0){
-					$(divCompensacion).html('<h5>Compensación Anual Total</h5><canvas id="'+divChartCompensacion+'"></canvas>');
+					$(divCompensacion).html(`<h5>${label}</h5><canvas id="${divChartCompensacion}"></canvas>`);
 					chart(promedio, per75, max, value, itemCompensacion);
 				}else{
 					$(divCompensacion).empty();	
 				}
 			}
-
-
-			
-
 		}
 
 		function chart(prom, perc, max, empresa, item){

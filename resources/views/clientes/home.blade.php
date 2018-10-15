@@ -70,7 +70,7 @@
 	</div>
 	<div class="modal" id="modal-options">
 		<div class="modal-content">
-			<h5>Eligir Encuesta</h5>
+			<h5> @lang('homepage.modal_survey') </h5>
 			@if($dbEncuestaAnt)
 				<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
 					{{$dbEncuestaAnt->periodo}}
@@ -83,7 +83,7 @@
 			@endif
 		</div>
 		<div class="modal-footer">
-			<a class="waves-light waves-effect btn " id="close-modal">Cerrar</a>
+			<a class="modal-close waves-light waves-effect btn " id="close-modal">@lang('homepage.modal_button_close')</a>
 		</div>
 	</div>
 

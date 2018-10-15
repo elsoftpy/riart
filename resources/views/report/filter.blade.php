@@ -26,7 +26,7 @@
 							</select>
 							<label for="cargo_id" class="active">@lang('reportFilter.label_position')</label>
 						</div>													
-						<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>
+						<input type="hidden" name="empresa_id" id="empresa_id" value="{{$dbEmpresa}}"/>
 						<input type="hidden" name="moneda" value="local">
 					</div>
 					<div class="row">
@@ -82,8 +82,9 @@
 		$("#nivel_id").change(function(){
 			var selectCargo = $("#cargo_id");
 			var nivelId = $(this).val();
+			var empresaId = $("#empresa_id").val();
 			selectCargo.empty();
-			$.post('{{route('reportes.getcargos')}}', {"nivel_id": nivelId, "_token": "{{csrf_token()}}"}, 
+			$.post('{{route('reportes.getcargos')}}', {"nivel_id": nivelId, "empresa_id": empresaId, "_token": "{{csrf_token()}}"}, 
 				function(json){
 					var data = $.map(json, function(text, id){
                     	return {text:id, id:text};

@@ -1,9 +1,10 @@
 @extends('report.layout')
 
 @section('content')
-	<div class="row">
+@include('report.title')	
+<div class="row">
 		<div class="col s12">
-			<h4>Club {!! $club !!}</h4>
+			
 			<div class="hoverable bordered">
 				<div class="card">
 					<div class="card-content white-text" style="text-align: center;">

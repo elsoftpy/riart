@@ -10,7 +10,7 @@
 					<div class="row">
 						<div class="input-field col s12">
 							<input id="descripcion" type="text" class="validate" name="descripcion" value="{{$dbData->descripcion}}" >
-							<label for="nombres">Descripción</label>
+							<label for="descripcion">Cargo (Español)</label>
 						</div>					
 					</div>
 					<div class="row">
@@ -42,20 +42,61 @@
 						</div>																	
 					</div>
 					<div class="row">
-						<div class="input-field">
-							<label for="detalle" id="label-detalle">Descripción del Cargo</label>
+						<div class="input-field col s12">
+							<label for="detalle" id="label-detalle">Descripción del Cargo (en español)</label>
 							<textarea name="detalle" id="detalle" class="materialize-textarea">{{$dbData->detalle}}</textarea> 
 						</div>
 					</div>
-					<div class="row">
+					<div class="row col s12">
 						@if ($dbData->is_temporal == "1")
-							<input name="is_temporal" id="is_temporal" checked="checked" type="checkbox" class="with-gap"  />
-							<label for="is_temporal">Temporal</label>
+							<label>
+								<input name="is_temporal" id="is_temporal" checked="checked" type="checkbox" class="filled-in"/>
+								<span>Temporal</span>
+							</label>
 						@else	
-							<input name="is_temporal" id="is_temporal" type="checkbox" class="with-gap"  />
-							<label for="is_temporal">Temporal</label>
+							<label>
+								<input name="is_temporal" id="is_temporal" type="checkbox" class="filled-in"/>
+								<span>Temporal</span>
+							</label>
 						@endif
 					</div> 
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="descripcion_en" type="text" class="validate" name="descripcion_en" value="{{$dbData->cargoEn->descripcion}}" >
+							<label for="descripcion_en">Cargo (Inglés)</label>
+						</div>					
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<label for="detalle_en" id="label-detalle_en">Descripción del Cargo (Inglés)</label>
+							<textarea name="detalle_en" id="detalle_en" class="materialize-textarea">{{$dbData->cargoEn->detalle}}</textarea> 
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<select id="rubros"  name="rubros[]" multiple>
+								@foreach($dbRubros as $id => $descripcion)
+										@php
+											$cargoRubro = $dbData->cargosRubro->where('cargo_id', $dbData->id)
+																		 	  ->where('rubro_id', $id)
+																		 	  ->first();
+											if($cargoRubro){
+												$found = true;
+											}else{
+												$found = false;
+											}
+										@endphp			
+										@if ($found)
+											<option value = {{$id}} selected="selected">{{$descripcion}}</option>	
+										@else
+											<option value = {{$id}}>{{$descripcion}}</option>			
+										@endif
+
+								@endforeach
+							</select>
+							<label for="rubros" class="active">Rubros (para los que aplica el cargo)</label>
+						</div>
+					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					{{ method_field('PUT') }}
 					<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar

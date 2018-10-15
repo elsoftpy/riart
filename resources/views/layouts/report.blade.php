@@ -17,6 +17,8 @@
         <link href="{{ asset('/plugins/selectize/selectize.css') }}" rel="stylesheet"/>   
         <!-- Auxiliar -->
         <link href="{{ asset('/css/auxiliar.css') }}" rel="stylesheet">     
+        <!-- Translation -->
+        <link href="{{ asset('/css/translation.css') }}" rel="stylesheet">
         <!-- Intro JS -->
         <link href="{{ asset('/plugins/intro.js-2.7.0/introjs.css') }}" rel="stylesheet"/>     
         <link rel="stylesheet" href="{{asset('css/introCustom.css')}}" rel="stylesheet"/>
@@ -115,6 +117,11 @@
                 @include('flash::message') 
               <div class="col s12 m12 l12" style="margin-top:10px;">
                 @yield('content')
+                @if (Auth::check())
+                    @if (!Auth::user()->is_admin)
+                        @include('includes.translation')
+                    @endif
+                @endif
               </div>
           </div>
           <!-- logo -->
@@ -161,5 +168,6 @@
         });
 
     </script>
+    @include('includes.translation_script')
     @stack('scripts')
 </html>

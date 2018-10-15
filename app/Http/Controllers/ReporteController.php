@@ -11,7 +11,9 @@ use App\Cargos_rubro;
 use App\Empresa;
 use App\Ficha_dato;
 use App\Nivel;
+use App\Nivel_en;
 use App\Cargo;
+use App\Cargo_en;
 use App\Rubro;
 use App\User;
 use Hash;
@@ -19,9 +21,13 @@ use DB;
 use Auth;
 use Excel;
 use Session;
+use Lang;
+
+
 
 class ReporteController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -31,6 +37,7 @@ class ReporteController extends Controller
     {
 
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -67,8 +74,9 @@ class ReporteController extends Controller
         $empresa = Empresa::find($id);
         $club = $this->club($empresa->rubro_id);
         $rubro = $empresa->rubro_id;
+        $locale = $this->getIdioma();
         //dd($club, $empresa->rubro_id);
-        switch ($rubro) {
+        /*switch ($rubro) {
             case 1:
                 $imagen = "images/caratula-bancos.PNG";
                 break;
@@ -84,102 +92,74 @@ class ReporteController extends Controller
             default:
                 $imagen = "images/caratula-autos.PNG";
                 break;
-        }
+        }*/
+        $imagen = $this->club($empresa->rubro_id, true);
 
-        return view('report.home')->with('dbEmpresa', $id)->with('imagen', $imagen)->with('club', $club);
+        return view('report.home')->with('dbEmpresa', $id)
+                                  ->with('imagen', $imagen)
+                                  ->with('club', $club)
+                                  ->with('locale', $locale);
     }
 
-    private function club($rubro){
-        switch ($rubro) {
-            case 1:
-                $imagen = "images/caratula-bancos.PNG";
-                $club = "- Bancos de Paraguay";
-                break;
-            case 2:
-                $imagen = "images/caratula-agro.PNG";
-                $club = "- Empresas de Agronegocios - Paraguay";
-                break;
-            case 3:
-                $imagen = "images/caratula-autos.PNG";
-                $club = '- Empresas del Sector Automotriz, Maquinarias y Utilitarios';
-                break;
-            case 4:
-                $imagen = "images/caratula-naviera.PNG";
-                $club = "- Navieras de Paraguay";
-                break;
-            default:
-                $imagen = "images/caratula-bancos.PNG";
-                $club = "de Bancos";
-                break;
+    private function club($rubro, $getImagen = null){
+        if($this->getIdioma() == "en"){
+            switch ($rubro) {
+                case 1:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "Banking";
+                    break;
+                case 2:
+                    $imagen = "images/caratula-agro-en.PNG";
+                    $club = "Agribusiness";
+                    break;
+                case 3:
+                    $imagen = "images/caratula-autos.PNG";
+                    $club = 'Car and Machine';
+                    break;
+                case 4:
+                    $imagen = "images/caratula-naviera-en.PNG";
+                    $club = "Shipping";
+                    break;
+                case 6:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $clue = "Non Governmental Organizations";
+                default:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "de Bancos";
+                    break;
+            }
+        }else{
+            switch ($rubro) {
+                case 1:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "- Bancos de Paraguay";
+                    break;
+                case 2:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "- Empresas de Agronegocios - Paraguay";
+                    break;
+                case 3:
+                    $imagen = "images/caratula-autos.PNG";
+                    $club = '- Empresas del Sector Automotriz, Maquinarias y Utilitarios';
+                    break;
+                case 4:
+                    $imagen = "images/caratula-naviera.PNG";
+                    $club = "- Navieras de Paraguay";
+                    break;
+                case 6:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $clue = "- Organizaciones No Gubernamentales";
+                default:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "de Bancos";
+                    break;
+            }
+        }
+        if($getImagen){
+            return $imagen;
         }
         return $club;        
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function filter($id)
-    {
-        $dbNiveles = Nivel::pluck('descripcion', 'id');
-        $dbCargos = Cargo::orderBy('descripcion')->pluck('descripcion', 'id');
-        $dbEmpresa = $id;
-        return view('report.filter')->with('dbNiveles', $dbNiveles)->with('dbCargos', $dbCargos)->with('dbEmpresa', $dbEmpresa);
-    }
-
-    public function showCargosClub($id){
-        $dbEmpresa = $id;
-        $empresa = Empresa::find($id);
-        $club = $this->club($empresa->rubro_id);
-        $rubro = $empresa->rubro_id;
-        if(Session::has('periodo')){
-            $per = Session::get('periodo');
-            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
-        }else{
-            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
-        }
-        $periodo = $dbEncuesta->periodo;    // periodo de la encuesta actual
-        $empresasId = Empresa::where('rubro_id', $rubro)->pluck('id');
-        $encuestasRubro = Cabecera_encuesta::whereIn('empresa_id', $empresasId)->where('periodo', $periodo)->pluck('id');
-        $encuestasCargos = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestasRubro)->whereNotNull('cargo_id')->get();
-        $cargosEmpresas = collect();
-        foreach ($encuestasCargos as $encuestaCargo) {
-            if($encuestaCargo->detalleEncuestas){
-                if($encuestaCargo->detalleEncuestas->cantidad_ocupantes > 0){
-                    $cargosEmpresas->push(["cargo"=> $encuestaCargo->cargo_id, "empresa"=>$encuestaCargo->cabeceraEncuestas->empresa_id]);
-                }
-            }
-        }
-
-        $groupedCargosEmpresas = $cargosEmpresas->groupBy('cargo');
-        $cargosIds = $groupedCargosEmpresas->map(function($item, $key){
-            if($item->groupBy('empresa')->count() > 1){
-                return $key;
-            }
-        })->values()->reject(function($value, $key){
-            return is_null($value); 
-        })->sort();
-        
-        $cargos = Cargos_rubro::where('rubro_id', $rubro)->whereIn('cargo_id', $cargosIds)->get();
-        //$cargos = Cargos_rubro::where('rubro_id', $rubro)->get();
-        $cargos = $cargos->map(function($item){
-            $item['nivel_id'] = $item->cargo->nivel->id;
-            $item['descripcion'] = $item->cargo->descripcion;
-            return $item;
-        });
-        $colNiveles = collect();
-        foreach ($cargos as $key => $value) {
-            $colNiveles->push($value->cargo->nivel->id);
-        }
-        $niveles = Nivel::whereIn('id', $colNiveles->unique())->orderBy('descripcion')->get();
-        return view('report.cargos_club')->with('dbEmpresa', $dbEmpresa)
-                                         ->with('club', $club)       
-                                         ->with('niveles', $niveles)
-                                         ->with('cargos', $cargos);
-    }
-
     public function lista($id){
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);
@@ -220,10 +200,39 @@ class ReporteController extends Controller
                                          ->with('niveles', $niveles)
                                          ->with('cargos', $cargos);
     }
+
+    public function conceptos($id){
+        $dbEmpresa = $id;
+        $empresa = Empresa::find($id);
+        $rubro = $empresa->rubro_id;
+        $club = $this->club($empresa->rubro_id);
+        $locale = $this->getIdioma();
+        if($locale == 'en'){
+            return view('report.conceptos_en')->with('club', $club)->with('dbEmpresa', $dbEmpresa)->with('locale', $locale);
+        }else{
+            return view('report.conceptos')->with('club', $club)->with('dbEmpresa', $dbEmpresa)->with('locale', $locale);
+        }
+        
+    }
+
+    public function metodologia($id){
+        $dbEmpresa = $id;
+        $empresa = Empresa::find($id);
+        $rubro = $empresa->rubro_id;
+        $club = $this->club($empresa->rubro_id);
+        $locale = $this->getIdioma();
+        if($locale == 'en'){
+            return view('report.metodologia_en')->with('club', $club)->with('dbEmpresa', $dbEmpresa)->with("locale", $locale);   
+        }
+
+        return view('report.metodologia')->with('club', $club)->with('dbEmpresa', $dbEmpresa)->with("locale", $locale);
+    }
+
     public function ficha($id){
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);
         $rubro = $empresa->rubro_id;
+        $locale = $this->getIdioma();
         if(Session::has('periodo')){
             $per = Session::get('periodo');
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
@@ -269,24 +278,99 @@ class ReporteController extends Controller
                                    ->with('periodo', $periodo)
                                    ->with('club', $club)
                                    ->with('tipoCambio', $tipoCambio)
+                                   ->with('locale', $locale)
                                    ->with('participantes', $participantes);
     }
 
-    public function conceptos($id){
-        $dbEmpresa = $id;
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function filter($id)
+    {
         $empresa = Empresa::find($id);
-        $rubro = $empresa->rubro_id;
-        $club = $this->club($empresa->rubro_id);
-        return view('report.conceptos')->with('club', $club)->with('dbEmpresa', $dbEmpresa);
+        $cargosRubros = Cargos_rubro::where('rubro_id', $empresa->rubro_id)->pluck('cargo_id');
+        if($this->getIdioma() == "en"){
+            $dbNiveles = Nivel_en::pluck('descripcion', 'id');
+            $dbCargos = Cargo_en::orderBy('descripcion')
+                                ->whereIn('id', $cargosRubros)
+                                ->pluck('descripcion', 'id');
+        }else{
+            $dbNiveles = Nivel::pluck('descripcion', 'id');
+            $dbCargos = Cargo::orderBy('descripcion')
+                             ->whereIn('id', $cargosRubros)
+                             ->pluck('descripcion', 'id');
+        }
+        $dbEmpresa = $id;
+        return view('report.filter')->with('dbNiveles', $dbNiveles)->with('dbCargos', $dbCargos)->with('dbEmpresa', $dbEmpresa);
     }
 
-    public function metodologia($id){
+    public function showCargosClub($id){
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);
-        $rubro = $empresa->rubro_id;
         $club = $this->club($empresa->rubro_id);
-        return view('report.metodologia')->with('club', $club)->with('dbEmpresa', $dbEmpresa);
+        $rubro = $empresa->rubro_id;
+        $locale = $this->getIdioma();
+        if(Session::has('periodo')){
+            $per = Session::get('periodo');
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
+        }else{
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
+        }
+        $periodo = $dbEncuesta->periodo;    // periodo de la encuesta actual
+        $empresasId = Empresa::where('rubro_id', $rubro)->pluck('id');
+        $encuestasRubro = Cabecera_encuesta::whereIn('empresa_id', $empresasId)->where('periodo', $periodo)->pluck('id');
+        $encuestasCargos = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestasRubro)->whereNotNull('cargo_id')->get();
+        $cargosEmpresas = collect();
+        foreach ($encuestasCargos as $encuestaCargo) {
+            if($encuestaCargo->detalleEncuestas){
+                if($encuestaCargo->detalleEncuestas->cantidad_ocupantes > 0){
+                    $cargosEmpresas->push(["cargo"=> $encuestaCargo->cargo_id, "empresa"=>$encuestaCargo->cabeceraEncuestas->empresa_id]);
+                }
+            }
+        }
+
+        $groupedCargosEmpresas = $cargosEmpresas->groupBy('cargo');
+        $cargosIds = $groupedCargosEmpresas->map(function($item, $key){
+            if($item->groupBy('empresa')->count() > 1){
+                return $key;
+            }
+        })->values()->reject(function($value, $key){
+            return is_null($value); 
+        })->sort();
+        
+        $cargos = Cargos_rubro::where('rubro_id', $rubro)
+                              ->whereIn('cargo_id', $cargosIds)->get();
+        //$cargos = Cargos_rubro::where('rubro_id', $rubro)->get();
+        $cargos = $cargos->map(function($item) use($locale){
+            if($locale == "es"){
+                $item['nivel_id'] = $item->cargo->nivel->id;
+                $item['descripcion'] = $item->cargo->descripcion;
+            }else{
+                $item['nivel_id'] = $item->cargoEn->nivel->id;
+                $item['descripcion'] = $item->cargoEn->descripcion;
+            }
+            
+            return $item;
+        });
+        $colNiveles = collect();
+        foreach ($cargos as $key => $value) {
+            $colNiveles->push($value->cargo->nivel->id);
+        }
+        if($locale == "es"){
+            $niveles = Nivel::whereIn('id', $colNiveles->unique())->orderBy('descripcion')->get();
+        }else{
+            $niveles = Nivel_en::whereIn('id', $colNiveles->unique())->orderBy('descripcion')->get();
+        }
+        
+        return view('report.cargos_club')->with('dbEmpresa', $dbEmpresa)
+                                         ->with('club', $club)       
+                                         ->with('niveles', $niveles)
+                                         ->with('cargos', $cargos);
     }
+
 
     public function cargoReport(Request $request){
 
@@ -338,7 +422,6 @@ class ReporteController extends Controller
                 switch ($key) {
                     
                     case 'detalle_universo':
-                        //dd($item, $itemArray);    
                         $this->CargaDetalle($item, $itemArray);            
                         break;
 
@@ -752,25 +835,25 @@ class ReporteController extends Controller
                 
             }*/
             switch ($value["Concepto"]) {
-                case "Salario Base":
+                case Lang::get('reportReport.concept_salary'):
                     $this->cargador($value, $itemArray, true);
                     $salarioEmpresa = intval(str_replace(".", "", $value["Empresa"]));
                     break;
-                case "Efectivo Anual Garantizado":
+                case Lang::get('reportReport.concept_concept_annual_cash'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case "Variable Anual":
+                case Lang::get('reportReport.variable_pay'):
                     $variableAnual = true;
                     $this->cargador($value, $itemArray, false);
                     $variableAnualEmp = $value["Empresa"];
                     break;
-                case "Total Adicional Anual":
+                case Lang::get('reportReport.concept_total_incentives'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case "Bono Anual":
+                case Lang::get('reportReport.concept_bonus'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case "Compensación Anual Total":
+                case Lang::get('reportReport.concept_total_comp'):
                     $this->cargador($value, $itemArray, false);
                     break;
             }
@@ -804,6 +887,7 @@ class ReporteController extends Controller
         }else{
             $compMedSal = 0;
         }
+
         if($itemArray[8] > 0){
             $comp75PercSal = round($salarioEmpresa/$itemArray[8] - 1, 2); 
         }else{
@@ -904,7 +988,7 @@ class ReporteController extends Controller
             // Salario Base y Anual
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base",
+                            Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
                             $salarioProm,
@@ -927,7 +1011,7 @@ class ReporteController extends Controller
             $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base Anual",
+                            Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
                             $salarioAnualProm,
@@ -949,7 +1033,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosGratif, 
-                            "Gratificación Anual Garantizada",
+                            Lang::get('reportReport.concept_annual_gratif.'),
                             $gratificacionMin,
                             $gratificacionMax,
                             $gratificacionProm,
@@ -971,7 +1055,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAguinaldo, 
-                            "Aguinaldo",
+                            Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
                             $aguinaldoProm,
@@ -1007,7 +1091,7 @@ class ReporteController extends Controller
                                                 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Anual Garantizado",
+                            Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,
@@ -1031,7 +1115,7 @@ class ReporteController extends Controller
  
             $this->pusher(  $collection, 
                             $casosAdicionalesBancos, 
-                            "Total Adicional Anual",
+                            Lang::get('reportReport.concept_total_incentives'),
                             $adicionalesMin * 12,
                             $adicionalesMax * 12,
                             $adicionalesProm * 12,
@@ -1054,7 +1138,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBono, 
-                            "Bono Anual",
+                            Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
                             $bonoProm,
@@ -1100,7 +1184,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Aguinaldo Impactado por Adicional, Gratificación y Bono",
+                            Lang::get('reportReport.concept_13month_impacted'),
                             $aguinaldoImpMin, 
                             $aguinaldoImpMax, 
                             $aguinaldoImpProm,
@@ -1139,7 +1223,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Anual Total",
+                            Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 
@@ -1162,7 +1246,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base",
+                            Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
                             $salarioProm,
@@ -1185,7 +1269,7 @@ class ReporteController extends Controller
             $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base Anual",
+                            Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
                             $salarioAnualProm,
@@ -1206,7 +1290,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAguinaldo, 
-                            "Aguinaldo",
+                            Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
                             $aguinaldoProm,
@@ -1241,7 +1325,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Anual Garantizado",
+                            Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,
@@ -1263,7 +1347,7 @@ class ReporteController extends Controller
             $countCasosPlus = $detalle->where('plus_rendimiento', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosPlus, 
-                            "Variable Anual",
+                            Lang::get('reportReport.concept_variable_pay'),
                             $plusMin,
                             $plusMax,
                             $plusProm,
@@ -1285,7 +1369,7 @@ class ReporteController extends Controller
             $countCasosAmarre = $detalle->where('adicional_amarre', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosAmarre, 
-                            "Adicional por Amarre",
+                            Lang::get('reportReport.concept_mooring'),
                             $amarreMin,
                             $amarreMax,
                             $amarreProm,
@@ -1308,7 +1392,7 @@ class ReporteController extends Controller
             $countCasosTipoCombustible = $detalle->where('adicional_tipo_combustible', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosTipoCombustible, 
-                            "Adicional por Tipo de Combustible",
+                            Lang::get('reportReport.concept_fuel_type'),
                             $TipoCombustibleMin,
                             $TipoCombustibleMax,
                             $TipoCombustibleProm,
@@ -1330,7 +1414,7 @@ class ReporteController extends Controller
             $countCasosEmbarque = $detalle->where('adicional_embarque', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosEmbarque, 
-                            "Adicional por Disponibilidad/Embarque",
+                            Lang::get('reportReport.concept_shipping'),
                             $embarqueMin,
                             $embarqueMax,
                             $embarqueProm,
@@ -1352,7 +1436,7 @@ class ReporteController extends Controller
             $countCasosCarga = $detalle->where('adicional_carga', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $countCasosCarga, 
-                            "Adicional por Carga",
+                            Lang::get('reportReport.concept_load'),
                             $cargaMin,
                             $cargaMax,
                             $cargaProm,
@@ -1391,7 +1475,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $casosAdicionales, 
-                            "Total Adicional Anual",
+                            Lang::get('reportReport.concept_total_incentives'),
                             $totalAdicionalMin,
                             $totalAdicionalMax,
                             $totalAdicionalProm,
@@ -1413,7 +1497,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBono, 
-                            "Bono Anual",
+                            Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
                             $bonoProm,
@@ -1450,7 +1534,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Total Anual",
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
                             $efectivoTotalProm,
@@ -1474,7 +1558,7 @@ class ReporteController extends Controller
             $casosBeneficiosNavieras = $detalle->where('beneficios_navieras', '>', '0')->unique('cabecera_encuesta_id')->count();
             $this->pusher(  $collection, 
                             $casosBeneficiosNavieras, 
-                            "Total Beneficios Anual",
+                            Lang::get('reportReport.concept_total_benefits'),
                             $beneficiosMin * 12,
                             $beneficiosMax * 12,
                             $beneficiosProm * 12,
@@ -1513,7 +1597,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Anual Total",
+                            Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 
@@ -1535,7 +1619,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base",
+                            Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
                             $salarioProm,
@@ -1558,7 +1642,7 @@ class ReporteController extends Controller
             $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Salario Base Anual",
+                            Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
                             $salarioAnualProm,
@@ -1579,7 +1663,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosGratif, 
-                            "Gratificación Anual Garantizada",
+                            Lang::get('reportReport.concept_annual_gratif.'),
                             $gratificacionMin,
                             $gratificacionMax,
                             $gratificacionProm,
@@ -1601,7 +1685,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAguinaldo, 
-                            "Aguinaldo",
+                            Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
                             $aguinaldoProm,
@@ -1644,7 +1728,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Anual Garantizado",
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,
@@ -1667,7 +1751,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosComision, 
-                            "Comisión Anual",
+                            Lang::get('reportReport.concept_annual_commission'),
                             $comisionMin*12,
                             $comisionMax*12,
                             $comisionProm*12,
@@ -1690,7 +1774,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosAdicionales, 
-                            "Total Adicional Anual",
+                            Lang::get('reportReport.concept_total_additional'),
                             $adicionalesMin * 12,
                             $adicionalesMax * 12,
                             $adicionalesProm * 12,
@@ -1712,7 +1796,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBono, 
-                            "Bono Anual",
+                            Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
                             $bonoProm,
@@ -1749,7 +1833,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Efectivo Total Anual",
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
                             $efectivoTotalProm,
@@ -1772,7 +1856,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasosBeneficios, 
-                            "Total Beneficios Anual",
+                            Lang::get('reportReport.concept_total_benefits'),
                             $beneficiosMin * 12,
                             $beneficiosMax * 12,
                             $beneficiosProm * 12,
@@ -1813,7 +1897,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            "Compensación Anual Total",
+                            Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
                             $totalCompAnualProm, 
@@ -2405,13 +2489,29 @@ class ReporteController extends Controller
             }
         });
 
-
-        return view('report.panel')->with('dbData', $dbData)->with('club', $club)->with('dbEmpresa', $dbEmpresa);
+        
+        return view('report.panel') ->with('dbData', $dbData)
+                                    ->with('club', $club)
+                                    ->with('locale', $this->getIdioma())
+                                    ->with('dbEmpresa', $dbEmpresa);
     }
 
     public function getCargos(Request $request){
         $id = $request->nivel_id;
-        $dbData = Cargo::orderBy('descripcion')->where('nivel_id', $id)->pluck('id', 'descripcion');
+        $empresa = Empresa::find($request->empresa_id);
+        
+        $cargosRubros = Cargos_rubro::where('rubro_id', $empresa->rubro_id)
+                                    ->pluck('cargo_id');
+        if($this->getIdioma() == "en"){
+            $dbData = Cargo_en::orderBy('descripcion')
+                                ->whereIn('id', $cargosRubros)
+                                ->pluck('id', 'descripcion');
+        }else{
+            $dbData = Cargo::orderBy('descripcion')
+                             ->whereIn('id', $cargosRubros)
+                             ->pluck('id', 'descripcion');
+        }
+       
 
         return $dbData;        
     }
@@ -2465,6 +2565,7 @@ class ReporteController extends Controller
     }
 
     private function cargoReportAll(Request $request, $tipo){
+        //dd($request->all());
         $dbEmpresa = Empresa::find($request->empresa_id);   // datos de la empresa del cliente
         if(Session::has('periodo')){
             $per = Session::get('periodo');
@@ -2478,9 +2579,17 @@ class ReporteController extends Controller
                                                ->first();
                 //dd($dbEncuesta, $request->periodo);
             }else{
-                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
-                                               ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
-                                               ->first();            
+                if($dbEmpresa->rubro_id == '1'){
+                    $per = '06/2017';
+                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                           ->whereRaw("periodo = '". $per."'")
+                                           ->first();
+                }else{
+                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                    ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
+                    ->first();
+                }
+                            
 
             }
         }
@@ -2488,8 +2597,13 @@ class ReporteController extends Controller
 
         $rubro = $dbEmpresa->rubro_id;      // rubro de la empresa del cliente
         // cargo oficial para el informe
-        $cargo = $request->cargo_id;        
-        $dbCargo = Cargo::find($cargo);  
+        $cargo = $request->cargo_id; 
+        if($this->getIdioma() == "es"){
+            $dbCargo = Cargo::find($cargo);
+        }else{
+            $dbCargo = Cargo_en::find($cargo);
+        }    
+          
         // empresas y cabeceras de encuestas de este periodo para empresas del rubro del cliente
         $dbEncuestadas = Cabecera_encuesta::where('periodo', $periodo)
                                           ->where('rubro_id', $rubro)
@@ -2681,47 +2795,9 @@ class ReporteController extends Controller
             $periodo = implode('_', explode('/', $periodo));
             $cargoFileName = str_replace("-", "_", str_replace(" ", "_", $dbCargo->descripcion));
             $filename = 'Resultados_'.$periodo.'_'.$cargoFileName;
-            $detalleUniverso = array();
-            $detalleNacional = array();
-            $detalleInternacional = array();
-            foreach ($universo as $value) {
-                $detalleUniverso[] = array( "Concepto"=>$value["concepto"], 
-                                            "Casos"=>$value["casos"], 
-                                            "Min"=>$value["min"], 
-                                            "25 Percentil"=>$value["per25"], 
-                                            "Promedio"=>$value["prom"], 
-                                            "Mediana"=>$value["med"], 
-                                            "75 Percentil"=>$value["per75"], 
-                                            "Max"=>$value["max"], 
-                                            "Empresa"=>$value["empresa"] 
-                                          );
-            }
-            foreach ($nacional as $value) {
-                $detalleNacional[] = array( "Concepto"=>$value["concepto"], 
-                                            "Casos"=>$value["casos"], 
-                                            "Min"=>$value["min"], 
-                                            "25 Percentil"=>$value["per25"], 
-                                            "Promedio"=>$value["prom"], 
-                                            "Mediana"=>$value["med"], 
-                                            "75 Percentil"=>$value["per75"], 
-                                            "Max"=>$value["max"], 
-                                            "Empresa"=>$value["empresa"] 
-                                          );
-            }
-
-            foreach ($internacional as $value) {
-                $detalleInternacional[] = array( "Concepto"=>$value["concepto"], 
-                                            "Casos"=>$value["casos"], 
-                                            "Min"=>$value["min"], 
-                                            "25 Percentil"=>$value["per25"], 
-                                            "Promedio"=>$value["prom"], 
-                                            "Mediana"=>$value["med"], 
-                                            "75 Percentil"=>$value["per75"], 
-                                            "Max"=>$value["max"], 
-                                            "Empresa"=>$value["empresa"] 
-                                          );
-            }
-
+            $detalleUniverso = $this->segmentArrayFactory($universo);
+            $detalleNacional = $this->segmentArrayFactory($nacional);
+            $detalleInternacional = $this->segmentArrayFactory($internacional);
 
             Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional ) {
                 $excel->sheet("universo", function($sheet) use($detalleUniverso){
@@ -2786,11 +2862,35 @@ class ReporteController extends Controller
             $resultado = collect([  
                                     "detalle_universo"=> $detalleUniverso, 
                                     "detalle_nacional"=> $detalleNacional, 
-                                    "detalleInternacional"=>$detalleInternacional]);
+                                    "detalleInternacional"=>$detalleInternacional
+                                ]);
 
             return $resultado;         
         }
+
     }
 
+    private function segmentArrayFactory($segmentArray){
+        foreach ($segmentArray as $value) {
 
+            $response[] = array(    Lang::get('reportReport.table_concepts')  => $value["concepto"], 
+                                    Lang::get('reportReport.table_occupants') => $value["casos"],
+                                    Lang::get('reportReport.table_cases')     => $value["casos"], 
+                                    Lang::get('reportReport.table_min')       => $value["min"], 
+                                    Lang::get('reportReport.table_perc25')    => $value["per25"], 
+                                    Lang::get('reportReport.table_average')   => $value["prom"], 
+                                    Lang::get('reportReport.table_median')    => $value["med"], 
+                                    Lang::get('reportReport.table_perc75')    => $value["per75"], 
+                                    Lang::get('reportReport.table_max')       => $value["max"], 
+                                    Lang::get('reportReport.table_company')   => $value["empresa"] 
+                                );
+        }
+
+        return $response;
+    }
+    
+    private function getIdioma(){
+        return $locale = app()->getLocale();
+    } 
+            
 }

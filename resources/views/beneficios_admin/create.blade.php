@@ -24,7 +24,7 @@
 					<div class="row">
 						<div class="input-field col s6">
 							<input type="text" class="validate" id="periodo" name="periodo"/>
-							<label for="fec_ini">Periodo</label>
+							<label for="periodo">Periodo</label>
 						</div>
 					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />

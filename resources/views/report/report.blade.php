@@ -16,11 +16,11 @@
 				<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
 			<input type="hidden" name="periodo" value="{{$periodo}}"/>
 				<button class="btn waves-effect waves-light lighten-1 white-text" type="submit" name="submit">
-					<i class="material-icons left">add</i>Excel
+					<i class="material-icons left">cloud_download</i>Excel
 				</button>
 			</form>		
 		</div>
-		<div class="col s2" data-intro="<p class='intro-title'><strong>MONEDA DE VISUALIZACION</strong></p>Click para cambiar la visualización en moneda local o Dólares Americanos" data-step="18">
+		<div class="col s3" data-intro="<p class='intro-title'><strong>MONEDA DE VISUALIZACION</strong></p>Click para cambiar la visualización en moneda local o Dólares Americanos" data-step="18">
 			<form id="filter_form" action="{{route('reportes.cargos')}}" method="POST">
 				@if ($convertir)
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
@@ -29,7 +29,7 @@
 					<input type="hidden" name="moneda" value="local"/>
 					<input type="hidden" name="periodo" value="{{$periodo}}"/>
 					<button class="btn waves-effect waves-light lighten-1 red white-text" type="submit" name="submitFilter" id="submitFilter">
-						<i class="material-icons left">monetization_on</i>Ver en Gs.
+						<i class="material-icons left">monetization_on</i>@lang('reportReport.button_currency_gs')
 					</button>
 				@else
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
@@ -38,63 +38,44 @@
 					<input type="hidden" name="moneda" value="extranjera"/>
 					<input type="hidden" name="periodo" value="{{$periodo}}"/>
 					<button class="btn waves-effect waves-light lighten-1 red white-text" type="submit" name="submitFilter" id="submitFilter">
-						<i class="material-icons left">monetization_on</i>Ver en U$D
+						<i class="material-icons left">monetization_on</i>@lang('reportReport.button_currency_us')
 					</button>
 
 				@endif
+			</form>
 		</div>
 		<div class="col s12">
 			<h4>{{$dbCargo->descripcion}}</h4>
 			@if ($convertir)
-				<p style="color: red;">Los montos están en Dólares Americanos</p>
+				<p style="color: red;">@lang('reportReport.p_currency_us')</p>
 			@else
-				<p style="color: red;">Los montos están en miles de Guaraníes</p>
+				<p style="color: red;">@lang('reportReport.p_currency_gs')</p>
 			@endif
 			
 			<div class="row">
 				<ul class="tabs teal lighten-5">
 					<li class="tab col s3" data-intro="<p class='intro-title'><strong>UNIVERSO</strong></p>Se observan los resultados del cargo en todos los segmentos" data-step="13">
 						<a href="#universo">
-							Universo
+							@lang('reportReport.label_tab_universe')
 						</a>
 					</li>
 					<li class="tab col s3" data-intro="<p class='intro-title'><strong>UNIVERSO</strong></p>Se observan los resultados del cargo en el segmento nacional" data-step="14">
 						<a href="#nacional">
-							Nacional
+							@lang('reportReport.label_tab_national')
 						</a>
 					</li>					
 					<li class="tab col s3" data-intro="<p class='intro-title'><strong>UNIVERSO</strong></p>Se observan los resultados del cargo en el segmento internacional" data-step="15">
 						<a href="#internacional">
-							Internacional
+							@lang('reportReport.label_tab_international')
 						</a>
 					</li>					
-
 				</ul>
 				<div class="browser-window" id="universo">
-					<div class="top-bar">
-	                  <h6>UNIVERSO DEL SEGMENTO</h6>
-	                </div>
 	                <div class="content">
 	                	<table id="listado-universo" class="highlight">
 	                		<thead>
-		                      <tr>
-		                      	 <th>Conceptos</th>
-		                      	 <th>Casos</th>
-		                      	 <th>Ocupantes</th>
-		                      	 <th>Mínimo</th>
-		                      	 <th>25 Perc.</th>
-		                      	 <th>Promedio</th>
-		                      	 <th>Mediana</th>
-		                      	 <th>75 Perc.</th>
-		                      	 <th>Máximo</th>
-		                      	 <th>{{$dbEmpresa->descripcion}}</th>
-								 <th>Comparación Promedio</th>
-		                      	 <th>Comparación Mediana</th>
-		                      	 <th>Comparación 75 Percentil</th>
-		                      	 <th>Comparación Máximo</th>
-		                      	 <th style="display: none;"></th>
-		                      </tr>
-		                    </thead>
+								@include('includes.report_table_headers')
+							</thead>
 			                <tbody>
 			                	@foreach ($universo as $item)
 		                    		<tr>
@@ -213,45 +194,27 @@
 		                    </tbody>
 		                </table>
 						<div class="col s4" id="salario-universo" data-step="17" data-intro="<p class='intro-title'><strong>GRAFICOS COMPARATIVOS</strong></p>Gráficos comparativos de su cargo vs. mercado">
-							<h5>Salario Base</h5>
+							<h5>@lang('reportReport.chart_salary')</h5>
 							<canvas id="salario-base"></canvas>
 						</div>
 						<div class="col s4" id="efectivo-universo" >
-							<h5>Efectivo Anual Garantizado</h5>
+							<h5>@lang('reportReport.chart_annual_cash')</h5>
 							<canvas id="efectivo-anual"></canvas>
 						</div>
 						<div class="col s4" id="compensacion-universo" >
-							<h5>Compensación Anual Total</h5>
+							<h5>@lang('reportReport.chart_total_comp')</h5>
 							<canvas id="compensacion-anual"></canvas>
 						</div>
 					</div>
 
 				</div>
 				<div class="browser-window" id="nacional">
-					<div class="top-bar">
-	                  <h6>SEGMENTO NACIONAL</h6>
-	                </div>
 	                <div class="content">
 	                	<table id="listado-nacional" class="highlight">
 	                		<thead>
-		                      <tr>
-		                      	 <th>Conceptos</th>
-		                      	 <th>Casos</th>
-		                      	 <th>Ocupantes</th>
-		                      	 <th>Mínimo</th>
-		                      	 <th>25 Perc.</th>
-		                      	 <th>Promedio</th>
-		                      	 <th>Mediana</th>
-		                      	 <th>75 Perc.</th>
-		                      	 <th>Máximo</th>
-		                      	 <th>Su Empresa</th>
-								<th>Comparación Promedio</th>
-		                      	 <th>Comparación Mediana</th>
-		                      	 <th>Comparación 75 Percentil</th>
-		                      	 <th>Comparación Máximo</th>
-		                      	 <th style="display: none;"></th>
-
-		                      	 </tr>
+		                    	<tr>
+		                      	 	@include('includes.report_table_headers')
+		                      	</tr>
 		                    </thead>
 		                    <tbody>
 			                	@foreach ($nacional as $item)
@@ -372,43 +335,26 @@
 		                    </tbody>
 		                </table>
 						<div class="col s4" id="salario-nacional">
-							<h5>Salario Base</h5>
+							<h5>@lang('reportReport.chart_salary')</h5>
 							<canvas id="salario-base-nacional"></canvas>
 						</div>
 						<div class="col s4" id="efectivo-nacional">
-							<h5>Efectivo Anual Garantizado</h5>
+							<h5>@lang('reportReport.chart_annual_cash')</h5>
 							<canvas id="efectivo-anual-nacional"></canvas>
 						</div>
 						<div class="col s4" id="compensacion-nacional">
-							<h5>Compensación Anual Total</h5>
+							<h5>@lang('reportReport.chart_total_comp')</h5>
 							<canvas id="compensacion-anual-nacional"></canvas>
 						</div>
 
 	                </div>
 				</div>
 				<div class="browser-window" id="internacional">
-					<div class="top-bar">
-	                  <h6>SEGMENTO INTERNACIONAL</h6>
-	                </div>
 	                <div class="content">
 	                	<table id="listado-internacional" class="highlight">
 	                		<thead>
-		                      <tr>
-		                      	 <th>Conceptos</th>
-		                      	 <th>Casos</th>
-		                      	 <th>Ocupantes</th>
-		                      	 <th>Mínimo</th>
-		                      	 <th>25 Perc.</th>
-		                      	 <th>Promedio</th>
-		                      	 <th>Mediana</th>
-		                      	 <th>75 Perc.</th>
-		                      	 <th>Máximo</th>
-		                      	 <th>Su Empresa</th>
-								<th>Comparación Promedio</th>
-		                      	 <th>Comparación Mediana</th>
-		                      	 <th>Comparación 75 Percentil</th>
-		                      	 <th>Comparación Máximo</th>
-								 <th style="display: none;"></th>
+		                      	<tr>
+		                      		@include('includes.report_table_headers')
 		                      	</tr>
 		                    </thead>
 		                    <tbody>
@@ -529,23 +475,37 @@
 		                    </tbody>
 		                </table>
 						<div class="col s4" id="salario-internacional">
-							<h5>Salario Base</h5>
+							<h5>@lang('reportReport.chart_salary')</h5>
 							<canvas id="salario-base-internacional"></canvas>
 						</div>
 						<div class="col s4" id="efectivo-internacional">
-							<h5>Efectivo Anual Garantizado</h5>
+							<h5>@lang('reportReport.chart_annual_cash')</h5>
 							<canvas id="efectivo-anual-internacional"></canvas>
 						</div>
 						<div class="col s4" id="compensacion-internacional">
-							<h5>Compensación Anual Total</h5>
+							<h5>@lang('reportReport.chart_total_comp')</h5>
 							<canvas id="compensacion-anual-internacional"></canvas>
 						</div>
-
 	                </div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<form id="locale_es_form" action="{{route('reportes.cargos')}}" method="POST">
+			<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+			<input type="hidden" name="empresa_id" value="{{$dbEmpresa->id}}"/>
+			<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
+			<input type="hidden" name="periodo" value="{{$periodo}}"/>
+			<input type="hidden" name="locale" value="es">
+	</form>
+	<form id="locale_en_form" action="{{route('reportes.cargos')}}" method="POST">
+			<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+			<input type="hidden" name="empresa_id" value="{{$dbEmpresa->id}}"/>
+			<input type="hidden" name="cargo_id" value="{{$dbCargo->id}}"/>
+			<input type="hidden" name="periodo" value="{{$periodo}}"/>
+			<input type="hidden" name="locale" value="en">
+	</form>
+	
 @stop
 @push('scripts')
 	<script type="text/javascript">
@@ -597,7 +557,25 @@
 		$("#submitFilter").click(function(){
 			$("#filter_form").submit();
 		});
+			
+		$("#lang_switch_es").click(function(e){
+			e.preventDefault();
+			var url = "{{route('switch.lang.report', 'es')}}";
+			$.get(url, function(){
+				$("#filter_form").submit();
+			});
+			
+			
+		});
 
+		$("#lang_switch_en").click(function(e){
+			e.preventDefault();
+			var url = "{{route('switch.lang.report', 'en')}}";
+			$.get(url, function(){
+				$("#filter_form").submit();
+			});
+			
+		});
 		function calculation(element){
 			//var table = $("#listado-universo");
 			var table = element;
@@ -679,33 +657,30 @@
 
 
 			}
-			if(label == "Salario Base"){
+			if(label == "Salario Base" || label == "Monthly Base Salary"){
 				if(value > 0){
-					$(divSalario).html('<h5>Salario Base</h5><canvas id="'+divChartSalario+'"></canvas>');
+					$(divSalario).html(`<h5>${label}</h5><canvas id="${divChartSalario}"></canvas>`);
 					chart(promedio, per75, max, value, itemSalario);	
 				}else{
 					$(divSalario).empty();
 				}
 				
-			}else if(label == "Efectivo Anual Garantizado"){
+			}else if(label == "Efectivo Anual Garantizado" || label == "Annual Guaranteed Cash"){
 				if(value > 0){
-					$(divEfectivo).html('<h5>Efectivo Anual Garantizado</h5><canvas id="'+divChartEfectivo+'"></canvas>');
+					$(divEfectivo).html(`<h5>${label}</h5><canvas id="${divChartEfectivo}"></canvas>`);
 					chart(promedio, per75, max, value, itemEfectivo);
 				}else{
 					$(divEfectivo).empty();
 				}
-			}else if(label == "Compensación Anual Total" || label == "Compensación Efectiva Anual Total"){
+			}else if(label == "Compensación Anual Total" || label == "Compensación Efectiva Anual Total" ||
+					 label == "Annual Total Compensation"){
 				if(value > 0){
-					$(divCompensacion).html('<h5>Compensación Anual Total</h5><canvas id="'+divChartCompensacion+'"></canvas>');
+					$(divCompensacion).html(`<h5>${label}</h5><canvas id="${divChartCompensacion}"></canvas>`);
 					chart(promedio, per75, max, value, itemCompensacion);
 				}else{
 					$(divCompensacion).empty();	
 				}
 			}
-
-
-			
-
 		}
 
 		function chart(prom, perc, max, empresa, item){

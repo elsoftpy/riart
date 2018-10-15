@@ -13,6 +13,10 @@
 
 Route::get('/', 'PollController@home')->name('home.page');
 Route::get('/home', 'HomeController@index')->name('home');
+// Languages
+Route::get('lang/{lang}', ['as' => 'lang.switch', 'uses' => 'LanguageController@switchLang']);
+
+Route::get('lang_report/{lang}', 'LanguageController@switchLangReport')->name('switch.lang.report');
 
 Route::group(["middleware"=>"auth"], function(){
 	

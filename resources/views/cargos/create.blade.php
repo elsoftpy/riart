@@ -10,7 +10,7 @@
 					<div class="row">
 						<div class="input-field col s12">
 							<input id="descripcion" type="text" class="validate" name="descripcion" >
-							<label for="nombres">Descripción</label>
+							<label for="descripcion">Cargo (En español)</label>
 						</div>					
 					</div>
 					<div class="row">
@@ -34,16 +34,40 @@
 						</div>																	
 					</div>
 					<div class="row">
-						<div class="input-field">
-							<label for="detalle" id="label-detalle">Descripción del Cargo</label>
+						<div class="input-field col s12">
+							<label for="detalle" id="label-detalle">Descripción del Cargo (en español)</label>
 							<textarea name="detalle" id="detalle" class="materialize-textarea"></textarea> 
 						</div>
 					</div>
 					<div class="row">
-						<input name="is_temporal" id="is_temporal" value="0" type="checkbox" class="with-gap"  />
-						<label for="is_temporal">Temporal</label>
+						<label>
+							<input name="is_temporal" id="is_temporal" value="0" type="checkbox" class="filled-in"  />
+							 <span>Temporal</span>
+						</label>
 					</div> 
-
+					<div class="row">
+						<div class="input-field col s12">
+							<input id="descripcion_en" type="text" class="validate" name="descripcion_en" >
+							<label for="descripcion_en">Cargo (en inglés)</label>
+						</div>					
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<label for="detalle_en" id="label-detalle_en">Descripción del Cargo (en inglés)</label>
+							<textarea name="detalle_en" id="detalle_en" class="materialize-textarea"></textarea> 
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s12">
+							<select id="rubros"  name="rubros[]" multiple>
+								@foreach ($dbRubros as $id => $descripcion)
+									<option value = {{$id}}>{{$descripcion}}</option>	
+								@endforeach
+											
+							</select>
+							<label for="rubros" class="active">Rubros (para los que aplica el cargo)</label>
+						</div>
+					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar
     					<i class="material-icons left">save</i>

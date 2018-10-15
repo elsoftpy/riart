@@ -9,12 +9,11 @@
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
                         {{ csrf_field() }}
-
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <div class="input-field col-md-6">
                                 <input id="username" type="text" class="validate" name="username" value="{{ old('username') }}" required autofocus/>
 
-                                <label for="username" class="col-md-4 control-label">Usuario</label>                                
+                                <label for="username" class="col-md-4 control-label">@lang('auth.user_label')</label>                                
                                 @if ($errors->has('username'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('username') }}</strong>
@@ -26,7 +25,7 @@
                         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                             <div class="input-field col-md-6">
                                 <input id="password" type="password" class="form-control" name="password" required/>
-                                <label for="password" class="col-md-4 control-label">Password</label>
+                                <label for="password" class="col-md-4 control-label">@lang('auth.password_label')</label>
                                 @if ($errors->has('password'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('password') }}</strong>
@@ -49,7 +48,8 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div>    
     </div>
 </div>
 @endsection
+

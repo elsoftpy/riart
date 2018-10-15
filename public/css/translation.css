@@ -1,0 +1,45 @@
+
+	.language-switch-tooltip {
+		position: fixed;
+		right: 85px;
+		padding:0px 0.5rem;
+		text-align: right;
+		background-color: #323232;
+		border-radius: 2px;
+		color: #FFF;
+		width:auto;
+	}
+
+	/* metodolodgia style */
+	.section-metodologia ol{
+		font-weight: bold;
+	}
+
+	.metodologia-parrafo{
+		margin-top: 1em;
+		font-weight: 400 !important;
+	}
+
+	.bold{
+		font-weight: bold;
+	}
+
+	.normal{
+		font-weight: 400 !important;
+	}
+
+	.underlined{
+		text-decoration: underline;
+	}
+
+	.indented{
+		padding-left: 2em;
+	}
+
+	.conceptos_estadisticos{
+		padding-left: 2em;
+	}
+
+	.conceptos_estadisticos strong{
+		font-weight: 700;
+	}

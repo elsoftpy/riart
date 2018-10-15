@@ -26,4 +26,8 @@ class Cargo extends Model
     	return $this->belongsTo("App\Nivel");
     }
 
+    public function cargoEn(){
+        return $this->hasOne('App\Cargo_en', 'id', 'id');
+    }
+
 }

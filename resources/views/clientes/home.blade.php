@@ -11,12 +11,12 @@
 	        		<thead>
 	                  <tr>
 	                  	 <th>Id</th>
-	                  	 <th>Descripcion</th>
-	                  	 <th>Rubro</th>
-	                  	 <th>Segmento</th>
-	                  	 <th>Nro. Suc.</th>
-	                  	 <th>Nro. Emp.</th>
-	                  	 <th>Origen</th>
+	                  	 <th>@lang('homepage.table_description')</th>
+	                  	 <th>@lang('homepage.table_club')</th>
+	                  	 <th>@lang('homepage.table_segment')</th>
+	                  	 <th>@lang('homepage.table_branches')</th>
+	                  	 <th>@lang('homepage.table_headcount')</th>
+	                  	 <th>@lang('homepage.table_origin')</th>
 	                  	 <th></th>
 						 <th></th>
 	                  </tr>
@@ -38,23 +38,23 @@
                     		</td>
                     		<td>
                     			<a href="{{ route('cargos_clientes.show', $dbEmpresa->id) }}" class="btn waves-light waves-effect white-text" style="margin-bottom: 1em;" data-intro="<p class='intro-title'><strong>LISTAR LOS CARGOS</strong></p> Click para acceder a su listado de cargos y a la </br> información de los mismos." data-step="2">
-                    				<i class="material-icons left">list</i>Listar
+                    				<i class="material-icons left">list</i>@lang('homepage.button_list')
                     			</a>
                     			<a href="{{ route('empresas.edit', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" data-step="7" data-intro="<p class='intro-title'><strong>EDITAR</strong></p> Función que permite la modificación de los datos de su empresa/banco." data-position="left">
-                    				<i class="material-icons left">edit</i>Editar
+                    				<i class="material-icons left">edit</i>@lang('homepage.button_edit')
                     			</a><br/>
                     			@if($dbEmpresa->rubro_id == 4)
                         			<a href="#" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" id="select_encuesta" data-step="8" data-intro="<p class='intro-title'><strong>REPORTE - RESULTADO</strong></p>Contiene información del mercado investigado: </br> podrá acceder a búsquedas por niveles de cargo y visualizar los resultados por cargo, permite la exportación de todos los cargos de su organizacion y del mercado a Excel." data-position="left">
-                    					<i class="material-icons left">dashboard</i>Reportes
+                    					<i class="material-icons left">dashboard</i>@lang('homepage.button_report')
                     				</a>                    			
                     			@else
 	                    			<a href="{{ route('encuestas.show', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" data-step="8" data-intro="<p class='intro-title'><strong>REPORTE - RESULTADO</strong></p>Contiene información del mercado investigado: </br> podrá acceder a búsquedas por niveles de cargo y visualizar los resultados por cargo, permite la exportación de todos los cargos de su organizacion y del mercado a Excel." data-position="left">
-	                    				<i class="material-icons left">dashboard</i>Reportes
+	                    				<i class="material-icons left">dashboard</i>@lang('homepage.button_report')
 	                    			</a>                    			
                     			@endif
 
 								<a href="{{ route('encuestas.update', $dbEncuesta->id) }}" class="btn waves-effect waves-light lighten-1 red white-text" style="margin-bottom: 1em;" onclick="update_row({{$dbEncuesta->id}})" data-step="29" data-intro="<p class='intro-title'><strong>FINALIZAR</strong></p>Realizar click cuando haya finalizado la carga de todos los cargos. No admite posteriores ediciones para el periodo.">
-									<i class="material-icons left">exit_to_app</i>Finalizar
+									<i class="material-icons left">exit_to_app</i>@lang('homepage.button_done')
 								</a>
 								<form id="update-form{{$dbEncuesta->id}}" action="{{ route('encuestas.update', $dbEncuesta->id) }}" method="POST" style="display: none;">
 					                {{ csrf_field() }}
@@ -70,7 +70,7 @@
 	</div>
 	<div class="modal" id="modal-options">
 		<div class="modal-content">
-			<h5>Eligir Encuesta</h5>
+			<h5> @lang('homepage.modal_survey') </h5>
 			@if($dbEncuestaAnt)
 				<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
 					{{$dbEncuestaAnt->periodo}}
@@ -83,7 +83,7 @@
 			@endif
 		</div>
 		<div class="modal-footer">
-			<a class="waves-light waves-effect btn " id="close-modal">Cerrar</a>
+			<a class="modal-close waves-light waves-effect btn " id="close-modal">@lang('homepage.modal_button_close')</a>
 		</div>
 	</div>
 

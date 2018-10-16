@@ -121,7 +121,7 @@ class FileAttachmentController extends Controller
     public function getPeriodosAjax(Request $request){
         
         $periodos = $this->getPeriodos($request->rubro_id);
-        
+        session(['delete_failed'=>"true"]);
         return $periodos;
     }
 

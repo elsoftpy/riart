@@ -69,8 +69,15 @@
 						"info": "Page _PAGE_ of _PAGES_",
 						"infoEmpty": "No records found",
 						"infoFiltered": "(Filtered out of _MAX_ rows)",
-						"search": "Search"        
+						"search": "Search",
+						"paginate":{
+							"first": "First",
+							"last": "Last",
+							"next": "Next",
+							"previous": "Previous",
+						},        
 					}
+					
 				});
 			}
 		   

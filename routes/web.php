@@ -124,6 +124,10 @@ Route::group(["middleware"=>"auth"], function(){
 
 	Route::resource('admin_ficha', 'FichasController');
 
+	Route::resource('areas', 'AreasController');
+
+	Route::resource('niveles', 'NivelesController');
+
 
 });
 

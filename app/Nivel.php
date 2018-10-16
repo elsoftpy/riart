@@ -13,4 +13,8 @@ class Nivel extends Model
     public function detalleEncuestas(){
     	return $this->hasMany("App\Detalle_encuesta");
     }
+
+    public function nivelEn(){
+        return $this->hasOne('App\Nivel_en', 'id' , 'id');
+    }
 }

@@ -13,4 +13,8 @@ class Area extends Model
     public function detalleEncuestas(){
     	return $this->hasMany("App\Detalle_encuesta");
     }
+
+    public function areaEn(){
+        return $this->hasOne('App\Area_en', 'id' , 'id');
+    }
 }

@@ -71,7 +71,10 @@
                             <a href="{{ route('admin_ficha.index') }}">Ficha</a>
                           </li>
                           <li>
-                          <a href="{{ route('file_attachment') }}">Attachment</a>
+                          <a href="{{ route('areas.index') }}">Areas</a>
+                          </li>
+                          <li>
+                            <a href="{{ route('niveles.index') }}">Niveles</a>
                           </li>                        
                           <li>  
                             <a href="{{ route('cargos.index') }}">Cargos Oficiales</a>
@@ -82,17 +85,21 @@
                               <i class="material-icons right">arrow_drop_down</i>
                             </a>
                           </li>
+                         
+
+                        </ul>
+                      </div>
+                      <div class="row">
+                        <ul class="right hide-on-med-and-down">
+                          <li>
+                             <a href="{{ route('file_attachment') }}">Attachment</a>
+                          </li>
                           <li>
                               <a href="#!" class="dropdown-trigger" data-target="dropdown3">
                                 Beneficios
                                 <i class="material-icons right">arrow_drop_down</i>
                               </a>
                           </li> 
-
-                        </ul>
-                      </div>
-                      <div class="row">
-                        <ul class="right hide-on-med-and-down">
                           <li>
                             <a href="#!" class="dropdown-trigger" data-target="dropdown2">
                               <i class="material-icons left">account_circle</i> 

@@ -3,46 +3,41 @@
 @section('content')
 	<div class="row">
 		<div class="col l4">
-			<a href="{{ route('cargos.create') }}" class="btn waves-effect waves-light lighten-1 white-text"><i class="material-icons left">add</i>Cargo</a>
+			<a href="{{ route('areas.create') }}" class="btn waves-effect waves-light lighten-1 white-text"><i class="material-icons left">add</i>Area</a>
 		</div>
 	</div>	
 		<div class="row">
 			<div class="browser-window">
 				<div class="top-bar">
-                  <h4>Listado de Cargos</h4>
+                  <h4>Listado de Areas</h4>
                 </div>
                 <div class="content">
                 	<table id="Listado" class="highlight">
                 		<thead>
-	                      	<tr>
-	                      	 	<th>Id</th>
-	                      	 	<th>Descripción</th>
-								<th>Descripción (en inglés)</th>   
+	                    	<tr>
+								<th>Id</th>
+								<th>Descripción</th>
+								<th>Descripción (Inglés)</th>
 								<th>Opciones</th>
-	                      	</tr>
+	                    	</tr>
 	                    </thead>
 	                    <tbody>
 	                    	@foreach($dbData as $est) 
 	                    		<tr>
 		                    		<td>{{ $est->id }}</td>
 									<td>{{ $est->descripcion }}</td>
-									<td>{{ $est->cargoEn->descripcion }}</td>
-		                    		<td><a href="{{ route('cargos.edit', $est->id) }}" class="btn waves-light waves-effect lighten-1 white-text ">
+									<td>{{ $est->areaEn->descripcion }}</td>
+		                    		<td><a href="{{ route('areas.edit', $est->id) }}" class="btn waves-light waves-effect lighten-1 white-text ">
 		                    			<i class="material-icons left">edit</i>Editar
 		                    			</a>
-										@if(!$est->cargosRubro->count() && !$est->encuestasCargo->count())
-										<a href="{{ route('cargos.destroy', $est->id) }}" class="btn waves-light waves-effect lighten-1 red white-text" onclick="delete_row({{$est->id}})">
+										
+										<a href="{{ route('areas.destroy', $est->id) }}" class="btn waves-light waves-effect lighten-1 red white-text" onclick="delete_row({{$est->id}})">
 		                    			<i class="material-icons left">delete</i>Borrar
 		                    			</a>		                    			
-										<form id="delete-form{{$est->id}}" action="{{ route('cargos.destroy', $est->id) }}" method="POST" style="display: none;">
+										<form id="delete-form{{$est->id}}" action="{{ route('areas.destroy', $est->id) }}" method="POST" style="display: none;">
 				                            {{ csrf_field() }}
 				                            {{ method_field('DELETE') }}
-				                        @else
-											<a href="{{ route('cargos.destroy', $est->id) }}" class="btn disabled waves-light waves-effect lighten-1 red white-text ">
-			                    			<i class="material-icons left">delete</i>Borrar
-			                    			</a>		                    			
-
-				                        @endif
+				                        
 				                        </form>                    			
 		                    		</td>
 	                    		</tr>
@@ -52,6 +47,10 @@
                 </div>
 			</div>
 		</div>
+		@if($toast)
+			<div id="toast"></div>
+		@endif
+		
 @endsection
 @push('scripts')
 	<script type="text/javascript">
@@ -80,6 +79,9 @@
 	    	});
    		});
 
+		if($("#toast").length > 0){
+			M.toast({html: 'Error al borrar el Registro'});	
+		}
 
 		function delete_row(row){
 			event.preventDefault(); 

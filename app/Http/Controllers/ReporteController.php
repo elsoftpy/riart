@@ -75,25 +75,13 @@ class ReporteController extends Controller
         $club = $this->club($empresa->rubro_id);
         $rubro = $empresa->rubro_id;
         $locale = $this->getIdioma();
-        //dd($club, $empresa->rubro_id);
-        /*switch ($rubro) {
-            case 1:
-                $imagen = "images/caratula-bancos.PNG";
-                break;
-            case 2:
-                $imagen = "images/caratula-agro_ok.PNG";
-                break;
-            case 4:
-                $imagen = "images/caratula-naviera.PNG";
-                break;
-            case 3:
-                $imagen = "images/caratula-autos.PNG";
-                break;
-            default:
-                $imagen = "images/caratula-autos.PNG";
-                break;
-        }*/
+
         $imagen = $this->club($empresa->rubro_id, true);
+
+        if($id == '95'){
+            $imagen = "images/ccfc-caratula.PNG";
+        }
+
 
         return view('report.home')->with('dbEmpresa', $id)
                                   ->with('imagen', $imagen)
@@ -122,7 +110,8 @@ class ReporteController extends Controller
                     break;
                 case 6:
                     $imagen = "images/caratula-bancos.PNG";
-                    $clue = "Non Governmental Organizations";
+                    $club = "Non Governmental Organizations";
+                    break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "de Bancos";
@@ -148,7 +137,8 @@ class ReporteController extends Controller
                     break;
                 case 6:
                     $imagen = "images/caratula-bancos.PNG";
-                    $clue = "- Organizaciones No Gubernamentales";
+                    $club = "- Organizaciones No Gubernamentales";
+                    break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "de Bancos";
@@ -292,13 +282,18 @@ class ReporteController extends Controller
     {
         $empresa = Empresa::find($id);
         $cargosRubros = Cargos_rubro::where('rubro_id', $empresa->rubro_id)->pluck('cargo_id');
+        $nivelesId = array();
+        foreach($cargosRubros as $cargoId){
+            $cargo = Cargo::find($cargoId);
+            $nivelesId[] = $cargo->nivel_id;
+        }
         if($this->getIdioma() == "en"){
-            $dbNiveles = Nivel_en::pluck('descripcion', 'id');
+            $dbNiveles = Nivel_en::whereIn('id', $nivelesId)->pluck('descripcion', 'id');
             $dbCargos = Cargo_en::orderBy('descripcion')
                                 ->whereIn('id', $cargosRubros)
                                 ->pluck('descripcion', 'id');
         }else{
-            $dbNiveles = Nivel::pluck('descripcion', 'id');
+            $dbNiveles = Nivel::whereIn('id', $nivelesId)->pluck('descripcion', 'id');
             $dbCargos = Cargo::orderBy('descripcion')
                              ->whereIn('id', $cargosRubros)
                              ->pluck('descripcion', 'id');
@@ -323,6 +318,7 @@ class ReporteController extends Controller
         $empresasId = Empresa::where('rubro_id', $rubro)->pluck('id');
         $encuestasRubro = Cabecera_encuesta::whereIn('empresa_id', $empresasId)->where('periodo', $periodo)->pluck('id');
         $encuestasCargos = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestasRubro)->whereNotNull('cargo_id')->get();
+        
         $cargosEmpresas = collect();
         foreach ($encuestasCargos as $encuestaCargo) {
             if($encuestaCargo->detalleEncuestas){
@@ -332,7 +328,10 @@ class ReporteController extends Controller
             }
         }
 
+        
+
         $groupedCargosEmpresas = $cargosEmpresas->groupBy('cargo');
+        
         $cargosIds = $groupedCargosEmpresas->map(function($item, $key){
             if($item->groupBy('empresa')->count() > 1){
                 return $key;
@@ -2502,13 +2501,16 @@ class ReporteController extends Controller
         
         $cargosRubros = Cargos_rubro::where('rubro_id', $empresa->rubro_id)
                                     ->pluck('cargo_id');
+
         if($this->getIdioma() == "en"){
             $dbData = Cargo_en::orderBy('descripcion')
                                 ->whereIn('id', $cargosRubros)
+                                ->where('nivel_id', $id)
                                 ->pluck('id', 'descripcion');
         }else{
             $dbData = Cargo::orderBy('descripcion')
                              ->whereIn('id', $cargosRubros)
+                             ->where('nivel_id', $id)
                              ->pluck('id', 'descripcion');
         }
        
@@ -2580,7 +2582,7 @@ class ReporteController extends Controller
                 //dd($dbEncuesta, $request->periodo);
             }else{
                 if($dbEmpresa->rubro_id == '1'){
-                    $per = '06/2017';
+                    $per = '06/2018';
                     $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                            ->whereRaw("periodo = '". $per."'")
                                            ->first();

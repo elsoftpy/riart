@@ -8,20 +8,23 @@
 	        <div class="content">
 				<form class="col s12" id="realForm" action="{{route('encuestas.storeNew')}}" method="POST">
 					<div class="row">
-						<div class="input-field col s6">
+						<label>Empresa</label>
+					</div>
+					<div class="row">
+						<div class="col s6">
 							<select id="empresa_id"  name="empresa_id">
 								<option>Elija una opción</option>
 								@foreach($dbEmpresas as $id => $descripcion)
 									<option value = {{$id}}>{{$descripcion}}</option>
 								@endforeach
 							</select>
-							<label for="empresa_id">Empresa</label>
+							
 						</div>					
 					</div>
 					<div class="row">
 						<div class="input-field col s6">
 							<input type="text" class="validate" id="periodo" name="periodo"/>
-							<label for="fec_ini">Periodo</label>
+							<label for="periodo">Periodo</label>
 						</div>
 					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />

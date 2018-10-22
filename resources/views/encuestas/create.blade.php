@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Crear Nueva Encuesta</h4>
+	          <h4>Crear Nueva Encuesta tasa</h4>
 	        </div>
 	        <div class="content">
 				<form class="col s12" id="realForm" action="{{route('encuestas.store')}}" method="POST">
@@ -20,7 +20,7 @@
 					<div class="row">
 						<div class="input-field col s6">
 							<input type="text" class="validate" id="periodo" name="periodo"/>
-							<label for="fec_ini">Periodo</label>
+							<label for="periodo">Periodo</label>
 						</div>
 					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />

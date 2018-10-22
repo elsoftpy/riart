@@ -2501,13 +2501,16 @@ class ReporteController extends Controller
         
         $cargosRubros = Cargos_rubro::where('rubro_id', $empresa->rubro_id)
                                     ->pluck('cargo_id');
+
         if($this->getIdioma() == "en"){
             $dbData = Cargo_en::orderBy('descripcion')
                                 ->whereIn('id', $cargosRubros)
+                                ->where('nivel_id', $id)
                                 ->pluck('id', 'descripcion');
         }else{
             $dbData = Cargo::orderBy('descripcion')
                              ->whereIn('id', $cargosRubros)
+                             ->where('nivel_id', $id)
                              ->pluck('id', 'descripcion');
         }
        

@@ -1615,7 +1615,7 @@ class ReporteController extends Controller
             $salarioMed = $this->median($salariosBase);
             $salario25Per = $this->percentile(25,$salariosBase);
             $salario75Per = $this->percentile(75, $salariosBase);
-
+            //dd($dbClienteEnc);
             $this->pusher(  $collection, 
                             $countCasos, 
                             Lang::get('reportReport.concept_salary'),
@@ -2645,6 +2645,7 @@ class ReporteController extends Controller
 
         // Datos de la encuesta llenada por el cliente
         $dbClienteEnc = $dbDetalle->where('cabecera_encuesta_id', $dbEncuesta->id)->first();
+       // dd($dbEncuesta, $dbClienteEnc, $cargo);
         if(empty($dbClienteEnc)){
             // get the column names for the table
             $columns = Schema::getColumnListing('detalle_encuestas');
@@ -2778,7 +2779,14 @@ class ReporteController extends Controller
                 $convertir = false;
             }
 
-            $tipoCambio = 5600;
+            $ficha = Ficha_dato::where('periodo', $periodo)->first();
+            //dd($ficha);
+            if($ficha){
+                $tipoCambio = $ficha->tipo_cambio;
+            }else{
+                $tipoCambio = 5600;
+            }
+            
 
             return view('report.report')->with('dbCargo', $dbCargo)
                                         ->with('dbEmpresa', $dbEmpresa)

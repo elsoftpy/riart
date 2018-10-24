@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Cabecera_encuesta;
 use App\beneficios_cabecera_encuesta;
+use App\Traits\ClubsTrait;
 
 class HomeController extends Controller
 {
+    use ClubsTrait;
     /**
      * Create a new controller instance.
      *
@@ -46,7 +48,9 @@ class HomeController extends Controller
                 $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
                 $dbEncuesta = $dbEncuestas->first();
                 $dbEncuestaAnt = $dbEncuestas->get(1);
+                $club = $this->club($dbEmpresa->rubro_id);
                     return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
+                                                ->with('club', $club)
                                                 ->with('dbEncuesta', $dbEncuesta)
                                                 ->with('dbEncuestaAnt' , $dbEncuestaAnt);
 

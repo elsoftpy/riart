@@ -16,6 +16,7 @@ use App\Cargo;
 use App\Cargo_en;
 use App\Rubro;
 use App\User;
+use App\Traits\ClubsTrait;
 use Hash;
 use DB;
 use Auth;
@@ -25,9 +26,9 @@ use Lang;
 
 
 
-class ReporteController extends Controller
+class ReporteController extends Controller 
 {
-
+    use ClubsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -89,67 +90,7 @@ class ReporteController extends Controller
                                   ->with('locale', $locale);
     }
 
-    private function club($rubro, $getImagen = null){
-        if($this->getIdioma() == "en"){
-            switch ($rubro) {
-                case 1:
-                    $imagen = "images/caratula-bancos.PNG";
-                    $club = "Banking";
-                    break;
-                case 2:
-                    $imagen = "images/caratula-agro-en.PNG";
-                    $club = "Agribusiness";
-                    break;
-                case 3:
-                    $imagen = "images/caratula-autos.PNG";
-                    $club = 'Car and Machine';
-                    break;
-                case 4:
-                    $imagen = "images/caratula-naviera-en.PNG";
-                    $club = "Shipping";
-                    break;
-                case 6:
-                    $imagen = "images/caratula-bancos.PNG";
-                    $club = "Non Governmental Organizations";
-                    break;
-                default:
-                    $imagen = "images/caratula-bancos.PNG";
-                    $club = "de Bancos";
-                    break;
-            }
-        }else{
-            switch ($rubro) {
-                case 1:
-                    $imagen = "images/caratula-bancos.PNG";
-                    $club = "- Bancos de Paraguay";
-                    break;
-                case 2:
-                    $imagen = "images/caratula-agro.PNG";
-                    $club = "- Empresas de Agronegocios - Paraguay";
-                    break;
-                case 3:
-                    $imagen = "images/caratula-autos.PNG";
-                    $club = '- Empresas del Sector Automotriz, Maquinarias y Utilitarios';
-                    break;
-                case 4:
-                    $imagen = "images/caratula-naviera.PNG";
-                    $club = "- Navieras de Paraguay";
-                    break;
-                case 6:
-                    $imagen = "images/caratula-bancos.PNG";
-                    $club = "- Organizaciones No Gubernamentales";
-                    break;
-                default:
-                    $imagen = "images/caratula-bancos.PNG";
-                    $club = "de Bancos";
-                    break;
-            }
-        }
-        if($getImagen){
-            return $imagen;
-        }
-        return $club;        
-    }
+    
     public function lista($id){
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);

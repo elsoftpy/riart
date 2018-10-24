@@ -4,7 +4,7 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>{{ $dbEmpresa->rubro->descripcion}}</h4>
+	          <h4>{{ $club }}</h4>
 	        </div>
 	        <div class="content">
 	        	<table id="Listado" class="highlight" data-step="1" data-intro="<p class='intro-title'><strong>DATOS DE SU EMPRESA/BANCO</strong></p> En la pantalla principal Ud. podrá visualizar los datos básicos</br> de su organización y los comandos que contiene la plataforma." >

@@ -8,7 +8,12 @@
 			<div class="hoverable bordered">
 				<div class="card">
 					<div class="card-content white-text" style="text-align: center;">
-						<img src="{{asset($imagen)}}">
+						@if ($dbEmpresa == 95)
+							<img src="{{asset($imagen)}}" width="45%">
+						@else
+							<img src="{{asset($imagen)}}">	
+						@endif
+						
 					</div>
 				</div>
 

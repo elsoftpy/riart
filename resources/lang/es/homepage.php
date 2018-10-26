@@ -12,4 +12,7 @@ return[
     "button_done"       =>  "Finalizar",
     "modal_survey"      =>  "Seleccionar Encuesta",
     "modal_button_close"=>  "Cerrar",
+    "table_data_local"  =>  "Nacional",
+    "table_data_inter"  =>  "Internacional",
+
 ];

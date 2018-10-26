@@ -13,7 +13,6 @@
 	                  	 <th>Id</th>
 	                  	 <th>@lang('homepage.table_description')</th>
 	                  	 <th>@lang('homepage.table_club')</th>
-	                  	 <th>@lang('homepage.table_segment')</th>
 	                  	 <th>@lang('homepage.table_branches')</th>
 	                  	 <th>@lang('homepage.table_headcount')</th>
 	                  	 <th>@lang('homepage.table_origin')</th>
@@ -26,14 +25,13 @@
                 		<tr>
                     		<td>{{ $dbEmpresa->id }}</td>
                     		<td>{{ $dbEmpresa->descripcion}}</td>
-                    		<td>{{ $dbEmpresa->rubro->descripcion}}</td>
-                    		<td>{{ $dbEmpresa->subrubro->descripcion}}</td>
+                    		<td>{{ $club}}</td>
                     		<td>{{ $dbEmpresa->cantidad_sucursales}}</td>
                     		<td>{{ $dbEmpresa->cantidad_empleados}}</td>
                     		<td>@if($dbEmpresa->tipo == 0)
-                    				{{"Nacional"}}
+                    				@lang('homepage.table_data_local')
                     			@else
-                    				{{"Internacional"}}
+                    				@lang('homepage.table_data_inter')
                     			@endif
                     		</td>
                     		<td>

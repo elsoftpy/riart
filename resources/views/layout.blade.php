@@ -160,6 +160,8 @@
                     @if (!Auth::user()->is_admin)
                       @include('includes.translation')        
                     @endif
+                @else
+                  @include('includes.translation')
                 @endif
                 
               </div>

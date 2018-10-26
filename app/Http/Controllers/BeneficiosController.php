@@ -354,11 +354,20 @@ class BeneficiosController extends Controller
                                        ->pluck('beneficios_opcion_id');            
         
         // Recuperamos las opciones de Respuesta de la pregunta para las leyendas del gráfico
-        $labels = $pregunta->beneficiosOpcion
-                           ->whereIn('id', $opcionesRespId)
-                           ->sortBy('id')
-                           ->pluck('opcion');
-        
+        if($pregunta->id == 66){
+          $labels = Autos_marca::whereIn('id', $opcionesRespId)
+          ->orderBy('id')
+          ->pluck('descripcion');
+        }else if($pregunta->id == 67){
+          $labels = Autos_modelo::whereIn('id', $opcionesRespId)
+          ->orderBy('id')
+          ->pluck('descripcion');
+        }else{
+          $labels = $pregunta->beneficiosOpcion
+          ->whereIn('id', $opcionesRespId)
+          ->sortBy('id')
+          ->pluck('opcion');
+        }
         // tabulamos las respuestas
         $respuestas = collect();
         $encuestasResp = beneficios_respuesta::where('beneficios_pregunta_id', $id)

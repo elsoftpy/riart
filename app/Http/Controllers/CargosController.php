@@ -136,7 +136,11 @@ class CargosController extends Controller
     }
 
     public function getDetalle(Request $request){
-        $cargo = Cargo::find($request->id);
+        if(app()->getLocale() == "en"){
+            $cargo = Cargo_en::find($request->id);
+        }else{
+            $cargo = Cargo::find($request->id);
+        }
         return $cargo->detalle;
     }
 

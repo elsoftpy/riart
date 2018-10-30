@@ -25,7 +25,7 @@ return [
     "title_national"            => "Local",
     "title_international"       => "International",
     "chart_salary"              => "Monthly Base Salary",
-    "chart_annual_cash"         => "Annual Guaranted Cash",
+    "chart_annual_cash"         => "Annual Guaranteed Cash",
     "chart_total_comp"          => "Annual Total Compensation",
     "concept_salary"            => "Monthly Base Salary",
     "concept_annual_salary"     => "Annual Base Salary",

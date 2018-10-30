@@ -779,7 +779,7 @@ class ReporteController extends Controller
                     $this->cargador($value, $itemArray, true);
                     $salarioEmpresa = intval(str_replace(".", "", $value["Empresa"]));
                     break;
-                case Lang::get('reportReport.concept_concept_annual_cash'):
+                case Lang::get('reportReport.concept_annual_cash'):
                     $this->cargador($value, $itemArray, false);
                     break;
                 case Lang::get('reportReport.variable_pay'):
@@ -1448,7 +1448,7 @@ class ReporteController extends Controller
                             $segmento, 
                             $dbCargo);
 
-            // Efectivo Total Anual
+            // Efectivo Anual Garantizado
             $detalle = $detalle->map(function($item){
                 $item['efectivo_total_anual'] = $item['efectivo_anual_garantizado'] +
                                                  $item['plus_rendimiento']+
@@ -1474,7 +1474,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            Lang::get('reportReport.concept_annual_cash_total'),
+                            Lang::get('reportReport.concept_annual_cash'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
                             $efectivoTotalProm,
@@ -1668,7 +1668,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            Lang::get('reportReport.concept_annual_cash_total'),
+                            Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
                             $efectivoProm,

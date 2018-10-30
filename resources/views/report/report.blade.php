@@ -38,7 +38,7 @@
 					<input type="hidden" name="periodo" value="{{$periodo}}"/>
 					<button class="btn waves-effect waves-light lighten-1 red white-text" type="submit" name="submitFilter" id="submitFilter">
 						@if ($dbEmpresa->id == 95)
-							<i class="material-icons left">monetization_on</i>Ver en CA$	
+							<i class="material-icons left">monetization_on</i>@lang('reportReport.button_currency_cas')	
 						@else
 							<i class="material-icons left">monetization_on</i>@lang('reportReport.button_currency_us')	
 						@endif

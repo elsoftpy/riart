@@ -2,6 +2,7 @@
 return [
     "button_currency_gs"        => "Ver en GS.",
     "button_currency_us"        => "Ver en U\$D.",
+    "button_currency_cas"       =>  "Ver en CA\$",
     "p_currency_gs"             => "Los montos están en miles de Guaraníes",
     "p_currency_us"             => "Los montos están en Dólares Americanos",
     "label_tab_universe"        => "Universo",

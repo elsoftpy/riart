@@ -2,6 +2,7 @@
 return [
     "button_currency_gs"        => "Convert to GS.",
     "button_currency_us"        => "Convert to U\$D",
+    "button_currency_cas"       =>  "Convert to CA\$",
     "p_currency_gs"             => "Values shown in thousands of Guaraníes",
     "p_currency_us"             => "Values shown in American Dollars",
     "label_tab_universe"        => "All Participants",

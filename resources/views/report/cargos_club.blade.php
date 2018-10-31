@@ -35,7 +35,9 @@
 												<input type="hidden" name="nivel_id" value="{{$item->nivel_id}}"/>
 												<input type="hidden" name="cargo_id" value="{{$item->cargo_id}}"/>
 												<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />		
-												<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>																						
+												<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>	
+												<input type="hidden" name="moneda" value="local">		
+
 												<button class="btn waves-effect waves-light" type="submit" name="submit">{{$item->descripcion}}
     					      					</button>
 											</form>

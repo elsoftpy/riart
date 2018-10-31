@@ -2714,10 +2714,10 @@ class ReporteController extends Controller
                 $tour = false;
             }
 
-            if($request->moneda != "local"){
-                $convertir = true;
-            }else{
+            if($request->moneda == "local"){
                 $convertir = false;
+            }else{
+                $convertir = true;
             }
 
             $ficha = Ficha_dato::where('periodo', $periodo)->first();

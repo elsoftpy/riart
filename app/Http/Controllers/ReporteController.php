@@ -168,11 +168,18 @@ class ReporteController extends Controller
             $per = Session::get('periodo');
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
         }else{
-            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
+            $dbFicha = Ficha_dato::activa()->where('rubro_id', $rubro)->first();
+            if($dbFicha){
+                $periodo = $dbFicha->periodo;
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->where('periodo', $periodo)->first();    
+            }else{
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
+            }    
+            
         }
         $cargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)->get()->count();
         $periodo = $dbEncuesta->periodo;
-        $dbFicha = Ficha_dato::where('rubro_id', $rubro)->where('periodo', $periodo)->first();
+        
         if($dbFicha){
             $cargos = $dbFicha->cargos_emergentes;
             $tipoCambio = $dbFicha = $dbFicha->tipo_cambio;
@@ -2522,16 +2529,29 @@ class ReporteController extends Controller
                                                ->first();
                 //dd($dbEncuesta, $request->periodo);
             }else{
-                if($dbEmpresa->rubro_id == '1'){
-                    $per = '06/2018';
-                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
-                                           ->whereRaw("periodo = '". $per."'")
-                                           ->first();
+                $ficha = Ficha_dato::activa()->where('rubro_id', $dbEmpresa->rubro_id)->first();
+                if($ficha){
+                    $per = $ficha->periodo;
                 }else{
-                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
-                    ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
-                    ->first();
+                    $per = null;
                 }
+                if($per){
+                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                                   ->where("periodo",$per)
+                                                   ->first();
+                }else{
+                    if($dbEmpresa->rubro_id == '1'){
+                        $per = '06/2018';
+                        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                               ->whereRaw("periodo = '". $per."'")
+                                               ->first();
+                    }else{
+                        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                        ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
+                        ->first();
+                    }
+                }
+                
                             
 
             }

@@ -29,7 +29,7 @@ class FichasController extends Controller
 
     public function store(Request $request){
     	$dbData = new Ficha_dato($request->all());
-
+        $dbData->activo = 0;
     	$dbData->save();
     	return redirect()->route('admin_ficha.index');
     }
@@ -44,15 +44,26 @@ class FichasController extends Controller
         $rubro = Rubro::get()->first()->id;
         $periodos = $this->getPeriodos($rubro);
         $rubros = $this->getRubros();
-        return view('fichas.create')->with('dbData', $dbData)
+        return view('fichas.edit')->with('dbData', $dbData)
                                     ->with('periodos', $periodos)
     								->with('rubros', $rubros);
     }
 
     public function update(Request $request, $id){
 
-    	$dbData = new Ficha_dato($request->all());
-
+        if($request->activo){
+            $activo = 1;
+            $fichas = Ficha_dato::where('rubro_id', $request->rubro_id)->get();
+            foreach($fichas as $ficha){
+                $ficha->activo = 0;
+                $ficha->save();
+            }
+        }else{
+            $activo = 0;
+        }
+        $dbData = Ficha_dato::find($id);
+        $dbData->fill($request->all());
+        $dbData->activo = $activo;
     	$dbData->save();
     	return redirect()->route('admin_ficha.index');
     }

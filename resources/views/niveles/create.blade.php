@@ -14,7 +14,7 @@
 						</div>
 						<div class="input-field col s6">
 							<input id="descripcion_en" type="text" class="validate" name="descripcion_en" >
-							<label for="descripcion_en">Descipción (en inglés)</label>
+							<label for="descripcion_en">Descripción (en inglés)</label>
 						</div>						
 					</div>					
 					<div class="row">

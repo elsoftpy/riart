@@ -7,7 +7,7 @@
         {!! MaterializeCSS::include_css() !!}
         <link rel="stylesheet" href="{{ asset('css/flash.css')}}">
         <style type="text/css"></style>
-        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- Datatables css -->
         <link href="{{ asset('/plugins/datatables/dataTables-materialize.css') }}" rel="stylesheet"/>
         <!-- Select 2 Materialize -->
@@ -106,7 +106,8 @@
     <script src="{{ asset('/plugins/chartjs/Chart.bundle.js') }}" type="text/javascript"></script> 
     <!-- Intro JS -->
     <script src="{{ asset('/plugins/intro.js-2.7.0/intro.js') }}" type="text/javascript"></script>         
-
+<!-- mcafee -->
+<script type="text/javascript" src="https://cdn.ywxi.net/js/1.js" async></script>
     <script type="text/javascript">
           var tour = introJs().setOptions({ "skipLabel": "Lo tengo", 
                                         "nextLabel": "Continue", 

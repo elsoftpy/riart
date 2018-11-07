@@ -7,7 +7,7 @@
         @endif      
     </div>
     <!-- Language selector button -->
-    <div class="fixed-action-btn">
+    <div class="fixed-action-btn" style="bottom:50px !important;">
         @if (app()->getLocale() == 'es')
           <a class="btn-floating btn-large tooltipped amber" data-position="left" data-tooltip="Cambiar idioma">    
         @else

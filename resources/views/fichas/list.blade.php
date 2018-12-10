@@ -17,8 +17,8 @@
                 		<thead>
 	                      <tr>
 	                      	 <th>Id</th>
-	                      	 <th>Periodo</th>
 	                      	 <th>Rubro</th>
+	                      	 <th>Periodo</th>
 	                      	 <th>Cargos Emergentes</th>
 	                      	 <th>Tipo de Cambio</th>
 	                      	 <th>Opciones</th>

@@ -7,11 +7,14 @@ use App\Http\Controllers\Controller;
 use App\Cabecera_encuesta;
 use App\Encuestas_cargo;
 use App\Detalle_encuesta;
+use App\Rubro;
 use App\Empresa;
 use App\Cargo;
+use App\Traits\PeriodosTrait;
 
 class ReportController extends Controller
 {
+    use PeriodosTrait;
     /**
      * Display a listing of the resource.
      *
@@ -25,6 +28,14 @@ class ReportController extends Controller
         return view('admin.reportes.filter_empresas')->with('dbEmpresas', $dbEmpresas)
                                                      ->with('dbCargos', $dbCargos);
 
+    }
+
+    public function filterNiveles(){
+        $rubro = Rubro::first()->id;
+        $periodos = $this->getPeriodos($rubro);
+        $rubros = $this->getRubros();
+    	return view('admin.reportes.filter_niveles')->with('periodos', $periodos)
+    								                ->with('rubros', $rubros);
     }
 
     /**
@@ -93,5 +104,13 @@ class ReportController extends Controller
     {
         //
     }
+
+    /*public function getPeriodos(Request $request){
+        $id = $request->empresa_id;
+        $periodos = Cabecera_encuesta::distinct('periodo')
+                                     ->where('empresa_id', $id)
+                                     ->pluck('periodo', 'periodo');
+        return $periodos;                                
+    }*/
 
 }

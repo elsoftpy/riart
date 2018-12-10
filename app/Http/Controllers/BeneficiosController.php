@@ -265,7 +265,13 @@ class BeneficiosController extends Controller
           $aplicables = beneficios_respuesta::whereIn('beneficios_cabecera_encuesta_id', $encuestas)
                                             ->where('beneficios_pregunta_id', $pregunta->id)
                                             ->get();
+          
+          //dd($encuestas, $aplicables);
+        
           $aplicables = $aplicables->reject(function($item){
+             if(!$item->beneficiosOpcion){
+              dd($item);
+            } 
             if($item->beneficiosOpcion->opcion_no_aplica){
               return $item;  
             }

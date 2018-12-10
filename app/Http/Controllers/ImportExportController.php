@@ -19,6 +19,7 @@ use Auth;
 use Excel;
 use Session;
 use Validator;
+use Exception;
 
 class ImportExportController extends Controller
 {
@@ -280,84 +281,92 @@ class ImportExportController extends Controller
         $validator = Validator::make($request->all(), $rules, $messages);
            
         if($validator->passes()){
+            DB::beginTransaction();
             Excel::load($file, function($reader) {
-                $reader->each(function($row){
-                    
-                    $encuesta = trim($row->id_encuesta);
-                    $encCargoId = trim($row->id_cargo_cliente);
-                    $cargoCliente = Encuestas_cargo::find($encCargoId);
-                    if(!$cargoCliente){
-                        $cargoCliente = new Encuestas_cargo();
-                        $cargoCliente->cabecera_encuesta_id = $encuesta;
-                    }
-                    $cargoClienteDesc = trim($row->cargocliente);
-                    $cargoOficialId = trim($row->id_cargo_oficial);
-                    
-                    $excluir = trim($row->excluir);
-                    if($excluir == "NO"){
-                        $incluir = 1;
-                    }else{
-                        $incluir = 0;
-                    }
-                    $cargoCliente->descripcion = $cargoClienteDesc;
-                    $cargoCliente->cargo_id = $cargoOficialId;
-                    $cargoCliente->incluir = $incluir;
-                    $cargoCliente->save();
-                    $detalle = Detalle_encuesta::where('cabecera_encuesta_id', $encuesta)
-                                               ->where('encuestas_cargo_id', $encCargoId)
-                                               ->first();
-                    if(!$detalle){
-                        $detalle = new Detalle_encuesta();
-                        $detalle->cabecera_encuesta_id = $encuesta;
-                        $detalle->encuestas_cargo_id = $cargoCliente->id;
-                    }
-                    $detalle->cantidad_ocupantes = $row->ocupantes;
-                    $detalle->area_id = $row->id_area;
-                    $detalle->nivel_id = $row->id_nivel;
-                    $detalle->salario_base = $row->salariobase;
-                    $detalle->gratificacion = $row->gratificacion;
-                    $detalle->aguinaldo = $row->aguinaldo;
-                    $detalle->comision = $row->comision;
-                    $detalle->plus_rendimiento = $row->variableanual;
-                    $detalle->salario_base = $row->salariobase;
-                    $detalle->adicional_amarre = $row->adicionalamarre;
-                    $detalle->adicional_tipo_combustible = $row->adicionaltipocombustible;
-                    $detalle->adicional_embarque = $row->adicionalembarque;
-                    $detalle->adicional_carga = $row->adicionaltipocarga;
-                    $detalle->adicional_titulo = $row->adicionaltitulo;
-                    $detalle->fallo_caja = $row->fallocaja;
-                    $detalle->fallo_caja_ext = $row->fallocajaext;
-                    $detalle->gratificacion_contrato = $row->gratifcontrato;
-                    $detalle->bono_anual = $row->bonoanual;
-                    $detalle->incentivo_largo_plazo = $row->incentivolargoplazo;
-                    $detalle->refrigerio = $row->refrigerio;
-                    $detalle->costo_seguro_medico = $row->costoseguromedico;
-                    $detalle->cobertura_seguro_medico = $row->coberturaseguromedico;
-                    $detalle->costo_seguro_medico = $row->costoseguromedico;
-                    $detalle->costo_seguro_vida = $row->costosegurovida;
-                    $detalle->car_company = $row->carcompany;
-                    $detalle->movilidad_full = $row->movilidadfull;
-                    $detalle->flota = $row->montotarjetaflota;
-                    $detalle->tarjeta_flota = $row->tarjetaflota;
-                    $detalle->monto_movil = $row->montoautomovil;
-                    $detalle->seguro_movil = $row->seguroautomovil;
-                    $detalle->mantenimiento_movil = $row->mantenimientoautomovil;
-                    $detalle->monto_km_recorrido = $row->kmrecorrido;
-                    $detalle->monto_ayuda_escolar = $row->ayudaescolar;
-                    $detalle->monto_comedor_interno = $row->comedorinterno;
-                    $detalle->monto_curso_idioma = $row->cursoidioma;
-                    $detalle->cobertura_curso_idioma = $row->coberturaidioma;
-                    $detalle->monto_post_grado = $row->postgrado;
-                    $detalle->cobertura_post_grado = $row->coberturapostgrado;
-                    $detalle->monto_celular_corporativo = $row->celular;
-                    $detalle->monto_vivienda = $row->vivienda;
-                    $detalle->monto_colegiatura_hijos = $row->colegiatura;
-                    $detalle->condicion_ocupante = $row->condicionocupante;
-                    $detalle->save();
-                });
+                try{
+                    $reader->each(function($row){                            
+                        $encuesta = trim($row->id_encuesta);
+                        $encCargoId = trim($row->id_cargo_cliente);
+                        $cargoCliente = Encuestas_cargo::find($encCargoId);
+                        if(!$cargoCliente){
+                            $cargoCliente = new Encuestas_cargo();
+                            $cargoCliente->cabecera_encuesta_id = $encuesta;
+                        }
+                        $cargoClienteDesc = trim($row->cargocliente);
+                        $cargoOficialId = trim($row->id_cargo_oficial);
+                        
+                        $excluir = trim($row->excluir);
+                        if($excluir == "NO"){
+                            $incluir = 1;
+                        }else{
+                            $incluir = 0;
+                        }
+                        $cargoCliente->descripcion = $cargoClienteDesc;
+                        $cargoCliente->cargo_id = $cargoOficialId;
+                        $cargoCliente->incluir = $incluir;
+                        $cargoCliente->save();
+                        $detalle = Detalle_encuesta::where('cabecera_encuesta_id', $encuesta)
+                                                   ->where('encuestas_cargo_id', $encCargoId)
+                                                   ->first();
+                        if(!$detalle){
+                            $detalle = new Detalle_encuesta();
+                            $detalle->cabecera_encuesta_id = $encuesta;
+                            $detalle->encuestas_cargo_id = $cargoCliente->id;
+                        }
+                        $detalle->cantidad_ocupantes = $row->ocupantes;
+                        $detalle->area_id = $row->id_area;
+                        $detalle->nivel_id = $row->id_nivel;
+                        $detalle->salario_base = $row->salariobase;
+                        $detalle->gratificacion = $row->gratificacion;
+                        $detalle->aguinaldo = $row->aguinaldo;
+                        $detalle->comision = $row->comision;
+                        $detalle->plus_rendimiento = $row->variableanual;
+                        $detalle->salario_base = $row->salariobase;
+                        $detalle->adicional_amarre = $row->adicionalamarre;
+                        $detalle->adicional_tipo_combustible = $row->adicionaltipocombustible;
+                        $detalle->adicional_embarque = $row->adicionalembarque;
+                        $detalle->adicional_carga = $row->adicionaltipocarga;
+                        $detalle->adicional_titulo = $row->adicionaltitulo;
+                        $detalle->fallo_caja = $row->fallocaja;
+                        $detalle->fallo_caja_ext = $row->fallocajaext;
+                        $detalle->gratificacion_contrato = $row->gratifcontrato;
+                        $detalle->bono_anual = $row->bonoanual;
+                        $detalle->incentivo_largo_plazo = $row->incentivolargoplazo;
+                        $detalle->refrigerio = $row->refrigerio;
+                        $detalle->costo_seguro_medico = $row->costoseguromedico;
+                        $detalle->cobertura_seguro_medico = $row->coberturaseguromedico;
+                        $detalle->costo_seguro_medico = $row->costoseguromedico;
+                        $detalle->costo_seguro_vida = $row->costosegurovida;
+                        $detalle->car_company = $row->carcompany;
+                        $detalle->movilidad_full = $row->movilidadfull;
+                        $detalle->flota = $row->montotarjetaflota;
+                        $detalle->tarjeta_flota = $row->tarjetaflota;
+                        $detalle->monto_movil = $row->montoautomovil;
+                        $detalle->seguro_movil = $row->seguroautomovil;
+                        $detalle->mantenimiento_movil = $row->mantenimientoautomovil;
+                        $detalle->monto_km_recorrido = $row->kmrecorrido;
+                        $detalle->monto_ayuda_escolar = $row->ayudaescolar;
+                        $detalle->monto_comedor_interno = $row->comedorinterno;
+                        $detalle->monto_curso_idioma = $row->cursoidioma;
+                        $detalle->cobertura_curso_idioma = $row->coberturaidioma;
+                        $detalle->monto_post_grado = $row->postgrado;
+                        $detalle->cobertura_post_grado = $row->coberturapostgrado;
+                        $detalle->monto_celular_corporativo = $row->celular;
+                        $detalle->monto_vivienda = $row->vivienda;
+                        $detalle->monto_colegiatura_hijos = $row->colegiatura;
+                        $detalle->condicion_ocupante = $row->condicionocupante;
+                        $detalle->save();                 
+                        
+                    });
+                }catch(Exception $e){
+                    DB::rollback();
+                    dd($e->getMessage());
+                } 
             });
+            DB::commit();
 
         }
+        
         session(['export_done'=>'true']);
         return redirect()->route('import_export.index');
 

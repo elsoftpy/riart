@@ -45,6 +45,7 @@
           <ul id="dropdown4" class="dropdown-content">
               <li><a href="{{route('resultados')}}">Excel</a></li>
               <li><a href="{{route('admin.reporte.filter')}}">Reporte - Cargos</a></li>
+              <li><a href="{{route('admin.reporte.filter.niveles')}}">Reporte - Niveles</a></li>
           </ul>
 
 

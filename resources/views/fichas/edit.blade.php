@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Editar Cargo</h4>
+	          <h4>Editar Ficha</h4>
 	        </div>
 	        <div class="content">
 				<form class="col s12" action="{{route('admin_ficha.update', $dbData->id)}}" method="POST">
@@ -72,8 +72,33 @@
 	<script type="text/javascript">
 		$(function(){
 			//$("select").select2();
-			$("select").formSelect();
+			$("select").select2();
+			updatePeriodo();
 		});
+
+		$("#rubro_id").change(function(){
+			updatePeriodo();
+		});
+
+		function updatePeriodo(){
+			var selectPeriodo = $("#periodo");
+			var rubroId = $("#rubro_id").val();
+			selectPeriodo.empty();
+			$.post('{{route('file_attachment.periodos')}}', {"rubro_id": rubroId, "_token": "{{csrf_token()}}"}, 
+				function(json){
+					var data = $.map(json, function(text, id){
+                    	return {text:text, id:id};
+                    });
+            		for(i = 0; i < data.length; i++){
+            			selectPeriodo.append(
+              			$("<option></option>").attr("value", data[i].id)
+                                    		  .text(data[i].text));
+					}
+
+					$("select").select2();
+				}
+			);
+		}
 
 		
 	</script>

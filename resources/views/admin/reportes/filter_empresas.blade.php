@@ -18,10 +18,12 @@
 									<option value = {{$id}}>{{$descripcion}}</option>
 								@endforeach
 							</select>
-						</div>					
+						                                                                                                                                                                                 </div>					
 						<div class="input-field col s6">
-							<input type="text" class="validate" id="periodo" name="periodo"/>
-							<label for="periodo">Periodo</label>
+							<select id="periodo"  name="periodo">
+								<option>Elija una opción...</option>
+							</select>
+							<label for="periodo" class="active">Periodo</label>
 						</div>
 					</div>
 					<div class="row">
@@ -53,7 +55,26 @@
 	<script>
   		$(document).ready(function() {
    			$('select').select2();
+		});
 
+		$("#empresa_id").change(function(){
+			var selectPeriodo = $("#periodo");
+			var empresaId = $(this).val();
+			selectPeriodo.empty();
+			$.post('{{route('admin.reporte.filter.periodos')}}', {"empresa_id": empresaId, "_token": "{{csrf_token()}}"}, 
+				function(json){
+					var data = $.map(json, function(text, id){
+                    	return {text:text, id:id};
+                    });
+            		for(i = 0; i < data.length; i++){
+            			selectPeriodo.append(
+              			$("<option></option>").attr("value", data[i].id)
+                                    		  .text(data[i].text));
+					}
+
+					$("select").select2();
+				}
+			);
 		});
 
 	</script>

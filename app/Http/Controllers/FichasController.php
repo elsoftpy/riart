@@ -8,7 +8,9 @@ use App\Ficha_dato;
 use App\Cabecera_encuesta;
 use App\Rubro;
 use App\Traits\PeriodosTrait;
+use Carbon\Carbon;
 use flash;
+use DB;
 
 class FichasController extends Controller
 {
@@ -41,9 +43,10 @@ class FichasController extends Controller
 
     public function edit($id){
         $dbData = Ficha_dato::find($id);
-        $rubro = Rubro::get()->first()->id;
-        $periodos = $this->getPeriodos($rubro);
+        $rubro = Rubro::find($dbData->rubro_id);
+        $periodos = $this->getPeriodos($rubro->id);
         $rubros = $this->getRubros();
+        //dd($periodos, $dbData);
         return view('fichas.edit')->with('dbData', $dbData)
                                     ->with('periodos', $periodos)
     								->with('rubros', $rubros);
@@ -80,5 +83,24 @@ class FichasController extends Controller
         return $cargo->detalle;
     }
 
+    public function countEmergentes(Request $request){
+        $rubro = $request->rubro_id;
+        $periodo = $request->periodo;
+        $results = DB::select( DB::raw(
+            "SELECT count(distinct cargo_id) cargos
+               FROM encuestas_cargos e 
+              WHERE cabecera_encuesta_id in ( select id 
+                                                from cabecera_encuestas
+                                               where rubro_id = :rubro
+                                                 and periodo = :periodo)"), 
+            array('rubro' => $rubro, 'periodo' => $periodo));
+            //return $results;
+            if($results){
+                $count = $results[0]->cargos;
+            }else{
+                $count = 0;
+            }
+            return $count;
+    }
 
 }

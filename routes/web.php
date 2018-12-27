@@ -123,8 +123,10 @@ Route::group(["middleware"=>"auth"], function(){
 	
 	Route::get('admin_reportes_filter', 'Admin\ReportController@index')->name('admin.reporte.filter');
 	Route::get('admin_reportes_filter/niveles', 'Admin\ReportController@filterNiveles')->name('admin.reporte.filter.niveles');
-	Route::post('admin_reportes_filter/periodos', 'Admin\ReportController@getPeriodos')->name('admin.reporte.filter.periodos');
+	Route::post('admin_reportes_filter/periodos', 'Admin\ReportController@getPeriodosEmpresa')->name('admin.reporte.filter.periodos');
 	Route::post('admin_reportes_excel/niveles', 'ReporteController@nivelReportClubExcel')->name('reportes.nivelesClubExcel');	
+	
+	Route::post('admin_ficha/contar_emergentes', 'FichasController@countEmergentes')->name('admin.ficha.contar');
 	Route::resource('admin_ficha', 'FichasController');
 
 	Route::resource('areas', 'AreasController');

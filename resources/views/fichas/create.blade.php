@@ -27,14 +27,21 @@
 					</div>
 					<div class="row">
 						<div class="input-field col s6">
-							<label for="cargos_emergentes" id="cargos_emergentes">Cargos Emergentes</label>
-							<input type="number" name="cargos_emergentes" id="cargos_emergentes" class="validate"/>
-						</div>
-
-						<div class="input-field col s6">
-							<label for="tipo_cambio" id="tipo_cambio">Tipo de Cambio</label>
+							<label for="tipo_cambio">Tipo de Cambio</label>
 							<input type="text" name="tipo_cambio" id="tipo_cambio" class="validate"/>
 						</div>
+
+						<div class="input-field col s5">
+							<label for="cargos_emergentes" id="emergentes_label">Cargos Emergentes</label>
+							<input type="number" name="cargos_emergentes" id="cargos_emergentes" class="validate"/>
+						</div>
+						<div class="input-field col s1">
+							<button class="btn waves-effect waves-light" name="emergentes" id="emergentes">
+								Contar
+							</button>
+						</div>
+
+						
 					</div>
 
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
@@ -83,6 +90,17 @@
 					$("select").select2();
 				}
 			);
+		});
+
+		$("#emergentes").click(function(e){
+			e.preventDefault();
+			var rubroId = $("#rubro_id").val();
+			var periodo = $("#periodo").val();
+			$.post("{{route('admin.ficha.contar')}}", {"rubro_id": rubroId, "periodo": periodo, "_token": "{{csrf_token()}}"},
+			function(json){
+				$("#cargos_emergentes").val(json);
+				$("#emergentes_label").addClass("active");
+			});
 		});
 
 		

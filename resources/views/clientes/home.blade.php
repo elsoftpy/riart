@@ -40,7 +40,7 @@
                     			</a>
                     			<a href="{{ route('empresas.edit', $dbEmpresa->id) }}" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" data-step="7" data-intro="<p class='intro-title'><strong>EDITAR</strong></p> Función que permite la modificación de los datos de su empresa/banco." data-position="left">
                     				<i class="material-icons left">edit</i>@lang('homepage.button_edit')
-                    			</a><br/>
+								</a><br/>
                     			@if($dbEmpresa->rubro_id == 4)
                         			<a href="#" class="btn waves-light waves-effect amber white-text" style="margin-bottom: 1em;" id="select_encuesta" data-step="8" data-intro="<p class='intro-title'><strong>REPORTE - RESULTADO</strong></p>Contiene información del mercado investigado: </br> podrá acceder a búsquedas por niveles de cargo y visualizar los resultados por cargo, permite la exportación de todos los cargos de su organizacion y del mercado a Excel." data-position="left">
                     					<i class="material-icons left">dashboard</i>@lang('homepage.button_report')
@@ -70,12 +70,16 @@
 		<div class="modal-content">
 			<h5> @lang('homepage.modal_survey') </h5>
 			@if($dbEncuestaAnt)
+				<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja" >
+					12/2017
+				</a>
 				<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
 					{{$dbEncuestaAnt->periodo}}
 				</a>	
 				<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
 					{{$dbEncuesta->periodo}}
 				</a>	
+				<input type="hidden" id="periodo_viejo" name="periodo_viejo" value="12/2017"/>
 				<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
 				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
 			@endif
@@ -157,6 +161,15 @@
 			e.preventDefault();
 			var periodo = $("#periodo_ant").val();
 			$.post('{{route('periodo')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
+				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
+			});
+		});
+		$("#encuesta-vieja").click(function(e){
+			e.preventDefault();
+			var periodo = $("#periodo_viejo").val();
+			console.log(periodo);
+			$.post('{{route('periodo')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(json){
+				console.log(json);
 				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
 			});
 		});		

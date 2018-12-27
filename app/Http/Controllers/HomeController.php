@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Cabecera_encuesta;
 use App\beneficios_cabecera_encuesta;
+use App\Ficha_dato;
 use App\Traits\ClubsTrait;
 
 class HomeController extends Controller
@@ -45,9 +46,22 @@ class HomeController extends Controller
 
             }else{
                 $dbEmpresa = Auth::user()->empresa;
-                $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
-                $dbEncuesta = $dbEncuestas->first();
+                $ficha = Ficha_dato::where('rubro_id', $dbEmpresa->rubro_id)->activa()->first();
+                if($ficha){
+                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                                    ->where('periodo', $ficha->periodo)
+                                                    ->first();                    
+                    $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                                    ->orderBy('id', 'DESC')
+                                                    ->get();                                                    
+                }else{
+                    $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
+                    $dbEncuesta = $dbEncuestas->first();
+                }
+                
+                
                 $dbEncuestaAnt = $dbEncuestas->get(1);
+                //dd($dbEncuesta, $dbEncuestaAnt);
                 $club = $this->club($dbEmpresa->rubro_id);
                     return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
                                                 ->with('club', $club)

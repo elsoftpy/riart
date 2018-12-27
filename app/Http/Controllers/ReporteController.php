@@ -166,9 +166,13 @@ class ReporteController extends Controller
         $empresa = Empresa::find($id);
         $rubro = $empresa->rubro_id;
         $locale = $this->getIdioma();
+        
         if(Session::has('periodo')){
             $per = Session::get('periodo');
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
+            $dbFicha = Ficha_dato::where('rubro_id', $rubro)
+                                 ->where('periodo', $per)
+                                 ->first();
         }else{
             $dbFicha = Ficha_dato::activa()->where('rubro_id', $rubro)->first();
             if($dbFicha){
@@ -678,25 +682,41 @@ class ReporteController extends Controller
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
-                });                
-                // Salario Efectivo Total Anual
+                });       
+
+                // Comision
+                                
                 $sheet->cell('AI5', function($cell){
-                    $cell->setValue('EFECTIVO TOTAL ANUAL');
+                    $cell->setValue('COMISION');
                 });
                 $sheet->mergeCells('AI5:AN5');
                 $sheet->cells('AI5:AN5', function($cells){
+                    $cells->setBackground('#6a1b9a');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                         
+
+                // Salario Efectivo Total Anual
+                $sheet->cell('AO5', function($cell){
+                    $cell->setValue('EFECTIVO TOTAL ANUAL');
+                });
+                $sheet->mergeCells('AO5:AT5');
+                $sheet->cells('AO5:AT5', function($cells){
                     $cells->setBackground('#f57c00');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
-                });                
+                });    
+
                 // Salario Base Comparativo Header
-                $sheet->cell('AO5', function($cell){
-                    $cell->setValue('SALARIO BASE COMP.');
+                $sheet->cell('AU5', function($cell){
+                    $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
                 });
-                $sheet->mergeCells('AO5:AT5');
-                $sheet->cells('AO5:AT5', function($cells){
+                $sheet->mergeCells('AU5:AZ5');
+                $sheet->cells('AU5:AZ5', function($cells){
                     $cells->setBackground('#0288d1');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
@@ -704,20 +724,34 @@ class ReporteController extends Controller
                     $cells->setAlignment('center');
                 });                
                 // Salario Variable Anual comp.
-                $sheet->cell('AU5', function($cell){
-                    $cell->setValue('VARIABLE ANUAL COMP.');
-                });
-                $sheet->mergeCells('AU5:AZ5');
-                $sheet->cells('AU5:AZ5', function($cells){
+                $sheet->cell('BA5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
+                });                
+
+                $sheet->mergeCells('BA5:BF5');
+                $sheet->cells('BA5:BF5', function($cells){
                     $cells->setBackground('#afb42b');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
-                });                                                                                                                                
+                });      
+                
+               // Salario Variable Anual comp.
+                $sheet->cell('BG5', function($cell){
+                    $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
+                });
+                $sheet->mergeCells('BG5:BL5');
+                $sheet->cells('BG5:BL5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                    $cells->setAlignment('center');
+                });
+
                 $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
                 $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-                for ($i= 0; $i < 8; $i++) {
+                for ($i= 0; $i < 10; $i++) {
                     foreach ($itemsHeader as $key => $value) {
                         array_push($cargoHeader, $value);
                     }
@@ -725,7 +759,7 @@ class ReporteController extends Controller
                 }
                 
                 $sheet->row(6, $cargoHeader);
-                $sheet->cells('A6:AZ6', function($cells){
+                $sheet->cells('A6:BL6', function($cells){
                     $cells->setBackground('#a7ffeb');
                 });
                 
@@ -810,218 +844,20 @@ class ReporteController extends Controller
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
-                });                
-                // Salario Efectivo Total Anual
-                $sheet->cell('AI5', function($cell){
-                    $cell->setValue('EFECTIVO TOTAL ANUAL');
-                });
-                $sheet->mergeCells('AI5:AN5');
-                $sheet->cells('AI5:AN5', function($cells){
-                    $cells->setBackground('#f57c00');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Base Comparativo Header
-                $sheet->cell('AO5', function($cell){
-                    $cell->setValue('SALARIO BASE COMP.');
-                });
-                $sheet->mergeCells('AO5:AT5');
-                $sheet->cells('AO5:AT5', function($cells){
-                    $cells->setBackground('#0288d1');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Variable Anual comp.
-                $sheet->cell('AU5', function($cell){
-                    $cell->setValue('VARIABLE ANUAL COMP.');
-                });
-                $sheet->mergeCells('AU5:AZ5');
-                $sheet->cells('AU5:AZ5', function($cells){
-                    $cells->setBackground('#afb42b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                                                                                                                                
-                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
-                $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-                for ($i= 0; $i < 8; $i++) {
-                    foreach ($itemsHeader as $key => $value) {
-                        array_push($cargoHeader, $value);
-                    }
-                    
-                }
-                
-                $sheet->row(6, $cargoHeader);
-                
-                $sheet->rows($detalleInternacional);
-
-                $sheet->cells('A6:AZ6', function($cells){
-                    $cells->setBackground('#a7ffeb');
-                });
-                $sheet->setFreeze('A7');
-            });
-            $excel->setActiveSheetIndex(0);    
-        })->export('xlsx');
-    }
-
-    public function nivelReportClubExcel(Request $request){
-        ini_set('max_execution_time', 0);
-        // periodo de la encuesta actual (semestral para navieras)
-        $periodo = $request->periodo;    
-        // rubro de la empresa del cliente        
-        $rubro = $request->rubro_id;
-        
-        $encuestasIDs = Cabecera_encuesta::where('periodo', $periodo)
-                                            ->where('rubro_id', $rubro)
-                                            ->pluck('id');
-        // recupera los cargos del periodo para todos los que tengan homologación con niveles
-        $nivelesCargos = Detalle_encuestas_nivel::distinct()
-                                          ->whereIn('cabecera_encuesta_id', $encuestasIDs)
-                                          ->whereNotNull('cargo_oficial_id')
-                                          ->pluck('nivel_oficial_id');
-        // variables de detalle para cada segmento
-        $detalleNacional = collect();
-        
-        $detalleInternacional = collect();
-        // Procesamiento por cargo
-        foreach ($nivelesCargos as $value) {
-            $request->request->add(["nivel_id"=> $value]);
-            // procesamos el reporte
-            $respuesta = $this->nivelReport($request, $encuestasIDs, true);
-            $nivel = Nivel::find($value);
-            // preparamos los datos para el array final del cargo
-            $itemArray = array( $nivel->descripcion, 
-                                $nivel->descripcion, 
-                              );
-            $itemArrayNac = $itemArray;
-            //$itemArrayInt = $itemArray;
-            // por cada item del detalle
-            foreach ($respuesta as $key => $item) {
-                
-                 switch ($key) {
-                    
-                    case 'detalle_universo':
-                        $this->cargaDetalleNivel($item, $itemArray);            
-                        break;
-                    case 'detalle_nacional':
-                        $this->cargaDetalleNivel($item, $itemArrayNac);            
-                        break;
-                    case 'detalleInternacional':
-                        $this->cargaDetalleNivel($item, $itemArrayInt);            
-                        break;                                                
-                } 
-
-            }
-            
-            //$detalleUniverso->push($itemArray);
-            $detalleNacional->push($itemArrayNac);
-            //$detalleInternacional->push($itemArrayInt);                 
-        }
-    
- 
-        $filename = 'Resultados_Niveles'.$periodo;
-
-        //Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional) {
-        Excel::create($filename, function($excel) use($detalleNacional) {
-            /* $excel->sheet("universo", function($sheet) use($detalleUniverso){
-                
-                $objDrawing = new PHPExcel_Worksheet_Drawing;
-                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
-                $objDrawing->setCoordinates('A1');
-                $objDrawing->setWidthAndHeight(304,60);
-                $objDrawing->setWorksheet($sheet);            
-
-                $sheet->cell('A5', function($cell){
-                    $cell->setValue('CARGO');
-                });
-                $sheet->mergeCells('A5:D5');
-                $sheet->cells('A5:D5', function($cells){
-                    $cells->setBackground('#00897b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-                // Salario Base Header
-                $sheet->cell('E5', function($cell){
-                    $cell->setValue('SALARIO BASE');
-                });
-                $sheet->mergeCells('E5:J5');
-                $sheet->cells('E5:J5', function($cells){
-                    $cells->setBackground('#0288d1');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Efectivo Anual Garantizado
-                $sheet->cell('K5', function($cell){
-                    $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                });
-                $sheet->mergeCells('K5:P5');
-                $sheet->cells('K5:P5', function($cells){
-                    $cells->setBackground('#388e3c');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Variable Anual
-                $sheet->cell('Q5', function($cell){
-                    $cell->setValue('VARIABLE ANUAL');
-                });
-                $sheet->mergeCells('Q5:V5');
-                $sheet->cells('Q5:V5', function($cells){
-                    $cells->setBackground('#afb42b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Total Adicional Anual
-                $sheet->cell('W5', function($cell){
-                    $cell->setValue('TOTAL ADICIONAL ANUAL');
-                });
-                $sheet->mergeCells('W5:AB5');
-                $sheet->cells('W5:AB5', function($cells){
-                    $cells->setBackground('#fbc02d');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Bono Anual
-                $sheet->cell('AC5', function($cell){
-                    $cell->setValue('BONO ANUAL');
-                });
-                $sheet->mergeCells('AC5:AH5');
-                $sheet->cells('AC5:AH5', function($cells){
-                    $cells->setBackground('#ffa000');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });    
+                }); 
                 
                 // Comision
-                
                 $sheet->cell('AI5', function($cell){
                     $cell->setValue('COMISION');
                 });
                 $sheet->mergeCells('AI5:AN5');
                 $sheet->cells('AI5:AN5', function($cells){
                     $cells->setBackground('#6a1b9a');
-                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontColor('#FFFFFF');
                     $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
                     $cells->setAlignment('center');
                 });
-                
+
                 // Salario Efectivo Total Anual
                 $sheet->cell('AO5', function($cell){
                     $cell->setValue('EFECTIVO TOTAL ANUAL');
@@ -1071,7 +907,7 @@ class ReporteController extends Controller
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
                 });
-                       
+
                 $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
                 $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
                 for ($i= 0; $i < 10; $i++) {
@@ -1080,18 +916,155 @@ class ReporteController extends Controller
                     }
                     
                 }
-
-                $sheet->row(6, $cargoHeader);
-                //dd($detalleUniverso);
-                $sheet->rows($detalleUniverso);
                 
+                $sheet->row(6, $cargoHeader);
+                
+                $sheet->rows($detalleInternacional);
+
                 $sheet->cells('A6:BL6', function($cells){
                     $cells->setBackground('#a7ffeb');
-                }); 
-                
+                });
+                $sheet->setFreeze('A7');
+            });
+            $excel->setActiveSheetIndex(0);    
+        })->export('xlsx');
+    }
 
-                $sheet->setFreeze('A7');  
-            }); */
+    public function nivelReportClubExcel(Request $request){
+        ini_set('max_execution_time', 0);
+        // periodo de la encuesta actual (semestral para navieras)
+        $periodo = $request->periodo;    
+        // rubro de la empresa del cliente        
+        $rubro = $request->rubro_id;
+        
+        $encuestasIDs = Cabecera_encuesta::where('periodo', $periodo)
+                                            ->where('rubro_id', $rubro)
+                                            ->pluck('id');
+        // recupera los cargos del periodo para todos los que tengan homologación con niveles
+        $nivelesCargos = Detalle_encuestas_nivel::distinct()
+                                          ->whereIn('cabecera_encuesta_id', $encuestasIDs)
+                                          ->whereNotNull('cargo_oficial_id')
+                                          ->pluck('nivel_oficial_id');
+        // variables de detalle para cada segmento
+        $detalleUniverso = collect();
+        $detalleNacional = collect();
+        $detalleInternacional = collect();
+        
+        $detalleInternacional = collect();
+        // Procesamiento por cargo
+        foreach ($nivelesCargos as $value) {
+            $request->request->add(["nivel_id"=> $value]);
+            // procesamos el reporte
+            $respuesta = $this->nivelReport($request, $encuestasIDs, true);
+            $nivel = Nivel::find($value);
+            // preparamos los datos para el array final del cargo
+            $itemArray = array( $nivel->descripcion, 
+                                $nivel->descripcion, 
+                              );
+            $itemArrayNac = $itemArray;
+            $itemArrayInt = $itemArray;
+            // por cada item del detalle
+            foreach ($respuesta as $key => $item) {
+                
+                 switch ($key) {
+                    
+                    case 'detalle_universo':
+                        $this->cargaDetalleNivel($item, $itemArray);            
+                        break;
+                    case 'detalle_nacional':
+                        $this->cargaDetalleNivel($item, $itemArrayNac);            
+                        break;
+                    case 'detalleInternacional':
+                        $this->cargaDetalleNivel($item, $itemArrayInt);            
+                        break;                                                
+                } 
+
+            }
+            
+            $detalleUniverso->push($itemArray);
+            $detalleNacional->push($itemArrayNac);
+            $detalleInternacional->push($itemArrayInt);                 
+        }
+    
+ 
+        $filename = 'Resultados_Niveles'.$periodo;
+
+        Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional) {
+        //Excel::create($filename, function($excel) use($detalleNacional) {
+             $excel->sheet("universo", function($sheet) use($detalleUniverso){
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);  
+
+                $sheet->cell('A5', function($cell){
+                    $cell->setValue('NIVEL');
+                });
+                $sheet->mergeCells('A5:D5');
+                $sheet->cells('A5:D5', function($cells){
+                    $cells->setBackground('#00897b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+                // Salario Base Header
+                $sheet->cell('E5', function($cell){
+                    $cell->setValue('SALARIO BASE');
+                });
+                $sheet->mergeCells('E5:J5');
+                $sheet->cells('E5:J5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                                
+                // Bono Anual
+                $sheet->cell('K5', function($cell){
+                    $cell->setValue('BONO ANUAL');
+                });
+                $sheet->mergeCells('K5:P5');
+                $sheet->cells('K5:P5', function($cells){
+                    $cells->setBackground('#ffa000');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                // Total efectivo anual
+                $sheet->cell('Q5', function($cell){
+                    $cell->setValue('TOTAL EFECTIVO ANUAL');
+                });
+                $sheet->mergeCells('Q5:V5');
+                $sheet->cells('Q5:V5', function($cells){
+                    $cells->setBackground('#4a148c');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                                
+                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+                $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
+                for ($i= 0; $i < 3; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                    
+                }
+                
+                $sheet->row(6, $cargoHeader);
+                $sheet->cells('A6:V6', function($cells){
+                    $cells->setBackground('#a7ffeb');
+                });
+                
+                $sheet->rows($detalleUniverso);
+                $sheet->setFreeze('A7');
+                
+            }); 
             // hoja nacional
             $excel->sheet("nacional", function($sheet) use($detalleNacional){
                 $objDrawing = new PHPExcel_Worksheet_Drawing;
@@ -1167,7 +1140,7 @@ class ReporteController extends Controller
                 $sheet->setFreeze('A7');
             });
             // hoja internacional
-            /* $excel->sheet("internacional", function($sheet) use($detalleInternacional){
+            $excel->sheet("internacional", function($sheet) use($detalleInternacional){
                 $objDrawing = new PHPExcel_Worksheet_Drawing;
                 $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
                 $objDrawing->setCoordinates('A1');
@@ -1175,7 +1148,7 @@ class ReporteController extends Controller
                 $objDrawing->setWorksheet($sheet);  
 
                 $sheet->cell('A5', function($cell){
-                    $cell->setValue('CARGO');
+                    $cell->setValue('NIVEL');
                 });
                 $sheet->mergeCells('A5:D5');
                 $sheet->cells('A5:D5', function($cells){
@@ -1197,93 +1170,35 @@ class ReporteController extends Controller
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
                 });                
-                // Salario Efectivo Anual Garantizado
+                                
+                // Bono Anual
                 $sheet->cell('K5', function($cell){
-                    $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
+                    $cell->setValue('BONO ANUAL');
                 });
                 $sheet->mergeCells('K5:P5');
                 $sheet->cells('K5:P5', function($cells){
-                    $cells->setBackground('#388e3c');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Variable Anual
-                $sheet->cell('Q5', function($cell){
-                    $cell->setValue('VARIABLE ANUAL');
-                });
-                $sheet->mergeCells('Q5:V5');
-                $sheet->cells('Q5:V5', function($cells){
-                    $cells->setBackground('#afb42b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Total Adicional Anual
-                $sheet->cell('W5', function($cell){
-                    $cell->setValue('TOTAL ADICIONAL ANUAL');
-                });
-                $sheet->mergeCells('W5:AB5');
-                $sheet->cells('W5:AB5', function($cells){
-                    $cells->setBackground('#fbc02d');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Bono Anual
-                $sheet->cell('AC5', function($cell){
-                    $cell->setValue('BONO ANUAL');
-                });
-                $sheet->mergeCells('AC5:AH5');
-                $sheet->cells('AC5:AH5', function($cells){
                     $cells->setBackground('#ffa000');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
-                });                
-                // Salario Efectivo Total Anual
-                $sheet->cell('AI5', function($cell){
-                    $cell->setValue('EFECTIVO TOTAL ANUAL');
                 });
-                $sheet->mergeCells('AI5:AN5');
-                $sheet->cells('AI5:AN5', function($cells){
-                    $cells->setBackground('#f57c00');
+
+                // Total efectivo anual
+                $sheet->cell('Q5', function($cell){
+                    $cell->setValue('TOTAL EFECTIVO ANUAL');
+                });
+                $sheet->mergeCells('Q5:V5');
+                $sheet->cells('Q5:V5', function($cells){
+                    $cells->setBackground('#4a148c');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
+                // $cells->setValignment('center');
                     $cells->setAlignment('center');
-                });                
-                // Salario Base Comparativo Header
-                $sheet->cell('AO5', function($cell){
-                    $cell->setValue('SALARIO BASE COMP.');
-                });
-                $sheet->mergeCells('AO5:AT5');
-                $sheet->cells('AO5:AT5', function($cells){
-                    $cells->setBackground('#0288d1');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                // Salario Variable Anual comp.
-                $sheet->cell('AU5', function($cell){
-                    $cell->setValue('VARIABLE ANUAL COMP.');
-                });
-                $sheet->mergeCells('AU5:AZ5');
-                $sheet->cells('AU5:AZ5', function($cells){
-                    $cells->setBackground('#afb42b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                                                                                                                                
+                });                                
                 $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
                 $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-                for ($i= 0; $i < 8; $i++) {
+                for ($i= 0; $i < 3; $i++) {
                     foreach ($itemsHeader as $key => $value) {
                         array_push($cargoHeader, $value);
                     }
@@ -1291,14 +1206,13 @@ class ReporteController extends Controller
                 }
                 
                 $sheet->row(6, $cargoHeader);
-                
-                $sheet->rows($detalleInternacional);
-
-                $sheet->cells('A6:AZ6', function($cells){
+                $sheet->cells('A6:V6', function($cells){
                     $cells->setBackground('#a7ffeb');
                 });
+                
+                $sheet->rows($detalleInternacional);
                 $sheet->setFreeze('A7');
-            }); */
+            }); 
             $excel->setActiveSheetIndex(0);    
         })->export('xlsx');
     }    
@@ -3180,6 +3094,7 @@ class ReporteController extends Controller
 
             }
         }
+        //dd($dbEmpresa, $ficha, $per);
         $periodo = $dbEncuesta->periodo;    // periodo de la encuesta actual
 
         $rubro = $dbEmpresa->rubro_id;      // rubro de la empresa del cliente
@@ -3523,21 +3438,148 @@ class ReporteController extends Controller
         }
         // Recuperamos los datos de los cargos proveídos por las empresas encuestadas
 
+        $dbEncuestasNivel = Detalle_encuestas_nivel::whereIn('cabecera_encuesta_id', $encuestasIDs)
+                                                      ->where('nivel_oficial_id', $nivel)
+                                                      ->where('incluir', 1)
+                                                      ->get();
         $dbEncuestasNivelNac = Detalle_encuestas_nivel::whereIn('cabecera_encuesta_id', $encuestadasNacIds)
                                                       ->where('nivel_oficial_id', $nivel)
                                                       ->where('incluir', 1)
                                                       ->get();
+        $dbEncuestasNivelInter = Detalle_encuestas_nivel::whereIn('cabecera_encuesta_id', $encuestadasInterIds)
+                                                      ->where('nivel_oficial_id', $nivel)
+                                                      ->where('incluir', 1)
+                                                      ->get();
 
-        
+        // conteo de casos encontrados universo
+        $countCasos = $dbEncuestasNivel->where('cantidad_ocupantes', '>', '0')
+                                       ->unique('cabecera_encuesta_id')
+                                       ->count();
         // conteo de casos encontrados nacionales
         $countCasosNac = $dbEncuestasNivelNac->where('cantidad_ocupantes', '>', '0')
                                              ->unique('cabecera_encuesta_id')
                                              ->count();
-        //$countCasosNac = $encuestadasNacIds->count();
+        // conteo de casos encontrados internacionales
+        $countCasosInter = $dbEncuestasNivelInter->where('cantidad_ocupantes', '>', '0')
+                                                 ->unique('cabecera_encuesta_id')
+                                                 ->count();                                             
+
         // conteo de casos encontrados
-        $countOcupantesNac = $dbEncuestasNivelNac->sum('cantidad_ocupantes');
+        $countOcupantes = $dbEncuestasNivel->sum('cantidad_ocupantes');        
+        $universo = collect();
+        $segmento = "universo";
+        // Salario Base
+        $salariosBase = $dbEncuestasNivel->where('salario_base', '>', '0')
+                                         ->pluck('salario_base');
+        $salarioMin = $salariosBase->min();
+        $salarioMax = $salariosBase->max();
+        $salarioProm = $salariosBase->avg();
+        $salarioMed = $this->median($salariosBase);
+        $salario25Per = $this->percentile(25,$salariosBase);
+        $salario75Per = $this->percentile(75, $salariosBase);
+
+        //dd($dbClienteEnc);
+        $this->pusherNivel( $universo, 
+                            $countCasos, 
+                            Lang::get('reportReport.concept_salary'),
+                            $salarioMin,
+                            $salarioMax,
+                            $salarioProm,
+                            $salarioMed,
+                            $salario25Per,
+                            $salario75Per,
+                            $segmento, 
+                            $dbNivel);
+        
+        //Bono
+        $bonos = $dbEncuestasNivel->where('bono_anual', '>', '0')
+                                  ->pluck('bono_anual');
+        $bonoMin = $bonos->min();
+        $bonoMax = $bonos->max();
+        $bonoProm = $bonos->avg();
+        $bonoMed = $this->median($bonos);
+        $bono25Per = $this->percentile(25, $bonos);
+        $bono75Per = $this->percentile(75, $bonos);
+
+        $countCasosBonos = $dbEncuestasNivel->where('bono_anual', '>', '0')
+                                            ->unique('cabecera_encuesta_id')
+                                            ->count();
+        $this->pusherNivel( $universo, 
+                            $countCasosBonos, 
+                            Lang::get('reportReport.concept_bonus'),
+                            $bonoMin,
+                            $bonoMax,
+                            $bonoProm,
+                            $bonoMed,
+                            $bono25Per,
+                            $bono75Per,
+                            $segmento, 
+                            $dbNivel);                
+            
+        // Efectivo Total Anual
+        $efectivoAnual = $dbEncuestasNivel->where('salario_base', '>', '0')
+                                          ->pluck('total_efectivo_anual');
+               
+        $efectivoTotalMin = $efectivoAnual->min();
+        $efectivoTotalMax = $efectivoAnual->max();
+        $efectivoTotalProm = $efectivoAnual->avg();
+        $efectivoTotalMed = $this->median($efectivoAnual);
+        $efectivoTotal25Per = $this->percentile(25, $efectivoAnual);
+        $efectivoTotal75Per = $this->percentile(75, $efectivoAnual);
+
+        $this->pusherNivel( $universo, 
+                            $countCasos, 
+                            Lang::get('reportReport.concept_bonus'),
+                            $efectivoTotalMin,
+                            $efectivoTotalMax,
+                            $efectivoTotalProm,
+                            $efectivoTotalMed,
+                            $efectivoTotal25Per,
+                            $efectivoTotal75Per,
+                            $segmento, 
+                            $dbNivel);                
+        
+        //$detalleUniverso = $this->nivelSegmentArrayFactory($universo);
+        $detalleUniverso = array();
+        foreach ($universo as $value) {
+            $detalleUniverso[] = array( "Concepto"=>$value["concepto"],
+                                        "ocupantes"=> $countOcupantes, 
+                                        "Casos"=>$value["casos"], 
+                                        "Min"=>$value["min"], 
+                                        "25 Percentil"=>$value["per25"], 
+                                        "Promedio"=>$value["prom"], 
+                                        "Mediana"=>$value["med"], 
+                                        "75 Percentil"=>$value["per75"], 
+                                        "Max"=>$value["max"], 
+                                        "nivel"=>$value["nivel"] 
+                                        );
+        } 
+
         $nacional = collect();
+        $salarioBase = 0;
+        $salarioMin = 0;
+        $salarioMax = 0;
+        $salarioProm = 0;
+        $salarioMed = 0;
+        $salario25Per = 0;
+        $salario75Per = 0;
+        $bonos = 0;
+        $bonoMin = 0;
+        $bonoMax = 0;
+        $bonoProm = 0;
+        $bonoMed = 0;
+        $bono25Per = 0;
+        $bono75Per = 0;        
+        $efectivoAnual = 0;
+        $efectivoTotalMin = 0;
+        $efectivoTotalMax = 0;
+        $efectivoTotalProm = 0;
+        $efectivoTotalMed = 0;
+        $efectivoTotal25Per = 0;
+        $efectivoTotal75Per = 0;
+
         $segmento = "nacional";
+        $countOcupantesNac = $dbEncuestasNivelNac->sum('cantidad_ocupantes');
         // Salario Base
         $salariosBase = $dbEncuestasNivelNac->where('salario_base', '>', '0')->pluck('salario_base');
         $salarioMin = $salariosBase->min();
@@ -3549,16 +3591,16 @@ class ReporteController extends Controller
 
         //dd($dbClienteEnc);
         $this->pusherNivel( $nacional, 
-                        $countCasosNac, 
-                        Lang::get('reportReport.concept_salary'),
-                        $salarioMin,
-                        $salarioMax,
-                        $salarioProm,
-                        $salarioMed,
-                        $salario25Per,
-                        $salario75Per,
-                        $segmento, 
-                        $dbNivel);
+                            $countCasosNac, 
+                            Lang::get('reportReport.concept_salary'),
+                            $salarioMin,
+                            $salarioMax,
+                            $salarioProm,
+                            $salarioMed,
+                            $salario25Per,
+                            $salario75Per,
+                            $segmento, 
+                            $dbNivel);
         
         //Bono
         $bonos = $dbEncuestasNivelNac->where('bono_anual', '>', '0')->pluck('bono_anual');
@@ -3570,22 +3612,23 @@ class ReporteController extends Controller
         $bono75Per = $this->percentile(75, $bonos);
 
         $countCasosBonosNac = $dbEncuestasNivelNac->where('bono_anual', '>', '0')
-                                             ->unique('cabecera_encuesta_id')
-                                             ->count();
-        $this->pusherNivel(  $nacional, 
-                        $countCasosBonosNac, 
-                        Lang::get('reportReport.concept_bonus'),
-                        $bonoMin,
-                        $bonoMax,
-                        $bonoProm,
-                        $bonoMed,
-                        $bono25Per,
-                        $bono75Per,
-                        $segmento, 
-                        $dbNivel);                
+                                                  ->unique('cabecera_encuesta_id')
+                                                  ->count();
+        $this->pusherNivel( $nacional, 
+                            $countCasosBonosNac, 
+                            Lang::get('reportReport.concept_bonus'),
+                            $bonoMin,
+                            $bonoMax,
+                            $bonoProm,
+                            $bonoMed,
+                            $bono25Per,
+                            $bono75Per,
+                            $segmento, 
+                            $dbNivel);                
             
         // Efectivo Total Anual
-        $efectivoAnual = $dbEncuestasNivelNac->where('salario_base', '>', '0')->pluck('total_efectivo_anual');
+        $efectivoAnual = $dbEncuestasNivelNac->where('salario_base', '>', '0')
+                                             ->pluck('total_efectivo_anual');
                
         $efectivoTotalMin = $efectivoAnual->min();
         $efectivoTotalMax = $efectivoAnual->max();
@@ -3594,21 +3637,21 @@ class ReporteController extends Controller
         $efectivoTotal25Per = $this->percentile(25, $efectivoAnual);
         $efectivoTotal75Per = $this->percentile(75, $efectivoAnual);
 
-        $this->pusherNivel(  $nacional, 
-                        $countCasosBonosNac, 
-                        Lang::get('reportReport.concept_bonus'),
-                        $efectivoTotalMin,
-                        $efectivoTotalMax,
-                        $efectivoTotalProm,
-                        $efectivoTotalMed,
-                        $efectivoTotal25Per,
-                        $efectivoTotal75Per,
-                        $segmento, 
-                        $dbNivel);                
+        $this->pusherNivel( $nacional, 
+                            $countCasosBonosNac, 
+                            Lang::get('reportReport.concept_bonus'),
+                            $efectivoTotalMin,
+                            $efectivoTotalMax,
+                            $efectivoTotalProm,
+                            $efectivoTotalMed,
+                            $efectivoTotal25Per,
+                            $efectivoTotal75Per,
+                            $segmento, 
+                            $dbNivel);                
         
-        $detalleNacional = $this->nivelSegmentArrayFactory($nacional);
+        //$detalleNacional = $this->nivelSegmentArrayFactory($nacional);
         $detalleNacional = array();
-        foreach ($nacional as $value) {
+         foreach ($nacional as $value) {
             $detalleNacional[] = array( "Concepto"=>$value["concepto"],
                                         "ocupantes"=> $countOcupantesNac, 
                                         "Casos"=>$value["casos"], 
@@ -3620,12 +3663,123 @@ class ReporteController extends Controller
                                         "Max"=>$value["max"], 
                                         "nivel"=>$value["nivel"] 
                                         );
-        }        
+        }         
+        
+        $internacional = collect();
+        $salarioBase = 0;
+        $salarioMin = 0;
+        $salarioMax = 0;
+        $salarioProm = 0;
+        $salarioMed = 0;
+        $salario25Per = 0;
+        $salario75Per = 0;
+        $bonos = 0;
+        $bonoMin = 0;
+        $bonoMax = 0;
+        $bonoProm = 0;
+        $bonoMed = 0;
+        $bono25Per = 0;
+        $bono75Per = 0;        
+        $efectivoAnual = 0;
+        $efectivoTotalMin = 0;
+        $efectivoTotalMax = 0;
+        $efectivoTotalProm = 0;
+        $efectivoTotalMed = 0;
+        $efectivoTotal25Per = 0;
+        $efectivoTotal75Per = 0;
+        $countOcupantesInter = $dbEncuestasNivelInter->sum('cantidad_ocupantes');
+        $segmento = "internacional";
+        // Salario Base
+        $salariosBase = $dbEncuestasNivelInter->where('salario_base', '>', '0')
+                                              ->pluck('salario_base');
+        $salarioMin = $salariosBase->min();
+        $salarioMax = $salariosBase->max();
+        $salarioProm = $salariosBase->avg();
+        $salarioMed = $this->median($salariosBase);
+        $salario25Per = $this->percentile(25,$salariosBase);
+        $salario75Per = $this->percentile(75, $salariosBase);
+
+        //dd($dbClienteEnc);
+        $this->pusherNivel( $internacional, 
+                            $countCasosInter, 
+                            Lang::get('reportReport.concept_salary'),
+                            $salarioMin,
+                            $salarioMax,
+                            $salarioProm,
+                            $salarioMed,
+                            $salario25Per,
+                            $salario75Per,
+                            $segmento, 
+                            $dbNivel);
+        
+        //Bono
+        $bonos = $dbEncuestasNivelInter->where('bono_anual', '>', '0')
+                                       ->pluck('bono_anual');
+        $bonoMin = $bonos->min();
+        $bonoMax = $bonos->max();
+        $bonoProm = $bonos->avg();
+        $bonoMed = $this->median($bonos);
+        $bono25Per = $this->percentile(25, $bonos);
+        $bono75Per = $this->percentile(75, $bonos);
+
+        $countCasosBonosInter = $dbEncuestasNivelInter->where('bono_anual', '>', '0')
+                                                      ->unique('cabecera_encuesta_id')
+                                                      ->count();
+        $this->pusherNivel( $internacional, 
+                            $countCasosBonosInter, 
+                            Lang::get('reportReport.concept_bonus'),
+                            $bonoMin,
+                            $bonoMax,
+                            $bonoProm,
+                            $bonoMed,
+                            $bono25Per,
+                            $bono75Per,
+                            $segmento, 
+                            $dbNivel);                
+            
+        // Efectivo Total Anual
+        $efectivoAnual = $dbEncuestasNivelInter->where('salario_base', '>', '0')
+                                               ->pluck('total_efectivo_anual');
+               
+        $efectivoTotalMin = $efectivoAnual->min();
+        $efectivoTotalMax = $efectivoAnual->max();
+        $efectivoTotalProm = $efectivoAnual->avg();
+        $efectivoTotalMed = $this->median($efectivoAnual);
+        $efectivoTotal25Per = $this->percentile(25, $efectivoAnual);
+        $efectivoTotal75Per = $this->percentile(75, $efectivoAnual);
+
+        $this->pusherNivel( $internacional, 
+                            $countCasosInter, 
+                            Lang::get('reportReport.concept_bonus'),
+                            $efectivoTotalMin,
+                            $efectivoTotalMax,
+                            $efectivoTotalProm,
+                            $efectivoTotalMed,
+                            $efectivoTotal25Per,
+                            $efectivoTotal75Per,
+                            $segmento, 
+                            $dbNivel);                
+        
+        //$detalleInternacional = $this->nivelSegmentArrayFactory($internacional);
+         $detalleInternacional = array();
+        foreach ($internacional as $value) {
+            $detalleInternacional[] = array("Concepto"=>$value["concepto"],
+                                            "ocupantes"=> $countOcupantesInter, 
+                                            "Casos"=>$value["casos"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "nivel"=>$value["nivel"] 
+                                           );
+        } 
 
         $resultado = collect([  
-                               // "detalle_universo"=> $detalleUniverso, 
-                                "detalle_nacional"=> $detalleNacional, 
-                               // "detalleInternacional"=>$detalleInternacional
+                               "detalle_universo"=> $detalleUniverso, 
+                               "detalle_nacional"=> $detalleNacional, 
+                               "detalleInternacional"=>$detalleInternacional
                             ]);
         return $resultado;         
 

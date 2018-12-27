@@ -105,12 +105,12 @@ class ReportController extends Controller
         //
     }
 
-    /*public function getPeriodos(Request $request){
+    public function getPeriodosEmpresa(Request $request){
         $id = $request->empresa_id;
         $periodos = Cabecera_encuesta::distinct('periodo')
                                      ->where('empresa_id', $id)
                                      ->pluck('periodo', 'periodo');
         return $periodos;                                
-    }*/
+    }
 
 }

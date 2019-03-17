@@ -26,17 +26,37 @@ class AreasController extends Controller
     }
 
     public function store(Request $request){
-        DB::transaction(function() use($request){
-            //Cargamos el área en español
-            $dbData = new Area($request->all());
-            //Cargamos el área en inglés  
-            $dbDataEn = new Area_en();
-            $dbDataEn->descripcion = $request->descripcion_en;
-            //Guardamos los registros
+        $dbData = new Area($request->all());
+        $dbDataEn = new Area_en();
+        $dbDataEn->descripcion = $request->descripcion_en;
+           
+        DB::beginTransaction();
+        try{
             $dbData->save();
-            $dbDataEn->save();            
-        });
-
+            $dbDataEn->save();
+            DB::commit();
+            flash::elsoftMessage(2010, true);
+        }catch(Exception $exception){
+            DB::rollback();
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3013, true);
+            }
+            return redirect()->back();
+        }
     	return redirect()->route('areas.index');
     }
 
@@ -56,35 +76,73 @@ class AreasController extends Controller
         $dbData = Area::find($id);
         //Area en inglés
         $dbDataEn = Area_en::find($id);
-        DB::transaction(function() use($request, $id, $dbData, $dbDataEn){
-            //Cargamos el área en español    
-            $dbData->fill($request->all());
-            //Cargamos el área en inglés
-            $dbDataEn->descripcion = $request->descripcion_en;
-            //Guardamos los registos
+        $dbData->fill($request->all());
+        $dbDataEn->descripcion = $request->descripcion_en;
+
+        DB::beginTransaction();
+        try{
             $dbData->save();
             $dbDataEn->save();
-        });
+            DB::commit();
+            flash::elsoftMessage(2010, true);
+        }catch(Exception $exception){
+            DB::rollback();
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3013, true);
+            }
+            return redirect()->back();
+        }
         
         
 
 		return redirect()->route('areas.index');
     }
 
-    public function destroy($id){
+    public function destroy($id){        
+        $dbData = Area::find($id);
+        $dbDataEn = Area_en::find($id);
         DB::beginTransaction();
-        try{ 
-            $dbData = Area::find($id);
-            $dbDataEn = Area_en::find($id);
+        try{
             $dbData->delete();
             $dbDataEn->delete();
-        }catch(\Exception $e){
+            DB::commit();
+            flash::elsoftMessage(2011, true);
+        }catch(Exception $exception){
             DB::rollback();
-            session(['delete_failed'=>"true"]);
-            return redirect()->back()->withErrors($e->getMessage());
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3012, true);
+            }
+            return redirect()->back();
         }
-        DB::commit();
-        
-		return redirect()->route('areas.index');    	
+
+        return redirect()->route('areas.index');    
     }
 }

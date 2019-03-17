@@ -72,13 +72,13 @@ class FlashNotifier
     public function overlay($message, $level = 'info', $number = '000')
     {
         if($level=='info'){
-            $title = 'Sabías que';
+            $title = 'Sabías que...';
             $class = 'modal-info';
-            $this->messageModal($message, $number, $title,$class);    
+            $this->messageModal($message, $number, $title, $class);    
         }elseif ($level=='warning') {
             $title = 'Cuiado';
             $class = 'modal-warning';
-            $this->messageModal($message, $number, $title,$class);    
+            $this->messageModal($message, $number, $title, $class);    
             
         }elseif ($level=='success') {
             $title = 'Buenísimo!';
@@ -147,7 +147,6 @@ class FlashNotifier
      */
     public function clearFlash()
     {
-        dd($this);
         $this->session->forget('flash_notification.message');
         $this->session->forget('flash_notification.number');
         $this->session->forget('flash_notification.title');
@@ -171,8 +170,14 @@ class FlashNotifier
                     $this->overlay('Mensaje de Prueba', 'info', 'S&B - 0');    
                 }else{
                     $this->info('Mensaje de Prueba - Info');    
+                }                
+                break;
+            case 10:
+                if($modal){
+                    $this->overlay('El Reporte no está disponible por el momento </br> Favor comuníquese con al consultora para mayor información', 'info', 'S&B - 10');
+                }else{
+                    $this->info('El Reporte no está disponible por el momento </br> Favor comuníquese con al consultora para mayor información', 'info');
                 }
-                
                 break;
             // warning
             case 1000:
@@ -279,9 +284,9 @@ class FlashNotifier
                 break;                            
             case 3013:
                 if($modal){
-                    $this->overlay('El Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada', 'error', 'S&B - 3013');    
+                    $this->overlay('Hubo un error inesperado al intentar insertar o actualizar el registro que seleccionaste', 'error', 'S&B - 3013');    
                 }else{
-                    $this->error('El Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada - Error');    
+                    $this->error('Hubo un error inesperado al intentar insertar o actualizar el registro que seleccionaste - Error');    
                 }
                 break;                                            
             case 3014:

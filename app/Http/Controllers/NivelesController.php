@@ -13,12 +13,8 @@ class NivelesController extends Controller
 {
     public function index(){
         $dbData = Nivel::get();
-        // Si terminó de borrar el registro
-        $toast = session('delete_failed');
-        if($toast){
-            session()->forget('delete_failed');
-        }
-    	return view('niveles.list')->with('dbData', $dbData)->with('toast', $toast);
+        
+    	return view('niveles.list')->with('dbData', $dbData);
     }
 
     public function create(){
@@ -26,17 +22,39 @@ class NivelesController extends Controller
     }
 
     public function store(Request $request){
-        DB::transaction(function() use($request){
-            //Cargamos el área en español
-            $dbData = new Nivel($request->all());
-            //Cargamos el área en inglés  
-            $dbDataEn = new Nivel_en();
-            $dbDataEn->descripcion = $request->descripcion_en;
-            //Guardamos los registros
+        
+        $dbData = new Nivel($request->all());    
+        $dbDataEn = new Nivel_en();
+        $dbDataEn->descripcion = $request->descripcion_en;
+        
+        DB::beginTransaction();
+        try{
             $dbData->save();
-            $dbDataEn->save();            
-        });
-
+            $dbDataEn->id = $dbData->id;
+            $dbDataEn->save();
+            DB::commit();
+            flash::elsoftMessage(2010, true);
+        }catch(Exception $exception){
+            DB::rollback();
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3013, true);
+            }
+            return redirect()->back();
+        }
     	return redirect()->route('niveles.index');
     }
 
@@ -52,36 +70,77 @@ class NivelesController extends Controller
 
     public function update(Request $request, $id){
         
-        //nivel en español
         $dbData = Nivel::find($id);
-        //nivel en inglés
         $dbDataEn = Nivel_en::find($id);
-        DB::transaction(function() use($request, $id, $dbData, $dbDataEn){
-            //Cargamos el área en español    
-            $dbData->fill($request->all());
-            //Cargamos el área en inglés
-            $dbDataEn->descripcion = $request->descripcion_en;
-            //Guardamos los registos
+        if(!$dbDataEn){
+            $dbDataEn = new Nivel_en();
+            $dbDataEn->id = $id;
+        }
+        $dbData->fill($request->all());
+        $dbDataEn->descripcion = $request->descripcion_en;
+
+        DB::beginTransaction();
+        try{
             $dbData->save();
             $dbDataEn->save();
-        });
+            DB::commit();
+            flash::elsoftMessage(2010, true);
+        }catch(Exception $exception){
+            DB::rollback();
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3013, true);
+            }
+            return redirect()->back();
+        }
 		return redirect()->route('niveles.index');
     }
 
     public function destroy($id){
+        $dbData = Nivel::find($id);
+        $dbDataEn = Nivel_en::find($id);
+
         DB::beginTransaction();
         try{
-            $dbData = Nivel::find($id);
-            $dbDataEn = Nivel_en::find($id);
             $dbData->delete();
-            $dbDataEn->delete();            
-            
-        }catch(\Exception $e){
+            $dbDataEn->delete();
+            DB::commit();
+            flash::elsoftMessage(2011, true);
+        }catch(Exception $exception){
             DB::rollback();
-            session(['delete_failed'=>"true"]);
-            return redirect()->back()->withErrors($e->getMessage());
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3012, true);
+            }
+            return redirect()->back();
         }
-        DB::commit();
+
 		return redirect()->route('niveles.index');    	
     }
 }

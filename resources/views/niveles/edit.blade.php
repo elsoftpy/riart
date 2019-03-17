@@ -3,17 +3,22 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Editar Area</h4>
+	          <h4>Editar Nivel</h4>
 	        </div>
 	        <div class="content">
-				<form class="col s12" action="{{route('areas.update', $dbData->id)}}" method="POST">
+				<form class="col s12" action="{{route('niveles.update', $dbData->id)}}" method="POST">
 					<div class="row">
 						<div class="input-field col s6">
 							<input id="descripcion" type="text" class="validate" name="descripcion" value="{{$dbData->descripcion}}">
 							<label for="descripcion">Descripción (En español)</label>
 						</div>
 						<div class="input-field col s6">
-							<input id="descripcion_en" type="text" class="validate" name="descripcion_en" value="{{$dbData->areaEn->descripcion}}">
+							@if ($dbData->nivelEn)
+								<input id="descripcion_en" type="text" class="validate" name="descripcion_en" value="{{$dbData->nivelEn->descripcion}}">	
+							@else
+								<input id="descripcion_en" type="text" class="validate" name="descripcion_en">	
+							@endif
+							
 							<label for="descripcion_en">Descripción (en inglés)</label>
 						</div>						
 					</div>					

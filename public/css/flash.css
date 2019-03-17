@@ -3,6 +3,11 @@
 
 }
 
+.modal-info {
+  background-color: #87d9fa !important;
+  color: #87d9fa !important;
+}
+
 .modal-warning {
   background-color: #ffc107 !important;
   color: #ffc107 !important;

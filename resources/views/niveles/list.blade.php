@@ -26,7 +26,12 @@
 	                    		<tr>
 		                    		<td>{{ $est->id }}</td>
 									<td>{{ $est->descripcion }}</td>
-									<td>{{ $est->nivelEn->descripcion }}</td>
+									<td>
+										@if ($est->nivelEn)
+											{{ $est->nivelEn->descripcion }}		
+										@endif
+										
+									</td>
 		                    		<td>
 										<a href="{{ route('niveles.edit', $est->id) }}" class="btn waves-light waves-effect lighten-1 white-text ">
 		                    				<i class="material-icons left">edit</i>Editar
@@ -46,9 +51,7 @@
                 </div>
 			</div>
 		</div>
-		@if($toast)
-			<div id="toast"></div>
-		@endif
+		
 @endsection
 @push('scripts')
 	<script type="text/javascript">
@@ -77,10 +80,6 @@
 	    	});
    		});
 		
-		if($("#toast").length > 0){
-			M.toast({html: 'Error al borrar el Registro'});	
-		}
-
 		function delete_row(row){
 			event.preventDefault(); 
 			if (confirm('Seguro que desea eliminar el registro?')){

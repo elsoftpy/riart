@@ -115,22 +115,23 @@ class CargosClientesController extends Controller
 
      public function show($id)
     {
-        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();
+        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)
+                                       ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')
+                                       ->first();
 
         if($dbEncuesta){
-            $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)->get();
+            $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)
+                                     ->get();
 
-            $dbDetalle = Detalle_encuesta::where('cabecera_encuesta_id', $dbEncuesta->id)->get();
-
+            $dbDetalle = Detalle_encuesta::where('cabecera_encuesta_id', $dbEncuesta->id)
+                                         ->get();
         }else{
             $dbData = null;
             $dbDetalle = null;
         }
 
-
         $dbEmpresa = $dbEncuesta->empresa->descripcion;
         $dbPeriodo = $dbEncuesta->periodo;
-
 
    
         return view('cargos_clientes.list') ->with('dbData', $dbData)

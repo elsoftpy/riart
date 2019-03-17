@@ -19,6 +19,7 @@ use App\Empresa;
 use Carbon\Carbon;
 use Hash;
 use Auth;
+use flash;
 
 class BeneficiosController extends Controller
 {
@@ -289,6 +290,10 @@ class BeneficiosController extends Controller
                                               ->orderBy('id', 'DESC')
                                               ->skip(1)
                                               ->first();
+      if(!$encuesta){
+        Flash::elsoftMessage(10, true);
+        return redirect()->route('home.page');
+      }
       // recuperamos el item para encontrar la pregunta
       $id = $request->item_id;
       $item = beneficios_item::find($id);

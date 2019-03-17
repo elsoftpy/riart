@@ -26,6 +26,10 @@ trait ClubsTrait{
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club: Survey of Non-Governmental Organizations";
                     break;
+                case 8:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "Club de Empresas de Consumo Masivo"; 
+                    break;                   
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "de Bancos";
@@ -52,6 +56,10 @@ trait ClubsTrait{
                 case 6:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club - Encuesta de Organizaciones No Gubernamentales";
+                    break;
+                case 8:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "Club de Empresas de Consumo Masivo";
                     break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";

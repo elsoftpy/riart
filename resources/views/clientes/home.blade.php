@@ -82,6 +82,11 @@
 				<input type="hidden" id="periodo_viejo" name="periodo_viejo" value="12/2017"/>
 				<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
 				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
+			@else
+				<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
+					{{$dbEncuesta->periodo}}
+				</a>				
+				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>				
 			@endif
 		</div>
 		<div class="modal-footer">

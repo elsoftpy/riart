@@ -25,7 +25,7 @@
 	
 	<div class="row">
 		<div class="hoverable bordered"  >
-			<div class=" col s11 offset-s1">
+			<div class="col s11 offset-s1 center" style="text-transform:uppercase;">
 				<h4 id="titulo">{{$item->titulo}}</h4>	
 			</div>
 			<div id="chart-canvas">
@@ -48,7 +48,7 @@
 								@foreach ($practicas as $element)
 									<li style="padding-top: 0.5em;">
 										<div class="flat" id="btn_{{$element->id}}">
-											<button class="flat" value="{{$element->id}}" id="{{$element->id}}}">
+											<button class="flat" value="{{$element->id}}" id="{{$element->id}}}" style="text-transform:uppercase;">
 												{{$element->item->titulo}}
 					      					</button>
 					      				</div>

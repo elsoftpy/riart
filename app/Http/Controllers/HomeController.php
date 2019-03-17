@@ -29,11 +29,32 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if(Auth::user()->is_admin){
+        $user = Auth::user();
+        
+        if($user->id == 176 ){
+            $ficha = Ficha_dato::find(2);
+            $dbEmpresa = $user->empresa;
+            session()->put('periodo', $ficha->periodo);
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                                    ->where('periodo', $ficha->periodo)
+                                                    ->first();                    
+            
+            $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                            ->orderBy('id', 'DESC')
+                                            ->get();
+                                            $dbEncuestaAnt = $dbEncuestas->get(1);
+            
+            $club = $this->club($dbEmpresa->rubro_id);
+                return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
+                                            ->with('club', $club)
+                                            ->with('dbEncuesta', $dbEncuesta)
+                                            ->with('dbEncuestaAnt' , $dbEncuestaAnt);                                            
+        }
+        if($user->is_admin){
             return view('home');    
         }else{
-            if(Auth::user()->is_benefit){
-                $dbEmpresa = Auth::user()->empresa;
+            if($user->is_benefit){
+                $dbEmpresa = $user->empresa;
                 $dbEncuestas = beneficios_cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
                 if($dbEncuestas->count() > 0){
                     $dbEncuesta = $dbEncuestas->first();    
@@ -45,8 +66,9 @@ class HomeController extends Controller
                                               ->with('dbEmpresa', $dbEmpresa);    
 
             }else{
-                $dbEmpresa = Auth::user()->empresa;
+                $dbEmpresa = $user->empresa;
                 $ficha = Ficha_dato::where('rubro_id', $dbEmpresa->rubro_id)->activa()->first();
+                
                 if($ficha){
                     $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                                     ->where('periodo', $ficha->periodo)
@@ -61,12 +83,12 @@ class HomeController extends Controller
                 
                 
                 $dbEncuestaAnt = $dbEncuestas->get(1);
-                //dd($dbEncuesta, $dbEncuestaAnt);
+                //dd($dbEmpresa->rubro_id);
                 $club = $this->club($dbEmpresa->rubro_id);
-                    return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
-                                                ->with('club', $club)
-                                                ->with('dbEncuesta', $dbEncuesta)
-                                                ->with('dbEncuestaAnt' , $dbEncuestaAnt);
+                return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
+                                            ->with('club', $club)
+                                            ->with('dbEncuesta', $dbEncuesta)
+                                            ->with('dbEncuestaAnt' , $dbEncuestaAnt);
 
             }
         }

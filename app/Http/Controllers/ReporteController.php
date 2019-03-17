@@ -371,9 +371,8 @@ class ReporteController extends Controller
             $itemArrayInt = $itemArray;
             // por cada item del detalle
             foreach ($respuesta as $key => $item) {
-                
+                //dd($item);
                 switch ($key) {
-                    
                     case 'detalle_universo':
                         $this->CargaDetalle($item, $itemArray);            
                         break;
@@ -387,7 +386,7 @@ class ReporteController extends Controller
                 }
 
             }
-            
+            //dd($itemArray);
             $detalleUniverso->push($itemArray);
             $detalleNacional->push($itemArrayNac);
             $detalleInternacional->push($itemArrayInt);                 
@@ -491,7 +490,7 @@ class ReporteController extends Controller
                 
                 // Salario Efectivo Total Anual
                 $sheet->cell('AO5', function($cell){
-                    $cell->setValue('EFECTIVO TOTAL ANUAL');
+                    $cell->setValue('COMPENSACION ANUAL TOTAL');
                 });
                 $sheet->mergeCells('AO5:AT5');
                 $sheet->cells('AO5:AT5', function($cells){
@@ -1222,10 +1221,6 @@ class ReporteController extends Controller
         $variableAnualEmp = 0;
         //dd($item);
         foreach ($item as $key => $value) {
-/*            dd($value, $key, $item);
-            if( array_key_exists("Variable Anual", $value)){
-                
-            }*/
             switch ($value["Concepto"]) {
                 case "Comision":
                     $this->cargador($value, $itemArray, false);
@@ -1792,33 +1787,7 @@ class ReporteController extends Controller
                             $segmento, 
                             $dbCargo);
 
-            if($muestraComision){
-                //Comisión
-                $countCasosComision = $detalle->where('comision', '>', '0')->unique('cabecera_encuesta_id')->count();
-                $comision = $detalle->where('comision', '>', '0')->pluck('comision');
-                $comisionMin = $comision->min();
-                $comisionMax = $comision->max();
-                $comisionProm = $comision->avg();
-                $comisionMed = $this->median($comision);
-                $comision25Per = $this->percentile(25, $comision);
-                $comision75Per = $this->percentile(75, $comision);
-
-                $this->pusher(  $collection, 
-                                $countCasosComision, 
-                                //Lang::get('reportReport.concept_bonus'),
-                                "Comision",
-                                $comisionMin,
-                                $comisionMax,
-                                $comisionProm,
-                                $comisionMed,
-                                $comision25Per,
-                                $comision75Per,
-                                $dbClienteEnc->comision, 
-                                $segmento, 
-                                $dbCargo);
-
-            }
-            
+                       
             // Variable Anual
             $plusRendimiento = $detalle->where('plus_rendimiento', '>', '0')->pluck('plus_rendimiento');
             $plusMin = $plusRendimiento->min();
@@ -1990,6 +1959,33 @@ class ReporteController extends Controller
                             $dbClienteEnc->bono_anual,
                             $segmento, 
                             $dbCargo);
+            
+            if($muestraComision){
+                //Comisión
+                $countCasosComision = $detalle->where('comision', '>', '0')->unique('cabecera_encuesta_id')->count();
+                $comision = $detalle->where('comision', '>', '0')->pluck('comision');
+                $comisionMin = $comision->min();
+                $comisionMax = $comision->max();
+                $comisionProm = $comision->avg();
+                $comisionMed = $this->median($comision);
+                $comision25Per = $this->percentile(25, $comision);
+                $comision75Per = $this->percentile(75, $comision);
+
+                $this->pusher(  $collection, 
+                                $countCasosComision, 
+                                //Lang::get('reportReport.concept_bonus'),
+                                "Comision",
+                                $comisionMin,
+                                $comisionMax,
+                                $comisionProm,
+                                $comisionMed,
+                                $comision25Per,
+                                $comision75Per,
+                                $dbClienteEnc->comision, 
+                                $segmento, 
+                                $dbCargo);
+
+            }
 
             // Efectivo Anual Garantizado
             $detalle = $detalle->map(function($item){
@@ -2017,7 +2013,7 @@ class ReporteController extends Controller
 
             $this->pusher(  $collection, 
                             $countCasos, 
-                            Lang::get('reportReport.concept_annual_cash'),
+                            Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
                             $efectivoTotalProm,
@@ -2219,34 +2215,7 @@ class ReporteController extends Controller
                             $efectivoEmpresa, 
                             $segmento, 
                             $dbCargo);
-
-            if($muestraComision){
-                //Comisión
-                $countCasosComision = $detalle->where('comision', '>', '0')->unique('cabecera_encuesta_id')->count();
-                $comision = $detalle->where('comision', '>', '0')->pluck('comision');
-                $comisionMin = $comision->min();
-                $comisionMax = $comision->max();
-                $comisionProm = $comision->avg();
-                $comisionMed = $this->median($comision);
-                $comision25Per = $this->percentile(25, $comision);
-                $comision75Per = $this->percentile(75, $comision);
-
-                $this->pusher(  $collection, 
-                                $countCasosComision, 
-                                //Lang::get('reportReport.concept_bonus'),
-                                "Comision",
-                                $comisionMin,
-                                $comisionMax,
-                                $comisionProm,
-                                $comisionMed,
-                                $comision25Per,
-                                $comision75Per,
-                                $dbClienteEnc->comision, 
-                                $segmento, 
-                                $dbCargo);
-
-            }            
-
+            
             //Adicional
             $countCasosAdicionales = $detalle->where('adicionales_resto', '>', '0')->unique('cabecera_encuesta_id')->count();            
             $adicionales = $detalle->where('adicionales_resto', '>', '0')->pluck('adicionales_resto');
@@ -2292,6 +2261,34 @@ class ReporteController extends Controller
                             $segmento, 
                             $dbCargo);
 
+
+            if($muestraComision){
+                //Comisión
+                $countCasosComision = $detalle->where('comision', '>', '0')->unique('cabecera_encuesta_id')->count();
+                $comision = $detalle->where('comision', '>', '0')->pluck('comision');
+                $comisionMin = $comision->min();
+                $comisionMax = $comision->max();
+                $comisionProm = $comision->avg();
+                $comisionMed = $this->median($comision);
+                $comision25Per = $this->percentile(25, $comision);
+                $comision75Per = $this->percentile(75, $comision);
+
+                $this->pusher(  $collection, 
+                                $countCasosComision, 
+                                //Lang::get('reportReport.concept_bonus'),
+                                "Comision",
+                                $comisionMin * 12,
+                                $comisionMax * 12,
+                                $comisionProm * 12,
+                                $comisionMed * 12,
+                                $comision25Per * 12,
+                                $comision75Per * 12,
+                                $dbClienteEnc->comision * 12, 
+                                $segmento, 
+                                $dbCargo);
+
+            }            
+                
             // Efectivo Total Anual
             $detalle = $detalle->map(function($item){
                 $item['efectivo_total_anual'] = $item['efectivo_anual_garantizado'] +
@@ -2348,7 +2345,7 @@ class ReporteController extends Controller
                             $beneficiosMed * 12,
                             $beneficios25Per * 12,
                             $beneficios75Per * 12,
-                            $dbClienteEnc->beneficios_bancos * 12, 
+                            $dbClienteEnc->beneficios_resto * 12, 
                             $segmento, 
                             $dbCargo);
             
@@ -2561,6 +2558,7 @@ class ReporteController extends Controller
                                      $item->plus_rendimiento + 
                                      $adicionalNav + 
                                      $item->bono_anual;
+
             $efectivoTotalAnual = $efectivoAnual + $adicionalOtros + $item->bono_anual;
 
             $totalBeneficios =  $item->refrigerio + 
@@ -2665,6 +2663,7 @@ class ReporteController extends Controller
                                 "Condición Ocupante"=>$item->condicion_ocupante,
                                 "Total Beneficios Anual"=>$totalBeneficios*12,
                                 "Compensación Anual Total" => ($totalBeneficios*12 + $efectivoTotalAnual),
+                                "Compensación Anual Total Navieras" => ($totalBeneficios*12 + $efectivoTotalAnualNav),
                                 "Aguinaldo Impactado"=> $aguinaldoImpactado,
                                 "Compensación Efectiva Anual" => $compensacionEfectiva
                 );
@@ -2676,7 +2675,7 @@ class ReporteController extends Controller
         Excel::create($filename, function($excel) use($detalle, $periodo) {
             $excel->sheet($periodo, function($sheet) use($detalle){
                 
-                $sheet->cells('A10:BQ10', function($cells){
+                $sheet->cells('A10:BR10', function($cells){
                     $cells->setBackground('#00897b');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
@@ -3052,8 +3051,9 @@ class ReporteController extends Controller
         return "ok";
     }
 
-    private function cargoReportAll(Request $request, $tipo, $muestraComision = false){
+    private function cargoReportAll(Request $request, $tipo, $muestraComision = true){
         //dd($request->all());
+
         $dbEmpresa = Empresa::find($request->empresa_id);   // datos de la empresa del cliente
         if(Session::has('periodo')){
             $per = Session::get('periodo');
@@ -3326,7 +3326,7 @@ class ReporteController extends Controller
             })->export('xlsx');
             return redirect()->route('resultados');
         }elseif ($tipo == "clubExcel") {
-           
+            
             $cargoFileName = str_replace("-", "_", str_replace(" ", "_", $dbCargo->descripcion));
             $filename = 'Resultados_'.$periodo.'_'.$cargoFileName;
             $detalleUniverso = array();

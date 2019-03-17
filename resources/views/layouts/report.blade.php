@@ -7,7 +7,7 @@
         {!! MaterializeCSS::include_css() !!}
         <link rel="stylesheet" href="{{ asset('css/flash.css')}}">
         <style type="text/css"></style>
-        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         
         <!-- Datatables css -->
         <link href="{{ asset('/plugins/datatables/dataTables.bootstrap.css') }}" rel="stylesheet"/>

@@ -7,7 +7,7 @@
         {!! MaterializeCSS::include_css() !!}
         <link rel="stylesheet" href="{{ asset('css/flash.css')}}">
         <style type="text/css"></style>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         
         <!-- Datatables css -->
         <link href="{{ asset('/plugins/datatables/dataTables-materialize.css') }}" rel="stylesheet"/>
@@ -29,23 +29,24 @@
       <div class="container" style="width: 90% !important">
           <!-- TOP MENU -->
           <ul id="dropdown1" class="dropdown-content">
-              <li><a href="{{ route('cargos.index')}}">Formulario</a></li>
+            <li><a href="{{ route('cargos.index')}}">Formulario</a></li>
 
           </ul>
           <ul id="dropdown2" class="dropdown-content">
-              <li><a href="{{route('reset.form')}}">Cambiar Contraseña</a></li>
-              <li><a href="{{route('generate')}}">Generar contraseñas</a></li>
+            <li><a href="{{route('reset.form')}}">Cambiar Contraseña</a></li>
+            <li><a href="{{route('generate')}}">Generar contraseñas</a></li>
           </ul>
           <ul id="dropdown3" class="dropdown-content">
-              <li><a href="{{ route('beneficios_admin.index') }}">Encuestas</a></li>
-              <li><a href="{{ route('beneficios_preguntas.index') }}">Preguntas</a></li>
-              <li><a href="{{ route('beneficios.admin.resultados') }}">Resultados</a></li>
-              <li><a href="{{ route('beneficios.admin.conclusion') }}">Conclusiones</a></li>
+            <li><a href="{{ route('periodos_activos.index') }}">Periodos Activos</a></li>
+            <li><a href="{{ route('beneficios_admin.index') }}">Encuestas</a></li>
+            <li><a href="{{ route('beneficios_preguntas.index') }}">Preguntas</a></li>
+            <li><a href="{{ route('beneficios.admin.resultados') }}">Resultados</a></li>
+            <li><a href="{{ route('beneficios.admin.conclusion') }}">Conclusiones</a></li>
           </ul>
           <ul id="dropdown4" class="dropdown-content">
-              <li><a href="{{route('resultados')}}">Excel</a></li>
-              <li><a href="{{route('admin.reporte.filter')}}">Reporte - Cargos</a></li>
-              <li><a href="{{route('admin.reporte.filter.niveles')}}">Reporte - Niveles</a></li>
+            <li><a href="{{route('resultados')}}">Excel</a></li>
+            <li><a href="{{route('admin.reporte.filter')}}">Reporte - Cargos</a></li>
+            <li><a href="{{route('admin.reporte.filter.niveles')}}">Reporte - Niveles</a></li>
           </ul>
 
 

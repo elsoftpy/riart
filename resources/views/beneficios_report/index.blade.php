@@ -62,7 +62,7 @@
 																			<input type="hidden" name="item_id" value="{{$item->id}}"/>
 																			<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 																			<div class="flat" id="btn_{{$item->id}}">
-																				<button class="flat wrap" type="submit" name="submitForm">{{$item->titulo}}
+																				<button class="flat wrap" type="submit" name="submitForm" style="text-transform: uppercase;">{{$item->titulo}}
 													      						</button>
 													      					</div>
 																		</form>

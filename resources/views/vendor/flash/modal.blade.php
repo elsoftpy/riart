@@ -5,7 +5,7 @@
         </div>
         <div class="modal-body">
             <p style="margin-left: 1em;"> {{ $number }} </p>    
-            <p style="margin-left: 1em;" class="black-text"> {{ $body }} </p>    
+            <p style="margin-left: 1em;" class="black-text"> {!! $body !!} </p>    
             <div class="modal-footer">
                 <a href="#!" class="modal-action modal-close waves-effect btn">Cerrar </a>
             </div>

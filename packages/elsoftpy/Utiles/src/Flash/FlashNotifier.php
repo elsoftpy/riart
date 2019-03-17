@@ -168,7 +168,7 @@ class FlashNotifier
             // info
             case 0:
                 if($modal){
-                    $this->overlay('Mensaje de Prueba', 'info', 'PollPall - 0');    
+                    $this->overlay('Mensaje de Prueba', 'info', 'S&B - 0');    
                 }else{
                     $this->info('Mensaje de Prueba - Info');    
                 }
@@ -177,14 +177,14 @@ class FlashNotifier
             // warning
             case 1000:
                 if($modal){
-                    $this->overlay('Mensaje de Prueba', 'warning', 'PollPall - 1000');    
+                    $this->overlay('Mensaje de Prueba', 'warning', 'S&B - 1000');    
                 }else{
                     $this->warning('Mensaje de Prueba - Atención');    
                 }
                 break;
             case 1001:
                 if($modal){
-                    $this->overlay('No tenés permiso de acceso al Formulario', 'warning', 'PollPall - 1001');    
+                    $this->overlay('No tenés permiso de acceso al Formulario', 'warning', 'S&B - 1001');    
                 }else{
                     $this->warning('No tenés permiso de acceso al Formulario');    
                 }
@@ -192,7 +192,7 @@ class FlashNotifier
             // success                
             case 2000:
                 if($modal){
-                    $this->overlay('Mensaje de Prueba', 'success', 'PollPall - 2000');    
+                    $this->overlay('Mensaje de Prueba', 'success', 'S&B - 2000');    
                 }else{
                     $this->success('Mensaje de Prueba - Exito');    
                 }
@@ -200,49 +200,49 @@ class FlashNotifier
                 break;
             case 2010:
                 if($modal){
-                    $this->overlay('La encuesta fue eliminada', 'success', 'PollPall - 2010');    
+                    $this->overlay('El registro fue guardado con éxito', 'success', 'S&B - 2010');    
                 }else{
-                    $this->success('La encuesta fue eliminada');    
+                    $this->success('El registro fue guardado con éxito');    
                 }
                 break;           
             case 2011:
                 if($modal){
-                    $this->overlay('El registro de la Persona fue eliminado', 'success', 'PollPall - 2011');    
+                    $this->overlay('El registro fue eliminado con éxito', 'success', 'S&B - 2011');    
                 }else{
-                    $this->success('El registro de la Persona fue eliminado');    
+                    $this->success('El registro fue eliminado con éxito');    
                 }
                 break;                  
             case 2012:
                 if($modal){
-                    $this->overlay('El registro de la Gerencia fue eliminado', 'success', 'PollPall - 2012');    
+                    $this->overlay('El registro de la Gerencia fue eliminado', 'success', 'S&B - 2012');    
                 }else{
                     $this->success('El registro de la Gerencia fue eliminado');    
                 }
                 break;                  
             case 2013:
                 if($modal){
-                    $this->overlay('El registro del Area fue eliminado', 'success', 'PollPall - 2013');    
+                    $this->overlay('El registro del Area fue eliminado', 'success', 'S&B - 2013');    
                 }else{
                     $this->success('El registro del Area fue eliminado');    
                 }
                 break;                                  
             case 2014:
                 if($modal){
-                    $this->overlay('El registro de la Sub Area fue eliminado', 'success', 'PollPall - 2014');    
+                    $this->overlay('El registro de la Sub Area fue eliminado', 'success', 'S&B - 2014');    
                 }else{
                     $this->success('El registro de la Sub Area fue eliminado');    
                 }
                 break;  
             case 2015:
                 if($modal){
-                    $this->overlay('El registro del Cargo fue eliminado', 'success', 'PollPall - 2015');    
+                    $this->overlay('El registro del Cargo fue eliminado', 'success', 'S&B - 2015');    
                 }else{
                     $this->success('El registro del Cargo fue eliminado');    
                 }
                 break;                                                                    
             case 2016:
                 if($modal){
-                    $this->overlay('El registro del Funcionario fue eliminado', 'success', 'PollPall - 2016');    
+                    $this->overlay('El registro del Funcionario fue eliminado', 'success', 'S&B - 2016');    
                 }else{
                     $this->success('El registro del Funcionario fue eliminado');    
                 }
@@ -251,49 +251,49 @@ class FlashNotifier
             //Errors    
             case 3000:
                 if($modal){
-                    $this->overlay('Mensaje de Prueba', 'error', 'PollPall - 3000');    
+                    $this->overlay('Mensaje de Prueba', 'error', 'S&B - 3000');    
                 }else{
                     $this->error('Mensaje de Prueba - Error');    
                 }
                 break;
             case 3010:
                 if($modal){
-                    $this->overlay('La encuesta que querés eliminar ya fue utilizada, por eso no puede ser borrada', 'error', 'PollPal - 3010');    
+                    $this->overlay('La encuesta que querés eliminar ya fue utilizada, por eso no puede ser borrada', 'error', 'S&B - 3010');    
                 }else{
                     $this->error('Mensaje de Prueba - Error');    
                 }
                 break;
             case 3011:
                 if($modal){
-                    $this->overlay('El registro de la Persona que querés eliminar está relacionado con otro registro, por eso no puede ser borrado', 'error', 'PollPal - 3011');    
+                    $this->overlay('El registro de la Persona que querés eliminar está relacionado con otro registro, por eso no puede ser borrado', 'error', 'S&B - 3011');    
                 }else{
                     $this->error('El registro de la Persona que querés eliminar está relacionado con otro registro, por eso no puede ser borrado - Error');    
                 }
                 break;            
             case 3012:
                 if($modal){
-                    $this->overlay('La Gerencia que querés eliminar está relacionada con otro registro, por eso no puede ser borrada', 'error', 'PollPal - 3012');    
+                    $this->overlay('Hubo un error inesperado al intentar eliminar el registro que seleccionaste.', 'error', 'S&B - 3012');    
                 }else{
-                    $this->error('La Gerencia que querés eliminar está relacionada con otro registro, por eso no puede ser borrada - Error');    
+                    $this->error('Hubo un error inesperado al intentar eliminar el registro que seleccionaste. - Error');    
                 }
                 break;                            
             case 3013:
                 if($modal){
-                    $this->overlay('El Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada', 'error', 'PollPal - 3013');    
+                    $this->overlay('El Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada', 'error', 'S&B - 3013');    
                 }else{
                     $this->error('El Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada - Error');    
                 }
                 break;                                            
             case 3014:
                 if($modal){
-                    $this->overlay('La Sub Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada', 'error', 'PollPal - 3014');    
+                    $this->overlay('La Sub Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada', 'error', 'S&B - 3014');    
                 }else{
                     $this->error('La Sub Area que querés eliminar está relacionada con otro registro, por eso no puede ser borrada - Error');    
                 }
                 break;                                            
             case 3015:
                 if($modal){
-                    $this->overlay('El Cargo que querés eliminar está relacionado con otro registro, por eso no puede ser borrado', 'error', 'PollPal - 3015');    
+                    $this->overlay('El Cargo que querés eliminar está relacionado con otro registro, por eso no puede ser borrado', 'error', 'S&B - 3015');    
                 }else{
                     $this->error('El Cargo que querés eliminar está relacionado con otro registro, por eso no puede ser borrado - Error');    
                 }
@@ -301,11 +301,34 @@ class FlashNotifier
 
             case 3016:
                 if($modal){
-                    $this->overlay('El registro de Funcionario que querés eliminar está relacionado con otro registro, por eso no puede ser borrado', 'error', 'PollPal - 3016');    
+                    $this->overlay('El registro de Funcionario que querés eliminar está relacionado con otro registro, por eso no puede ser borrado', 'error', 'S&B - 3016');    
                 }else{
                     $this->error('El registro de Funcionario que querés eliminar está relacionado con otro registro, por eso no puede ser borrado - Error');    
                 }
-                break;                                            
+                break;      
+            case 4001:
+                if($modal){
+                    $this->overlay('Error de integridad en la Base de Datos. </br> Ha introducido un valor nulo en un campo que no admite dicho valor. </br> La información guardada podría no mostrarse correctamente.', 'warning', 'S&B - 4000');
+                }else{
+                    $this->warning('Error en la base de datos (Valor nulo no válido) -Atención');
+                }                                        
+                break;
+            case 4002:
+                if($modal){
+                    $this->overlay('Error de integridad en la Base de Datos. </br> Ha intentado introducir una clave única ya existente.', 'error', 'S&B - 4002');
+                }else{
+                    $this->error('Error en la base de datos (Valor duplicado) -Error');
+                }                                        
+                break;
+            case 4003:
+                if($modal){
+                    $this->overlay('Error de integridad en la Base de Datos. </br> No se puede borrar o actualizar el registro porque posee otros registros relacionados a él', 'error', 'S&B - 4003');
+                }else{
+                    $this->error('Error en la base de datos (Registros relacionados al que desea borrar o actualizar) -Error');
+                }                                        
+                break;
+
+                
 
 
         }

@@ -44,6 +44,12 @@ class BeneficiosController extends Controller
         //     
     }
 
+    public function clonePoll($id){
+      $dbData = beneficios_cabecera_encuesta::find($id);
+
+      return view('beneficios.create')->with('dbData', $dbData);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -52,7 +58,35 @@ class BeneficiosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+      $periodo = $request->periodo;
+      $id = $request->encuesta_id;
+      $empresa = $request->empresa_id;
+      $dbOriginal = beneficios_cabecera_encuesta::find($id);
+      $dbNuevo = new beneficios_cabecera_encuesta();
+      $dbNuevo->empresa_id = $empresa;
+      $dbNuevo->rubro_id =  $dbOriginal->rubro_id;
+      $dbNuevo->sub_rubro_id =  $dbOriginal->sub_rubro_id;
+      $dbNuevo->cantidad_empleados =  $dbOriginal->cantidad_empleados;
+      $dbNuevo->cantidad_sucursales =  $dbOriginal->cantidad_sucursales;
+      $dbNuevo->periodo = $periodo;
+      $dbNuevo->finalizada = 'N';
+      $dbNuevo->save();
+
+      $nuevoId = $dbNuevo->id;
+
+      $oldDetalle = beneficios_respuesta::where('beneficios_cabecera_encuesta_id', $id)->get();
+
+      foreach($oldDetalle as $detalle){
+        $dbDetalle = new beneficios_respuesta();
+        $dbDetalle->beneficios_cabecera_encuesta_id = $nuevoId;
+        $dbDetalle->beneficios_pregunta_id = $detalle->beneficios_pregunta_id;
+        $dbDetalle->beneficios_opcion_id = $detalle->beneficios_opcion_id;
+        $dbDetalle->abierta = $detalle->abierta;
+        $dbDetalle->save();
+      }
+
+      return redirect()->route('beneficios_admin.index');
+      
     }
 
     /**
@@ -118,7 +152,7 @@ class BeneficiosController extends Controller
           $marca = $dbData->detalleBeneficio->where('beneficios_pregunta_id', 66)->first()->beneficios_opcion_id;
 
         }else{
-        $marca = 1;
+          $marca = 1;
 
         }
 
@@ -250,6 +284,11 @@ class BeneficiosController extends Controller
       $dbEmpresa = Auth::user()->empresa;
       // Rubro de la empresa
       $rubro = $dbEmpresa->rubro_id;
+      // recuperamos la penultima encuesta
+      $encuesta = beneficios_cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                              ->orderBy('id', 'DESC')
+                                              ->skip(1)
+                                              ->first();
       // recuperamos el item para encontrar la pregunta
       $id = $request->item_id;
       $item = beneficios_item::find($id);
@@ -257,7 +296,10 @@ class BeneficiosController extends Controller
       $pregunta = $item->pregunta;
 
       // Encuestas del rubro
-      $encuestas = beneficios_cabecera_encuesta::where('rubro_id', $rubro)->pluck('id');
+      $encuestas = beneficios_cabecera_encuesta::where('rubro_id', $rubro)
+                                               ->where('periodo', $encuesta->periodo)
+                                               ->pluck('id');
+
       // Si la pregunta es cerrada verificamos la cantidad de "no aplica" que tiene
       if($pregunta->cerrada == 'S'){
         if(!$pregunta->beneficios_pregunta_id){
@@ -268,9 +310,10 @@ class BeneficiosController extends Controller
           
           //dd($encuestas, $aplicables);
         
+          //dd($aplicables);
           $aplicables = $aplicables->reject(function($item){
              if(!$item->beneficiosOpcion){
-              dd($item);
+              return false;
             } 
             if($item->beneficiosOpcion->opcion_no_aplica){
               return $item;  
@@ -305,10 +348,12 @@ class BeneficiosController extends Controller
       $rubro = $empresa->rubro_id;
 
       // Ultima encuesta de la empresa
-      $encuesta = beneficios_cabecera_encuesta::where("empresa_id", $empresa->id)->orderBy('id', 'DESC')->first();
+      $encuesta = beneficios_cabecera_encuesta::where("empresa_id", $empresa->id)->orderBy('id', 'DESC')->skip(1)->first();
 
       // Encuestas del rubro
-      $encuestas = beneficios_cabecera_encuesta::where('rubro_id', $rubro)->pluck('id');
+      $encuestas = beneficios_cabecera_encuesta::where('rubro_id', $rubro)
+                                                ->where('periodo', $encuesta->periodo)
+                                                ->pluck('id');
       // Recuperamos el id de la Pregunta del cuestionario
       $id = $request->pregunta;
       $pregunta = beneficios_pregunta::find($id);

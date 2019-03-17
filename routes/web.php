@@ -97,9 +97,15 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::post('autos_modelos', 'BeneficiosController@getModelos')->name('autos.modelos');
 
 	//Beneficios 
+	
+	Route::post('periodos_activos/periodos_ajax', 'BeneficiosPeriodosController@getPeriodosAjax')->name('periodos_activos.periodos');
+	Route::resource('periodos_activos', 'BeneficiosPeriodosController');
+
 	Route::post('beneficios/reportes', 'BeneficiosController@report')->name('beneficios.reportes');
 
 	Route::post('beneficios/reportes_ajax', 'BeneficiosController@getChartData')->name("beneficios.data");
+
+	Route::get('beneficios_encuestas_clone/{id}', 'BeneficiosController@clonePoll')->name('beneficios.encuestas.clone');
 
 	Route::post('beneficios/reportes_composicion', 'BeneficiosController@compositionReport')->name("beneficios.reportes.composicion");
 

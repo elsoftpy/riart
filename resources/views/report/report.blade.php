@@ -50,7 +50,7 @@
 			</form>
 		</div>
 		<div class="col s12">
-			<h4>{{$dbCargo->descripcion}}</h4>
+			<h4>{{$dbCargo->descripcion}} - {{$periodo}}</h4>
 			@if ($convertir)
 				<p style="color: red;">@lang('reportReport.p_currency_us')</p>
 			@else

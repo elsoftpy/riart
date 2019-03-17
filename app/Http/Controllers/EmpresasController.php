@@ -8,6 +8,8 @@ use App\Rubro;
 use App\Sub_rubro;
 use Auth;
 use flash;
+use Exception;
+use DB;
 
 class EmpresasController extends Controller
 {
@@ -115,6 +117,36 @@ class EmpresasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $dbData = Empresa::find($id);
+        DB::beginTransaction();
+        try{
+            $dbData->delete();
+            DB::commit();
+            flash::elsoftMessage(2011, true);
+        }catch(Exception $exception){
+            DB::rollback();
+            if ($exception instanceof \Illuminate\Database\QueryException) {
+                switch ($exception->errorInfo[1]) {
+                    case 1048:
+                        Flash::elsoftMessage(4001, true);
+                        break;
+                    case 1062:
+                        Flash::elsoftMessage(4002, true);    
+                        break;
+                    case 1451:
+                        Flash::elsoftMessage(4003, true);
+                    default:
+                        Flash::elsoftMessage(4000, true);
+                        break;
+                }
+            }else{
+                Flash::elsoftMessage(3012, true);
+            }
+            return redirect()->back();
+        }
+
+        return redirect()->route('empresas.index');
     }
+
+    
 }

@@ -28,7 +28,7 @@ use Lang;
 
 
 
-class ReporteController extends Controller 
+class ReporteControllerBkp extends Controller 
 {
     use ClubsTrait;
     /**
@@ -370,9 +370,8 @@ class ReporteController extends Controller
             $itemArrayNac = $itemArray;
             $itemArrayInt = $itemArray;
             // por cada item del detalle
-            //$cantConceptos = 0;
             foreach ($respuesta as $key => $item) {
-               // dd($item);
+                //dd($item);
                 switch ($key) {
                     case 'detalle_universo':
                         $this->CargaDetalle($item, $itemArray);            
@@ -394,8 +393,8 @@ class ReporteController extends Controller
         }
         $filename = 'Resultados_'.$periodo;
 
-        Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro) {
-            $excel->sheet("universo", function($sheet) use($detalleUniverso, $rubro){
+        Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional) {
+            $excel->sheet("universo", function($sheet) use($detalleUniverso){
                 
                 $objDrawing = new PHPExcel_Worksheet_Drawing;
                 $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
@@ -403,7 +402,6 @@ class ReporteController extends Controller
                 $objDrawing->setWidthAndHeight(304,60);
                 $objDrawing->setWorksheet($sheet);            
 
-                
                 $sheet->cell('A5', function($cell){
                     $cell->setValue('CARGO');
                 });
@@ -426,347 +424,187 @@ class ReporteController extends Controller
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
+                });                
+                // Salario Efectivo Anual Garantizado
+                $sheet->cell('K5', function($cell){
+                    $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
                 });
-                if($rubro == 1){
-                           
-                    // Salario Efectivo Anual Garantizado
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-                    
-                    // Comision
-                    
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                    
-                     
-                    // Compensación Total Anual
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('COMPENSACION TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-                    
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    $topeHeader = 8;
-                    $rango = 'A6:AZ6';
-
-                }elseif($rubro == 4){
-                    // Salario Variable Anual
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('VARIABLE ANUAL');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });            
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Comisión
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-                    
-                    // Efectivo Total Anual
-                    
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('EFECTIVO TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                    
-                    // Compensación Total Anual
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('COMPENSACION ANUAL TOTAL');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#f57c00');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Base Comparativo Header
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BA5', function($cell){
-                        $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('BA5:BF5');
-                    $sheet->cells('BA5:BF5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-                    
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BG5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
-                    });
-                    $sheet->mergeCells('BG5:BL5');
-                    $sheet->cells('BG5:BL5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    $topeHeader = 10;
-                    $rango = 'A6:BL6';
-
-                }else{
-                    // Salario Efectivo Anual Garantizado
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-
-                    // Comision
-
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    // Efectivo Total Anual
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('EFECTIVO TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#f57c00');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Compensación total anual
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('COMPENSACION TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BA5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
-                    });
-                    $sheet->mergeCells('BA5:BF5');
-                    $sheet->cells('BA5:BF5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    $topeHeader = 9;
-                    $rango = 'A6:BF6';
-                }
+                $sheet->mergeCells('K5:P5');
+                $sheet->cells('K5:P5', function($cells){
+                    $cells->setBackground('#388e3c');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual
+                $sheet->cell('Q5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL');
+                });
+                $sheet->mergeCells('Q5:V5');
+                $sheet->cells('Q5:V5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Total Adicional Anual
+                $sheet->cell('W5', function($cell){
+                    $cell->setValue('TOTAL ADICIONAL ANUAL');
+                });
+                $sheet->mergeCells('W5:AB5');
+                $sheet->cells('W5:AB5', function($cells){
+                    $cells->setBackground('#fbc02d');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Bono Anual
+                $sheet->cell('AC5', function($cell){
+                    $cell->setValue('BONO ANUAL');
+                });
+                $sheet->mergeCells('AC5:AH5');
+                $sheet->cells('AC5:AH5', function($cells){
+                    $cells->setBackground('#ffa000');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });    
+                
+                // Comision
+                
+                $sheet->cell('AI5', function($cell){
+                    $cell->setValue('COMISION');
+                });
+                $sheet->mergeCells('AI5:AN5');
+                $sheet->cells('AI5:AN5', function($cells){
+                    $cells->setBackground('#6a1b9a');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+                
+                // Salario Efectivo Total Anual
+                $sheet->cell('AO5', function($cell){
+                    $cell->setValue('COMPENSACION ANUAL TOTAL');
+                });
+                $sheet->mergeCells('AO5:AT5');
+                $sheet->cells('AO5:AT5', function($cells){
+                    $cells->setBackground('#f57c00');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Base Comparativo Header
+                $sheet->cell('AU5', function($cell){
+                    $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('AU5:AZ5');
+                $sheet->cells('AU5:AZ5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual comp.
+                $sheet->cell('BA5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('BA5:BF5');
+                $sheet->cells('BA5:BF5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });           
+                
+                // Salario Variable Anual comp.
+                $sheet->cell('BG5', function($cell){
+                    $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
+                });
+                $sheet->mergeCells('BG5:BL5');
+                $sheet->cells('BG5:BL5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
                        
+/*
+                $sheet->cell('AI5', function($cell){
+                    $cell->setValue('EFECTIVO TOTAL ANUAL');
+                });
+                $sheet->mergeCells('AI5:AN5');
+                $sheet->cells('AI5:AN5', function($cells){
+                    $cells->setBackground('#6a1b9a');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+                            
+                // Salario Base Comparativo Header
+                $sheet->cell('AO5', function($cell){
+                    $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('AO5:AT5');
+                $sheet->cells('AO5:AT5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual comp.
+                $sheet->cell('AU5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('AU5:AZ5');
+                $sheet->cells('AU5:AZ5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+  */              
                 $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
                 $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-
-                for ($i= 0; $i < $topeHeader; $i++) {
+                for ($i= 0; $i < 10; $i++) {
                     foreach ($itemsHeader as $key => $value) {
                         array_push($cargoHeader, $value);
                     }
                     
                 }
+                /*for ($i= 0; $i < 8; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                }*/
                    
                 $sheet->row(6, $cargoHeader);
+                //dd($detalleUniverso);
                 $sheet->rows($detalleUniverso);
-                $sheet->cells($rango, function($cells){
+                
+                $sheet->cells('A6:BL6', function($cells){
                     $cells->setBackground('#a7ffeb');
-                });                 
+                }); 
+                
+                /*$sheet->cells('A6:AZ6', function($cells){
+                    $cells->setBackground('#a7ffeb');
+                }); */
                 $sheet->setFreeze('A7');  
             });
             // hoja nacional
-            $excel->sheet("nacional", function($sheet) use($detalleNacional, $rubro){
+            $excel->sheet("nacional", function($sheet) use($detalleNacional){
                 $objDrawing = new PHPExcel_Worksheet_Drawing;
                 $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
                 $objDrawing->setCoordinates('A1');
@@ -795,347 +633,140 @@ class ReporteController extends Controller
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
+                });                
+                // Salario Efectivo Anual Garantizado
+                $sheet->cell('K5', function($cell){
+                    $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
                 });
-                if($rubro == 1){
-                           
-                    // Salario Efectivo Anual Garantizado
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-                    
-                    // Comision
-                    
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                    
-                     
-                    // Compensación Total Anual
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('COMPENSACION TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-                    
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
+                $sheet->mergeCells('K5:P5');
+                $sheet->cells('K5:P5', function($cells){
+                    $cells->setBackground('#388e3c');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual
+                $sheet->cell('Q5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL');
+                });
+                $sheet->mergeCells('Q5:V5');
+                $sheet->cells('Q5:V5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Total Adicional Anual
+                $sheet->cell('W5', function($cell){
+                    $cell->setValue('TOTAL ADICIONAL ANUAL');
+                });
+                $sheet->mergeCells('W5:AB5');
+                $sheet->cells('W5:AB5', function($cells){
+                    $cells->setBackground('#fbc02d');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Bono Anual
+                $sheet->cell('AC5', function($cell){
+                    $cell->setValue('BONO ANUAL');
+                });
+                $sheet->mergeCells('AC5:AH5');
+                $sheet->cells('AC5:AH5', function($cells){
+                    $cells->setBackground('#ffa000');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });       
 
-                    $topeHeader = 8;
-                    $rango = 'A6:AZ6';
+                // Comision
+                                
+                $sheet->cell('AI5', function($cell){
+                    $cell->setValue('COMISION');
+                });
+                $sheet->mergeCells('AI5:AN5');
+                $sheet->cells('AI5:AN5', function($cells){
+                    $cells->setBackground('#6a1b9a');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                         
 
-                }elseif($rubro == 4){
-                    // Salario Variable Anual
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('VARIABLE ANUAL');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });            
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Comisión
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-                    
-                    // Efectivo Total Anual
-                    
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('EFECTIVO TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                    
-                    // Compensación Total Anual
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('COMPENSACION ANUAL TOTAL');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#f57c00');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Base Comparativo Header
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BA5', function($cell){
-                        $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('BA5:BF5');
-                    $sheet->cells('BA5:BF5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-                    
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BG5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
-                    });
-                    $sheet->mergeCells('BG5:BL5');
-                    $sheet->cells('BG5:BL5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
+                // Salario Efectivo Total Anual
+                $sheet->cell('AO5', function($cell){
+                    $cell->setValue('EFECTIVO TOTAL ANUAL');
+                });
+                $sheet->mergeCells('AO5:AT5');
+                $sheet->cells('AO5:AT5', function($cells){
+                    $cells->setBackground('#f57c00');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });    
 
-                    $topeHeader = 10;
-                    $rango = 'A6:BL6';
+                // Salario Base Comparativo Header
+                $sheet->cell('AU5', function($cell){
+                    $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('AU5:AZ5');
+                $sheet->cells('AU5:AZ5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual comp.
+                $sheet->cell('BA5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
+                });                
 
-                }else{
-                    // Salario Efectivo Anual Garantizado
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
+                $sheet->mergeCells('BA5:BF5');
+                $sheet->cells('BA5:BF5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });      
+                
+               // Salario Variable Anual comp.
+                $sheet->cell('BG5', function($cell){
+                    $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
+                });
+                $sheet->mergeCells('BG5:BL5');
+                $sheet->cells('BG5:BL5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                    $cells->setAlignment('center');
+                });
 
-                    // Comision
-
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    // Efectivo Total Anual
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('EFECTIVO TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#f57c00');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Compensación total anual
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('COMPENSACION TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BA5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
-                    });
-                    $sheet->mergeCells('BA5:BF5');
-                    $sheet->cells('BA5:BF5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    $topeHeader = 9;
-                    $rango = 'A6:BF6';
-                }
-                       
                 $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
                 $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-
-                for ($i= 0; $i < $topeHeader; $i++) {
+                for ($i= 0; $i < 10; $i++) {
                     foreach ($itemsHeader as $key => $value) {
                         array_push($cargoHeader, $value);
                     }
                     
                 }
-                   
+                
                 $sheet->row(6, $cargoHeader);
-                $sheet->rows($detalleNacional);
-                $sheet->cells($rango, function($cells){
+                $sheet->cells('A6:BL6', function($cells){
                     $cells->setBackground('#a7ffeb');
                 });
+                
+                $sheet->rows($detalleNacional);
                 $sheet->setFreeze('A7');
             });
             // hoja internacional
-            $excel->sheet("internacional", function($sheet) use($detalleInternacional, $rubro){
+            $excel->sheet("internacional", function($sheet) use($detalleInternacional){
                 $objDrawing = new PHPExcel_Worksheet_Drawing;
                 $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
                 $objDrawing->setCoordinates('A1');
@@ -1164,342 +795,132 @@ class ReporteController extends Controller
                     $cells->setFontWeight("bold");
                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
+                });                
+                // Salario Efectivo Anual Garantizado
+                $sheet->cell('K5', function($cell){
+                    $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
                 });
-                if($rubro == 1){
-                           
-                    // Salario Efectivo Anual Garantizado
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-                    
-                    // Comision
-                    
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                    
-                     
-                    // Compensación Total Anual
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('COMPENSACION TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-                    
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
+                $sheet->mergeCells('K5:P5');
+                $sheet->cells('K5:P5', function($cells){
+                    $cells->setBackground('#388e3c');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual
+                $sheet->cell('Q5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL');
+                });
+                $sheet->mergeCells('Q5:V5');
+                $sheet->cells('Q5:V5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Total Adicional Anual
+                $sheet->cell('W5', function($cell){
+                    $cell->setValue('TOTAL ADICIONAL ANUAL');
+                });
+                $sheet->mergeCells('W5:AB5');
+                $sheet->cells('W5:AB5', function($cells){
+                    $cells->setBackground('#fbc02d');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Bono Anual
+                $sheet->cell('AC5', function($cell){
+                    $cell->setValue('BONO ANUAL');
+                });
+                $sheet->mergeCells('AC5:AH5');
+                $sheet->cells('AC5:AH5', function($cells){
+                    $cells->setBackground('#ffa000');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                }); 
+                
+                // Comision
+                $sheet->cell('AI5', function($cell){
+                    $cell->setValue('COMISION');
+                });
+                $sheet->mergeCells('AI5:AN5');
+                $sheet->cells('AI5:AN5', function($cells){
+                    $cells->setBackground('#6a1b9a');
+                    $cells->setFontColor('#FFFFFF');
+                    $cells->setFontWeight("bold");
+                    $cells->setAlignment('center');
+                });
 
-                    $topeHeader = 8;
-                    $rango = 'A6:AZ6';
+                // Salario Efectivo Total Anual
+                $sheet->cell('AO5', function($cell){
+                    $cell->setValue('EFECTIVO TOTAL ANUAL');
+                });
+                $sheet->mergeCells('AO5:AT5');
+                $sheet->cells('AO5:AT5', function($cells){
+                    $cells->setBackground('#f57c00');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Base Comparativo Header
+                $sheet->cell('AU5', function($cell){
+                    $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('AU5:AZ5');
+                $sheet->cells('AU5:AZ5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });                
+                // Salario Variable Anual comp.
+                $sheet->cell('BA5', function($cell){
+                    $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
+                });
+                $sheet->mergeCells('BA5:BF5');
+                $sheet->cells('BA5:BF5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });           
+                
+                // Salario Variable Anual comp.
+                $sheet->cell('BG5', function($cell){
+                    $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
+                });
+                $sheet->mergeCells('BG5:BL5');
+                $sheet->cells('BG5:BL5', function($cells){
+                    $cells->setBackground('#afb42b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
 
-                }elseif($rubro == 4){
-                    // Salario Variable Anual
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('VARIABLE ANUAL');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });            
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Comisión
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-                    
-                    // Efectivo Total Anual
-                    
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('EFECTIVO TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                    
-                    // Compensación Total Anual
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('COMPENSACION ANUAL TOTAL');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#f57c00');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Base Comparativo Header
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BA5', function($cell){
-                        $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('BA5:BF5');
-                    $sheet->cells('BA5:BF5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-                    
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BG5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
-                    });
-                    $sheet->mergeCells('BG5:BL5');
-                    $sheet->cells('BG5:BL5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    $topeHeader = 10;
-                    $rango = 'A6:BL6';
-
-                }else{
-                    // Salario Efectivo Anual Garantizado
-                    $sheet->cell('K5', function($cell){
-                        $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
-                    });
-                    $sheet->mergeCells('K5:P5');
-                    $sheet->cells('K5:P5', function($cells){
-                        $cells->setBackground('#388e3c');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                                    
-                    // Total Adicional Anual
-                    $sheet->cell('Q5', function($cell){
-                        $cell->setValue('TOTAL ADICIONAL ANUAL');
-                    });
-                    $sheet->mergeCells('Q5:V5');
-                    $sheet->cells('Q5:V5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Bono Anual
-                    $sheet->cell('W5', function($cell){
-                        $cell->setValue('BONO ANUAL');
-                    });
-                    $sheet->mergeCells('W5:AB5');
-                    $sheet->cells('W5:AB5', function($cells){
-                        $cells->setBackground('#ffa000');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });    
-
-                    // Comision
-
-                    $sheet->cell('AC5', function($cell){
-                        $cell->setValue('COMISION');
-                    });
-                    $sheet->mergeCells('AC5:AH5');
-                    $sheet->cells('AC5:AH5', function($cells){
-                        $cells->setBackground('#6a1b9a');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    // Efectivo Total Anual
-                    $sheet->cell('AI5', function($cell){
-                        $cell->setValue('EFECTIVO TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AI5:AN5');
-                    $sheet->cells('AI5:AN5', function($cells){
-                        $cells->setBackground('#f57c00');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Compensación total anual
-                    $sheet->cell('AO5', function($cell){
-                        $cell->setValue('COMPENSACION TOTAL ANUAL');
-                    });
-                    $sheet->mergeCells('AO5:AT5');
-                    $sheet->cells('AO5:AT5', function($cells){
-                        $cells->setBackground('#0288d1');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });                
-                    // Salario Variable Anual comp.
-                    $sheet->cell('AU5', function($cell){
-                        $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
-                    });
-                    $sheet->mergeCells('AU5:AZ5');
-                    $sheet->cells('AU5:AZ5', function($cells){
-                        $cells->setBackground('#afb42b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });           
-
-                    // Salario Variable Anual comp.
-                    $sheet->cell('BA5', function($cell){
-                        $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
-                    });
-                    $sheet->mergeCells('BA5:BF5');
-                    $sheet->cells('BA5:BF5', function($cells){
-                        $cells->setBackground('#fbc02d');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                    // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-
-                    $topeHeader = 9;
-                    $rango = 'A6:BF6';
-                }
-                       
                 $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
                 $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-
-                for ($i= 0; $i < $topeHeader; $i++) {
+                for ($i= 0; $i < 10; $i++) {
                     foreach ($itemsHeader as $key => $value) {
                         array_push($cargoHeader, $value);
                     }
                     
                 }
-                   
+                
                 $sheet->row(6, $cargoHeader);
+                
                 $sheet->rows($detalleInternacional);
 
-                $sheet->cells($rango, function($cells){
+                $sheet->cells('A6:BL6', function($cells){
                     $cells->setBackground('#a7ffeb');
                 });
                 $sheet->setFreeze('A7');
@@ -1796,8 +1217,6 @@ class ReporteController extends Controller
     }    
     private function cargaDetalle($item, &$itemArray){
         $variableAnual = false;
-        $efectivoTotal = false;
-        $efectivoGarantizado = false;
         $salarioEmpresa = 0;
         $variableAnualEmp = 0;
         //dd($item);
@@ -1807,15 +1226,13 @@ class ReporteController extends Controller
                     $this->cargador($value, $itemArray, false);
                     break;
                 case Lang::get('reportReport.concept_salary'):
-                    //dd("salario");    
                     $this->cargador($value, $itemArray, true);
                     $salarioEmpresa = intval(str_replace(".", "", $value["Empresa"]));
                     break;
                 case Lang::get('reportReport.concept_annual_cash'):
-                    $efectivoGarantizado = true;
                     $this->cargador($value, $itemArray, false);
                     break;
-                case Lang::get('reportReport.concept_variable_pay'):
+                case Lang::get('reportReport.variable_pay'):
                     $variableAnual = true;
                     $this->cargador($value, $itemArray, false);
                     $variableAnualEmp = $value["Empresa"];
@@ -1829,21 +1246,17 @@ class ReporteController extends Controller
                 case Lang::get('reportReport.concept_total_compensation'):
                     $this->cargador($value, $itemArray, false);
                     break;
-                case Lang::get('reportReport.concept_annual_cash_total'):
-                    $efectivoTotal = true;
-                    $this->cargador($value, $itemArray, false);
-                    break;
                 
             }
         }
         //dd($item);
-        /*if(!$variableAnual){
+        if(!$variableAnual){
             // agregamos 0 a los lugares de Variable Anual
             $aux = array_slice($itemArray, 0, 16, true);
             array_push($aux, 0,0,0,0,0,0);
             $aux2 = array_merge($aux, array_slice($itemArray, 16));
             $itemArray = $aux2; 
-        }*/
+        }
         // comparativo salario base
         if($itemArray[4] > 0){
             $compMinSal = round($salarioEmpresa/$itemArray[4] - 1, 2); 
@@ -1876,185 +1289,88 @@ class ReporteController extends Controller
         }else{
             $compMaxSal = 0;
         }
-
-        //dd($itemArray);
-
-        if($variableAnual){
-            // comparativo variable anual
-            if($itemArray[10] > 0){
-                $compMinVar = round($salarioEmpresa/$itemArray[10] - 1, 2); 
-            }else{
-                $compMinVar = 0;
-            }
-            if($itemArray[11] > 0){
-                $comp25PercVar = round($salarioEmpresa/$itemArray[11] - 1 , 2); 
-            }else{
-                $comp25PercVar = 0;
-            }
-            if($itemArray[12] > 0){
-                $compPromVar = round($salarioEmpresa/$itemArray[12] - 1 , 2); 
-            }else{
-                $compPromVar = 0;
-            }
-            if($itemArray[13] > 0){
-                $compMedVar =  round($salarioEmpresa/$itemArray[13] - 1, 2); 
-            }else{
-                $compMedVar = 0;
-            }        
-            if($itemArray[14] > 0){
-                $comp75PercVar = round($salarioEmpresa/$itemArray[14] - 1, 2); 
-            }else{
-                $comp75PercVar = 0;
-            }        
-            if($itemArray[15] > 0){
-                $compMaxVar = round($salarioEmpresa/$itemArray[15] - 1, 2); 
-            }else{
-                $compMaxVar = 0;
-            }    
-                
-            if($itemArray[34] > 0){
-                $ratioSalBaseTotalEfectivoMin = round(($itemArray[4]*12)/$itemArray[34], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMin = 0;
-            }
-            if($itemArray[35] > 0){
-                $ratioSalBaseTotalEfectivo25 = round(($itemArray[5]*12)/$itemArray[35], 2);
-            }else{
-                $ratioSalBaseTotalEfectivo25 = 0;
-            }
-            if($itemArray[36] > 0){
-                $ratioSalBaseTotalEfectivoProm = round(($itemArray[6]*12)/$itemArray[36], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoProm = 0;
-            }
-            if($itemArray[37] > 0){
-                $ratioSalBaseTotalEfectivoMed = round(($itemArray[7]*12)/$itemArray[37], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMed = 0;
-            }
-            if($itemArray[38] > 0){
-                $ratioSalBaseTotalEfectivo75 = round(($itemArray[8]*12)/$itemArray[38], 2);
-            }else{
-                $ratioSalBaseTotalEfectivo75 = 0;
-            }
-            if($itemArray[39] > 0){
-                $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[39], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMax = 0;
-            }
-            array_push( $itemArray, 
-            $compMinSal,
-            $comp25PercSal, 
-            $compPromSal, 
-            $compMedSal, 
-            $comp75PercSal, 
-            $compMaxSal, 
-            $compMinVar, 
-            $comp25PercVar, 
-            $compPromVar, 
-            $compMedVar, 
-            $comp75PercVar, 
-            $compMaxVar,
-            $ratioSalBaseTotalEfectivoMin,
-            $ratioSalBaseTotalEfectivo25,
-            $ratioSalBaseTotalEfectivoProm,
-            $ratioSalBaseTotalEfectivoMed,
-            $ratioSalBaseTotalEfectivo75,
-            $ratioSalBaseTotalEfectivoMax);
-        }elseif($efectivoTotal){
-            // comparativo efectivo total anual
-            if($itemArray[34] > 0){
-                $ratioSalBaseTotalEfectivoMin = round(($itemArray[4]*12)/$itemArray[34], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMin = 0;
-            }
-            if($itemArray[35] > 0){
-                $ratioSalBaseTotalEfectivo25 = round(($itemArray[5]*12)/$itemArray[35], 2);
-            }else{
-                $ratioSalBaseTotalEfectivo25 = 0;
-            }
-            if($itemArray[36] > 0){
-                $ratioSalBaseTotalEfectivoProm = round(($itemArray[6]*12)/$itemArray[36], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoProm = 0;
-            }
-            if($itemArray[37] > 0){
-                $ratioSalBaseTotalEfectivoMed = round(($itemArray[7]*12)/$itemArray[37], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMed = 0;
-            }
-            if($itemArray[38] > 0){
-                $ratioSalBaseTotalEfectivo75 = round(($itemArray[8]*12)/$itemArray[38], 2);
-            }else{
-                $ratioSalBaseTotalEfectivo75 = 0;
-            }
-            if($itemArray[39] > 0){
-                $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[39], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMax = 0;
-            }
-            
-            array_push( $itemArray, 
-            $compMinSal,
-            $comp25PercSal, 
-            $compPromSal, 
-            $compMedSal, 
-            $comp75PercSal, 
-            $compMaxSal, 
-            $ratioSalBaseTotalEfectivoMin,
-            $ratioSalBaseTotalEfectivo25,
-            $ratioSalBaseTotalEfectivoProm,
-            $ratioSalBaseTotalEfectivoMed,
-            $ratioSalBaseTotalEfectivo75,
-            $ratioSalBaseTotalEfectivoMax);            
+        // comparativo variable anual
+        if($itemArray[16] > 0){
+            $compMinVar = round($salarioEmpresa/$itemArray[16] - 1, 2); 
         }else{
-
-            if($itemArray[10] > 0){
-                $ratioSalBaseTotalEfectivoMin = round(($itemArray[4]*12)/$itemArray[10], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMin = 0;
-            }
-            if($itemArray[11] > 0){
-                $ratioSalBaseTotalEfectivo25 = round(($itemArray[5]*12)/$itemArray[11], 2);
-            }else{
-                $ratioSalBaseTotalEfectivo25 = 0;
-            }
-            if($itemArray[12] > 0){
-                $ratioSalBaseTotalEfectivoProm = round(($itemArray[6]*12)/$itemArray[12], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoProm = 0;
-            }
-            if($itemArray[13] > 0){
-                $ratioSalBaseTotalEfectivoMed = round(($itemArray[7]*12)/$itemArray[13], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMed = 0;
-            }
-            if($itemArray[14] > 0){
-                $ratioSalBaseTotalEfectivo75 = round(($itemArray[8]*12)/$itemArray[14], 2);
-            }else{
-                $ratioSalBaseTotalEfectivo75 = 0;
-            }
-            if($itemArray[15] > 0){
-                $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[15], 2);
-            }else{
-                $ratioSalBaseTotalEfectivoMax = 0;
-            }
+            $compMinVar = 0;
+        }
+        if($itemArray[17] > 0){
+            $comp25PercVar = round($salarioEmpresa/$itemArray[17] - 1 , 2); 
+        }else{
+            $comp25PercVar = 0;
+        }
+        if($itemArray[18] > 0){
+            $compPromVar = round($salarioEmpresa/$itemArray[18] - 1 , 2); 
+        }else{
+            $compPromVar = 0;
+        }
+        if($itemArray[19] > 0){
+            $compMedVar =  round($salarioEmpresa/$itemArray[19] - 1, 2); 
+        }else{
+            $compMedVar = 0;
+        }        
+        if($itemArray[20] > 0){
+            $comp75PercVar = round($salarioEmpresa/$itemArray[20] - 1, 2); 
+        }else{
+            $comp75PercVar = 0;
+        }        
+        if($itemArray[21] > 0){
+            $compMaxVar = round($salarioEmpresa/$itemArray[21] - 1, 2); 
+        }else{
+            $compMaxVar = 0;
+        }    
             
-            array_push( $itemArray, 
-            $compMinSal,
-            $comp25PercSal, 
-            $compPromSal, 
-            $compMedSal, 
-            $comp75PercSal, 
-            $compMaxSal, 
-            $ratioSalBaseTotalEfectivoMin,
-            $ratioSalBaseTotalEfectivo25,
-            $ratioSalBaseTotalEfectivoProm,
-            $ratioSalBaseTotalEfectivoMed,
-            $ratioSalBaseTotalEfectivo75,
-            $ratioSalBaseTotalEfectivoMax);            
+        if($itemArray[40] > 0){
+            $ratioSalBaseTotalEfectivoMin = round(($itemArray[4]*12)/$itemArray[40], 2);
+        }else{
+            $ratioSalBaseTotalEfectivoMin = 0;
+        }
+        if($itemArray[41] > 0){
+            $ratioSalBaseTotalEfectivo25 = round(($itemArray[5]*12)/$itemArray[41], 2);
+        }else{
+            $ratioSalBaseTotalEfectivo25 = 0;
+        }
+        if($itemArray[42] > 0){
+            $ratioSalBaseTotalEfectivoProm = round(($itemArray[6]*12)/$itemArray[42], 2);
+        }else{
+            $ratioSalBaseTotalEfectivoProm = 0;
+        }
+        if($itemArray[43] > 0){
+            $ratioSalBaseTotalEfectivoMed = round(($itemArray[7]*12)/$itemArray[43], 2);
+        }else{
+            $ratioSalBaseTotalEfectivoMed = 0;
+        }
+        if($itemArray[44] > 0){
+            $ratioSalBaseTotalEfectivo75 = round(($itemArray[8]*12)/$itemArray[44], 2);
+        }else{
+            $ratioSalBaseTotalEfectivo75 = 0;
+        }
+        if($itemArray[45] > 0){
+            $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[45], 2);
+        }else{
+            $ratioSalBaseTotalEfectivoMax = 0;
         }
         
+        array_push( $itemArray, 
+                    $compMinSal,
+                    $comp25PercSal, 
+                    $compPromSal, 
+                    $compMedSal, 
+                    $comp75PercSal, 
+                    $compMaxSal, 
+                    $compMinVar, 
+                    $comp25PercVar, 
+                    $compPromVar, 
+                    $compMedVar, 
+                    $comp75PercVar, 
+                    $compMaxVar,
+                    $ratioSalBaseTotalEfectivoMin,
+                    $ratioSalBaseTotalEfectivo25,
+                    $ratioSalBaseTotalEfectivoProm,
+                    $ratioSalBaseTotalEfectivoMed,
+                    $ratioSalBaseTotalEfectivo75,
+                    $ratioSalBaseTotalEfectivoMax);
         
     }
     private function cargador($value, &$itemArray, $casos){
@@ -2062,13 +1378,12 @@ class ReporteController extends Controller
                 array_push($itemArray, $value["ocupantes"]);
                 array_push($itemArray, $value["Casos"]);            
             }
-            //array_push($itemArray, $value["Concepto"]);
             array_push($itemArray, $value["Min"]);
             array_push($itemArray, $value["25 Percentil"]);
             array_push($itemArray, round($value["Promedio"], 2));
             array_push($itemArray, $value["Mediana"]);
             array_push($itemArray, $value["75 Percentil"]);
-            array_push($itemArray, $value["Max"]);       
+            array_push($itemArray, $value["Max"]);            
     }
 
 
@@ -2100,10 +1415,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
-                            round($salarioProm, 0),
-                            round($salarioMed, 0),
-                            round($salario25Per, 0),
-                            round($salario75Per, 0),
+                            $salarioProm,
+                            $salarioMed,
+                            $salario25Per,
+                            $salario75Per,
                             $dbClienteEnc->salario_base, 
                             $segmento, 
                             $dbCargo);        
@@ -2123,10 +1438,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
-                            round($salarioAnualProm, 0),
-                            round($salarioAnualMed, 0),
-                            round($salarioAnual25Per, 0),
-                            round($salarioAnual75Per, 0),
+                            $salarioAnualProm,
+                            $salarioAnualMed,
+                            $salarioAnual25Per,
+                            $salarioAnual75Per,
                             $dbClienteEnc->salario_base * 12, 
                             $segmento, 
                             $dbCargo);
@@ -2145,10 +1460,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_gratif.'),
                             $gratificacionMin,
                             $gratificacionMax,
-                            round($gratificacionProm, 0),
-                            round($gratificacionMed, 0),
-                            round($gratificacion25Per, 0),
-                            round($gratificacion75Per, 0),
+                            $gratificacionProm,
+                            $gratificacionMed,
+                            $gratificacion25Per,
+                            $gratificacion75Per,
                             $dbClienteEnc->gratificacion, 
                             $segmento, 
                             $dbCargo);
@@ -2167,10 +1482,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
-                            round($aguinaldoProm, 0),
-                            round($aguinaldoMed, 0),
-                            round($aguinaldo25Per, 0),
-                            round($aguinaldo75Per, 0),
+                            $aguinaldoProm,
+                            $aguinaldoMed,
+                            $aguinaldo25Per,
+                            $aguinaldo75Per,
                             $dbClienteEnc->aguinaldo, 
                             $segmento, 
                             $dbCargo);
@@ -2203,10 +1518,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
-                            round($efectivoProm, 0),
-                            round($efectivoMed, 0),
-                            round($efectivo25Per, 0),
-                            round($efectivo75Per, 0),
+                            $efectivoProm,
+                            $efectivoMed,
+                            $efectivo25Per,
+                            $efectivo75Per,
                             $efectivoEmpresa, 
                             $segmento, 
                             $dbCargo);
@@ -2225,13 +1540,13 @@ class ReporteController extends Controller
             $this->pusher(  $collection, 
                             $casosAdicionalesBancos, 
                             Lang::get('reportReport.concept_total_incentives'),
-                            $adicionalesMin,
-                            $adicionalesMax,
-                            round($adicionalesProm, 0),
-                            round($adicionalesMed, 0),
-                            round($adicionales25Per, 0),
-                            round($adicionales75Per, 0),
-                            $dbClienteEnc->adicionales_bancos, 
+                            $adicionalesMin * 12,
+                            $adicionalesMax * 12,
+                            $adicionalesProm * 12,
+                            $adicionalesMed * 12,
+                            $adicionales25Per * 12,
+                            $adicionales75Per * 12,
+                            $dbClienteEnc->adicionales_bancos * 12, 
                             $segmento, 
                             $dbCargo);
 
@@ -2275,10 +1590,10 @@ class ReporteController extends Controller
                                 "Comision",
                                 $comisionMin,
                                 $comisionMax,
-                                round($comisionProm, 0) * 12,
-                                round($comisionMed, 0) * 12,
-                                round($comision25Per, 0) * 12,
-                                round($comision75Per, 0) *12,
+                                $comisionProm,
+                                $comisionMed,
+                                $comision25Per,
+                                $comision75Per,
                                 $dbClienteEnc->comision, 
                                 $segmento, 
                                 $dbCargo);
@@ -2323,10 +1638,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_13month_impacted'),
                             $aguinaldoImpMin, 
                             $aguinaldoImpMax, 
-                            round($aguinaldoImpProm, 0),
-                            round($aguinaldoImpMed, 0),
-                            round($aguinaldoImp25Per, 0),
-                            round($aguinaldoImp75Per, 0),
+                            $aguinaldoImpProm,
+                            $aguinaldoImpMed,
+                            $aguinaldoImp25Per,
+                            $aguinaldoImp75Per,
                             $aguinaldoImpEmpresa,
                             $segmento, 
                             $dbCargo);
@@ -2336,7 +1651,7 @@ class ReporteController extends Controller
                 $item['total_comp_anual'] = ($item['salario_base'] * 12) + 
                                              $item['gratificacion'] + 
                                              $item['bono_anual'] +
-                                             $item['adicionales_bancos']+
+                                             $item['adicionales_bancos']*12+
                                              $item['aguinaldo'];
                 return $item;
             });                                                
@@ -2362,10 +1677,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
-                            round($totalCompAnualProm, 0),
-                            round($totalCompAnualMed, 0),
-                            round($totalCompAnual25Per, 0),
-                            round($totalCompAnual75Per, 0),
+                            $totalCompAnualProm, 
+                            $totalCompAnualMed, 
+                            $totalCompAnual25Per, 
+                            $totalCompAnual75Per, 
                             $totalCompAnualEmpresa,
                             $segmento, 
                             $dbCargo);
@@ -2385,10 +1700,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
-                            round($salarioProm, 0),
-                            round($salarioMed, 0),
-                            round($salario25Per, 0),
-                            round($salario75Per, 0),
+                            $salarioProm,
+                            $salarioMed,
+                            $salario25Per,
+                            $salario75Per,
                             $dbClienteEnc->salario_base,
                             $segmento, 
                             $dbCargo);        
@@ -2408,10 +1723,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
-                            round($salarioAnualProm, 0),
-                            round($salarioAnualMed, 0),
-                            round($salarioAnual25Per, 0), 
-                            round($salarioAnual75Per, 0),
+                            $salarioAnualProm,
+                            $salarioAnualMed,
+                            $salarioAnual25Per,
+                            $salarioAnual75Per,
                             $dbClienteEnc->salario_base * 12,
                             $segmento, 
                             $dbCargo);
@@ -2429,16 +1744,16 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
-                            round($aguinaldoProm, 0),
-                            round($aguinaldoMed, 0),
-                            round($aguinaldo25Per, 0),
-                            round($aguinaldo75Per, 0),
+                            $aguinaldoProm,
+                            $aguinaldoMed,
+                            $aguinaldo25Per,
+                            $aguinaldo75Per,
                             $dbClienteEnc->aguinaldo,
                             $segmento, 
                             $dbCargo);
 
             // Efectivo Anual Garantizado
-            /*$detalle = $detalle->map(function($item){
+            $detalle = $detalle->map(function($item){
                 $item['efectivo_anual_garantizado'] = ($item['salario_base'] * 12) + 
                                                       $item['aguinaldo'];
                 return $item;
@@ -2471,7 +1786,7 @@ class ReporteController extends Controller
                             $efectivoEmpresa,
                             $segmento, 
                             $dbCargo);
-            */
+
                        
             // Variable Anual
             $plusRendimiento = $detalle->where('plus_rendimiento', '>', '0')->pluck('plus_rendimiento');
@@ -2487,10 +1802,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_variable_pay'),
                             $plusMin,
                             $plusMax,
-                            round($plusProm, 0),
-                            round($plusMed,0),
-                            round($plus25Per, 0),
-                            round($plus75Per, 0),
+                            $plusProm,
+                            $plusMed,
+                            $plus25Per,
+                            $plus75Per,
                             $dbClienteEnc->plus_rendimiento,
                             $segmento, 
                             $dbCargo);        
@@ -2509,10 +1824,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_mooring'),
                             $amarreMin,
                             $amarreMax,
-                            round($amarreProm, 0),
-                            round($amarreMed, 0),
-                            round($amarre25Per, 0),
-                            round($amarre75Per, 0),
+                            $amarreProm,
+                            $amarreMed,
+                            $amarre25Per,
+                            $amarre75Per,
                             $dbClienteEnc->adicional_amarre,
                             $segmento, 
                             $dbCargo);        
@@ -2532,10 +1847,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_fuel_type'),
                             $TipoCombustibleMin,
                             $TipoCombustibleMax,
-                            round($TipoCombustibleProm, 0),
-                            round($TipoCombustibleMed, 0),
-                            round($TipoCombustible25Per, 0),
-                            round($TipoCombustible75Per, 0),
+                            $TipoCombustibleProm,
+                            $TipoCombustibleMed,
+                            $TipoCombustible25Per,
+                            $TipoCombustible75Per,
                             $dbClienteEnc->adicional_tipo_combustible,
                             $segmento, 
                             $dbCargo);        
@@ -2554,10 +1869,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_shipping'),
                             $embarqueMin,
                             $embarqueMax,
-                            round($embarqueProm, 0),
-                            round($embarqueMed, 0),
-                            round($embarque25Per, 0),
-                            round($embarque75Per, 0),
+                            $embarqueProm,
+                            $embarqueMed,
+                            $embarque25Per,
+                            $embarque75Per,
                             $dbClienteEnc->adicional_embarque,
                             $segmento, 
                             $dbCargo);        
@@ -2576,35 +1891,50 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_load'),
                             $cargaMin,
                             $cargaMax,
-                            round($cargaProm, 0),
-                            round($cargaMed, 0),
-                            round($carga25Per, 0),
-                            round($carga75Per, 0),
+                            $cargaProm,
+                            $cargaMed,
+                            $carga25Per,
+                            $carga75Per,
                             $dbClienteEnc->adicional_carga,
                             $segmento, 
                             $dbCargo);        
 
             // Total Adicional 
-            $casosAdicionales = $detalle->where('adicionales_navieras', '>', '0')->unique('cabecera_encuesta_id')->count();   
-            $adicionalAnual = $detalle->where('adicionales_navieras', '>', '0')->pluck('adicionales_navieras');
-            $totalAdicionalMin = $adicionalAnual->min();
-            $totalAdicionalMax = $adicionalAnual->max();
-            $totalAdicionalProm = $adicionalAnual->avg();
-            $totalAdicionalMed = $this->median($adicionalAnual);
-            $totalAdicional25Per = $this->percentile(25, $adicionalAnual);
-            $totalAdicional75Per = $this->percentile(75, $adicionalAnual);
+            $casosAdicionales = collect([$countCasosAmarre, $countCasosTipoCombustible, $countCasosEmbarque, $countCasosCarga])->max();
+            $adicionalAnual = $detalle->map(function($item){
+                $item['total_adicional_anual'] = $item['adicional_amarre'] +
+                                                 $item['adicional_tipo_combustible']+
+                                                 $item['adicional_embarque']+
+                                                 $item['adicional_carga'];
+                return $item;
+            });                                                
+           
+            $adicionalAnual = $adicionalAnual->where('total_adicional_anual', '>', 0);
+            $totalAdicionalMin = $adicionalAnual->pluck('total_adicional_anual')->min();
+            $totalAdicionalMax = $adicionalAnual->pluck('total_adicional_anual')->max();
+            $totalAdicionalProm = $adicionalAnual->pluck('total_adicional_anual')->avg();
+            $totalAdicionalMed = $this->median($adicionalAnual->pluck('total_adicional_anual'));
+            $totalAdicional25Per = $this->percentile(25, $adicionalAnual->pluck('total_adicional_anual'));
+            $totalAdicional75Per = $this->percentile(75, $adicionalAnual->pluck('total_adicional_anual'));
             
+            $found = $adicionalAnual->where('cabecera_encuesta_id', $dbClienteEnc->cabecera_encuesta_id)
+                             ->first();
+            if($found){
+                $totalAdicionalEmpresa = $found->total_adicional_anual;
+            }else{
+                $totalAdicionalEmpresa = 0;    
+            }
 
             $this->pusher(  $collection, 
                             $casosAdicionales, 
                             Lang::get('reportReport.concept_total_incentives'),
                             $totalAdicionalMin,
                             $totalAdicionalMax,
-                            round($totalAdicionalProm, 0),
-                            round($totalAdicionalMed, 0),
-                            round($totalAdicional25Per, 0),
-                            round($totalAdicional75Per, 0),
-                            $dbClienteEnc->adicionales_navieras,
+                            $totalAdicionalProm,
+                            $totalAdicionalMed,
+                            $totalAdicional25Per,
+                            $totalAdicional75Per,
+                            $totalAdicionalEmpresa,
                             $segmento, 
                             $dbCargo);
 
@@ -2622,10 +1952,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
-                            round($bonoProm, 0),
-                            round($bonoMed, 0),
-                            round($bono25Per, 0),
-                            round($bono75Per, 0),
+                            $bonoProm,
+                            $bonoMed,
+                            $bono25Per,
+                            $bono75Per,
                             $dbClienteEnc->bono_anual,
                             $segmento, 
                             $dbCargo);
@@ -2645,22 +1975,24 @@ class ReporteController extends Controller
                                 $countCasosComision, 
                                 //Lang::get('reportReport.concept_bonus'),
                                 "Comision",
-                                $comisionMin *12,
-                                $comisionMax *12,
-                                round($comisionProm, 0) *12,
-                                round($comisionMed, 0) *12,
-                                round($comision25Per, 0) *12,
-                                round($comision75Per, 0) *12,
-                                $dbClienteEnc->comision *12, 
+                                $comisionMin,
+                                $comisionMax,
+                                $comisionProm,
+                                $comisionMed,
+                                $comision25Per,
+                                $comision75Per,
+                                $dbClienteEnc->comision, 
                                 $segmento, 
                                 $dbCargo);
 
             }
 
-            // Efectivo Total Anual
+            // Efectivo Anual Garantizado
             $detalle = $detalle->map(function($item){
-                $item['efectivo_total_anual'] =  $item['salario_base'] * 12 +
-                                                 $item['aguinaldo'];
+                $item['efectivo_total_anual'] = $item['efectivo_anual_garantizado'] +
+                                                 $item['plus_rendimiento']+
+                                                 $item['total_adicional_anual']+
+                                                 $item['bono_anual'];
                 return $item;
             });                                                
            
@@ -2684,10 +2016,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
-                            round($efectivoTotalProm, 0),
-                            round($efectivoTotalMed, 0),
-                            round($efectivoTotal25Per, 0),
-                            round($efectivoTotal75Per, 0),
+                            $efectivoTotalProm,
+                            $efectivoTotalMed,
+                            $efectivoTotal25Per,
+                            $efectivoTotal75Per,
                             $efectivoTotalEmpresa,
                             $segmento, 
                             $dbCargo);
@@ -2706,68 +2038,23 @@ class ReporteController extends Controller
             $this->pusher(  $collection, 
                             $casosBeneficiosNavieras, 
                             Lang::get('reportReport.concept_total_benefits'),
-                            $beneficiosMin,
-                            $beneficiosMax,
-                            round($beneficiosProm, 0),
-                            round($beneficiosMed, 0), 
-                            round($beneficios25Per, 0),
-                            round($beneficios75Per, 0),
-                            $dbClienteEnc->beneficios_bancos,
+                            $beneficiosMin * 12,
+                            $beneficiosMax * 12,
+                            $beneficiosProm * 12,
+                            $beneficiosMed * 12,
+                            $beneficios25Per * 12,
+                            $beneficios75Per * 12,
+                            $dbClienteEnc->beneficios_bancos * 12,
                             $segmento, 
                             $dbCargo);
 
-            //Aguinaldo Impactado
-            $aguinaldoImpMin = 0;
-            $aguinaldoImpMax = 0;
-            $aguinaldoImpProm = 0;
-            $aguinaldoImpMed = 0;
-            $aguinaldoImp25Per = 0;
-            $aguinaldoImp75Per = 0;
-            $aguinaldoImpEmpresa = 0;
 
-            $detalle = $detalle->map(function($item){
-                $item['aguinaldo_impactado'] = (($item['salario_base'] * 12) + 
-                                                $item['gratificacion'] + 
-                                                $item['bono_anual'] +
-                                                $item['adicionales_navieras'])/12;
-                return $item;
-            });                                                
-
-            $aguinaldoImpMin = $detalle->pluck('aguinaldo_impactado')->min();
-            $aguinaldoImpMax = $detalle->pluck('aguinaldo_impactado')->max();
-            $aguinaldoImpProm = $detalle->pluck('aguinaldo_impactado')->avg();
-            $aguinaldoImpMed = $this->median($detalle->pluck('aguinaldo_impactado'));
-            $aguinaldoImp25Per = $this->percentile(25, $detalle->pluck('aguinaldo_impactado'));
-            $aguinaldoImp75Per = $this->percentile(75, $detalle->pluck('aguinaldo_impactado'));
-
-            $found = $detalle->where('cabecera_encuesta_id', $dbClienteEnc->cabecera_encuesta_id)
-                            ->first();
-            if($found){
-                $aguinaldoImpEmpresa = $found->aguinaldo_impactado;
-            }else{
-                $aguinaldoImpEmpresa = 0;    
-            }
-
-            //dd($detalle);
-
-            $this->pusher(  $collection, 
-                            $countCasos, 
-                            Lang::get('reportReport.concept_13month_impacted'),
-                            $aguinaldoImpMin, 
-                            $aguinaldoImpMax, 
-                            round($aguinaldoImpProm, 0),
-                            round($aguinaldoImpMed, 0),
-                            round($aguinaldoImp25Per, 0),
-                            round($aguinaldoImp75Per, 0),
-                            $aguinaldoImpEmpresa,
-                            $segmento, 
-                            $dbCargo);
 
          
             //Total Compensación anual
             $detalle = $detalle->map(function($item){
                 $item['total_comp_anual'] = $item['efectivo_total_anual'] +
-                                            $item['beneficios_navieras'];
+                                            $item['beneficios_navieras']*12;
                 return $item;
             });                                                
            
@@ -2792,10 +2079,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
-                            round($totalCompAnualProm, 0),
-                            round($totalCompAnualMed, 0),
-                            round($totalCompAnual25Per, 0),
-                            round($totalCompAnual75Per, 0),
+                            $totalCompAnualProm, 
+                            $totalCompAnualMed, 
+                            $totalCompAnual25Per, 
+                            $totalCompAnual75Per, 
                             $totalCompAnualEmpresa,
                             $segmento, 
                             $dbCargo);            
@@ -2814,14 +2101,13 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_salary'),
                             $salarioMin,
                             $salarioMax,
-                            round($salarioProm, 0),
-                            round($salarioMed, 0),
-                            round($salario25Per, 0),
-                            round($salario75Per, 0),
+                            $salarioProm,
+                            $salarioMed,
+                            $salario25Per,
+                            $salario75Per,
                             $dbClienteEnc->salario_base,
                             $segmento, 
                             $dbCargo);        
-
             // Salario Base Anual     
             $salariosBaseAnual = $salariosBase->map(function($item){
                 return $item * 12;
@@ -2838,14 +2124,13 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_salary'),
                             $salarioAnualMin,
                             $salarioAnualMax,
-                            round($salarioAnualProm, 0),
-                            round($salarioAnualMed, 0),
-                            round($salarioAnual25Per, 0), 
-                            round($salarioAnual75Per, 0),
+                            $salarioAnualProm,
+                            $salarioAnualMed,
+                            $salarioAnual25Per,
+                            $salarioAnual75Per,
                             $dbClienteEnc->salario_base * 12,
                             $segmento, 
                             $dbCargo);
-
             // Gratificacion
             $gratificaciones = $detalle->where('gratificacion', '>', '0')->pluck('gratificacion');
             $gratificacionMin = $gratificaciones->min();
@@ -2860,10 +2145,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_gratif.'),
                             $gratificacionMin,
                             $gratificacionMax,
-                            round($gratificacionProm, 0),
-                            round($gratificacionMed, 0),
-                            round($gratificacion25Per, 0),
-                            round($gratificacion75Per, 0),
+                            $gratificacionProm,
+                            $gratificacionMed,
+                            $gratificacion25Per,
+                            $gratificacion75Per,
                             $dbClienteEnc->gratificacion, 
                             $segmento, 
                             $dbCargo);
@@ -2882,21 +2167,27 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_13month'),
                             $aguinaldoMin,
                             $aguinaldoMax,
-                            round($aguinaldoProm, 0),
-                            round($aguinaldoMed, 0),
-                            round($aguinaldo25Per, 0),
-                            round($aguinaldo75Per, 0),
+                            $aguinaldoProm,
+                            $aguinaldoMed,
+                            $aguinaldo25Per,
+                            $aguinaldo75Per,
                             $dbClienteEnc->aguinaldo, 
                             $segmento, 
                             $dbCargo);
 
             // Efectivo Anual Garantizado
+
             $detalle = $detalle->map(function($item){
                 $item['efectivo_anual_garantizado'] = ($item['salario_base'] * 12) + 
                                                        $item['gratificacion']+
                                                        $item['aguinaldo'];
                 return $item;
             });   
+            /*if($segmento == "nacional"){
+                dd($detalle);                                             
+            }*/
+            
+           
             $efectivoMin = $detalle->pluck('efectivo_anual_garantizado')->min();
             $efectivoMax = $detalle->pluck('efectivo_anual_garantizado')->max();
             $efectivoProm = $detalle->pluck('efectivo_anual_garantizado')->avg();
@@ -2917,10 +2208,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_cash'),
                             $efectivoMin,
                             $efectivoMax,
-                            round($efectivoProm, 0),
-                            round($efectivoMed, 0),
-                            round($efectivo25Per, 0),
-                            round($efectivo75Per, 0),
+                            $efectivoProm,
+                            $efectivoMed,
+                            $efectivo25Per,
+                            $efectivo75Per,
                             $efectivoEmpresa, 
                             $segmento, 
                             $dbCargo);
@@ -2938,13 +2229,13 @@ class ReporteController extends Controller
             $this->pusher(  $collection, 
                             $countCasosAdicionales, 
                             Lang::get('reportReport.concept_total_additional'),
-                            $adicionalesMin,
-                            $adicionalesMax,
-                            round($adicionalesProm, 0),
-                            round($adicionalesMed, 0),
-                            round($adicionales25Per, 0),
-                            round($adicionales75Per, 0),
-                            $dbClienteEnc->adicionales_resto, 
+                            $adicionalesMin * 12,
+                            $adicionalesMax * 12,
+                            $adicionalesProm * 12,
+                            $adicionalesMed * 12,
+                            $adicionales25Per * 12,
+                            $adicionales75Per * 12,
+                            $dbClienteEnc->adicionales_resto * 12, 
                             $segmento, 
                             $dbCargo);
 
@@ -2962,10 +2253,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_bonus'),
                             $bonoMin,
                             $bonoMax,
-                            round($bonoProm, 0),
-                            round($bonoMed, 0),
-                            round($bono25Per, 0),
-                            round($bono75Per, 0),
+                            $bonoProm,
+                            $bonoMed,
+                            $bono25Per,
+                            $bono75Per,
                             $dbClienteEnc->bono_anual, 
                             $segmento, 
                             $dbCargo);
@@ -2988,10 +2279,10 @@ class ReporteController extends Controller
                                 "Comision",
                                 $comisionMin * 12,
                                 $comisionMax * 12,
-                                round($comisionProm, 0) * 12,
-                                round($comisionMed, 0) * 12,
-                                round($comision25Per, 0) * 12,
-                                round($comision75Per, 0) * 12,
+                                $comisionProm * 12,
+                                $comisionMed * 12,
+                                $comision25Per * 12,
+                                $comision75Per * 12,
                                 $dbClienteEnc->comision * 12, 
                                 $segmento, 
                                 $dbCargo);
@@ -3001,7 +2292,8 @@ class ReporteController extends Controller
             // Efectivo Total Anual
             $detalle = $detalle->map(function($item){
                 $item['efectivo_total_anual'] = $item['efectivo_anual_garantizado'] +
-                                                $item['adicionales_resto']+
+                                                $item['comision']*12+
+                                                $item['adicionales_resto']*12+
                                                 $item['bono_anual'];
                 return $item;
             });                                                
@@ -3026,10 +2318,10 @@ class ReporteController extends Controller
                             Lang::get('reportReport.concept_annual_cash_total'),
                             $efectivoTotalMin,
                             $efectivoTotalMax,
-                            round($efectivoTotalProm, 0),
-                            round($efectivoTotalMed, 0),
-                            round($efectivoTotal25Per, 0),
-                            round($efectivoTotal75Per, 0),
+                            $efectivoTotalProm,
+                            $efectivoTotalMed,
+                            $efectivoTotal25Per,
+                            $efectivoTotal75Per,
                             $efectivoTotalEmpresa,
                             $segmento, 
                             $dbCargo);
@@ -3047,63 +2339,22 @@ class ReporteController extends Controller
             $this->pusher(  $collection, 
                             $countCasosBeneficios, 
                             Lang::get('reportReport.concept_total_benefits'),
-                            $beneficiosMin,
-                            $beneficiosMax,
-                            round($beneficiosProm, 0),
-                            round($beneficiosMed, 0),
-                            round($beneficios25Per, 0),
-                            round($beneficios75Per, 0),
-                            $dbClienteEnc->beneficios_resto, 
+                            $beneficiosMin * 12,
+                            $beneficiosMax * 12,
+                            $beneficiosProm * 12,
+                            $beneficiosMed * 12,
+                            $beneficios25Per * 12,
+                            $beneficios75Per * 12,
+                            $dbClienteEnc->beneficios_resto * 12, 
                             $segmento, 
                             $dbCargo);
             
-            //Aguinaldo Impactado
-            $aguinaldoImpMin = 0;
-            $aguinaldoImpMax = 0;
-            $aguinaldoImpProm = 0;
-            $aguinaldoImpMed = 0;
-            $aguinaldoImp25Per = 0;
-            $aguinaldoImp75Per = 0;
-            $aguinaldoImpEmpresa = 0;
-
-            $detalle = $detalle->map(function($item){
-                $item['aguinaldo_impactado'] = (($item['salario_base'] * 12) + 
-                                                $item['gratificacion'] + 
-                                                $item['bono_anual'] +
-                                                $item['adicionales_resto'])/12;
-                return $item;
-            });                                                
-
-            $aguinaldoImpMin = $detalle->pluck('aguinaldo_impactado')->min();
-            $aguinaldoImpMax = $detalle->pluck('aguinaldo_impactado')->max();
-            $aguinaldoImpProm = $detalle->pluck('aguinaldo_impactado')->avg();
-            $aguinaldoImpMed = $this->median($detalle->pluck('aguinaldo_impactado'));
-            $aguinaldoImp25Per = $this->percentile(25, $detalle->pluck('aguinaldo_impactado'));
-            $aguinaldoImp75Per = $this->percentile(75, $detalle->pluck('aguinaldo_impactado'));
-
-            $found = $detalle->where('cabecera_encuesta_id', $dbClienteEnc->cabecera_encuesta_id)
-                            ->first();
-            if($found){
-                $aguinaldoImpEmpresa = $found->aguinaldo_impactado;
-            }else{
-                $aguinaldoImpEmpresa = 0;    
-            }
-
-            $this->pusher(  $collection, 
-                            $countCasos, 
-                            Lang::get('reportReport.concept_13month_impacted'),
-                            $aguinaldoImpMin, 
-                            $aguinaldoImpMax, 
-                            round($aguinaldoImpProm, 0),
-                            round($aguinaldoImpMed, 0),
-                            round($aguinaldoImp25Per, 0),
-                            round($aguinaldoImp75Per, 0),
-                            $aguinaldoImpEmpresa,
-                            $segmento, 
-                            $dbCargo);                            
-
             //Total Compensación anual
             $detalle = $detalle->map(function($item){
+/*                if($item->beneficios_resto > 0){
+                    dd($item->efectivo_total_anual, $item->beneficios_resto*12);    
+                }
+*/                
                 $item['total_comp_anual'] = $item['efectivo_total_anual'] +
                                             $item['beneficios_resto'] * 12;
                 return $item;
@@ -3123,15 +2374,18 @@ class ReporteController extends Controller
                 $totalCompAnualEmpresa = 0;    
             }
 
+
+
+
             $this->pusher(  $collection, 
                             $countCasos, 
                             Lang::get('reportReport.concept_total_compensation'),
                             $totalCompAnualMin, 
                             $totalCompAnualMax, 
-                            round($totalCompAnualProm, 0),
-                            round($totalCompAnualMed, 0),
-                            round($totalCompAnual25Per, 0),
-                            round($totalCompAnual75Per, 0),
+                            $totalCompAnualProm, 
+                            $totalCompAnualMed, 
+                            $totalCompAnual25Per, 
+                            $totalCompAnual75Per, 
                             $totalCompAnualEmpresa,
                             $segmento, 
                             $dbCargo);            
@@ -3231,6 +2485,7 @@ class ReporteController extends Controller
 
     public function resultados(){
         //$dbData = Cabecera_encuesta::select(DB::Raw('distinct periodo'))->get();
+        dd("nde tembo");
         $dbData = Cabecera_encuesta::get();
         $dbData = $dbData->map(function($item){
             $rubro = $item->rubro->descripcion;
@@ -3244,6 +2499,7 @@ class ReporteController extends Controller
     }
 
     public function resultadosExcel(Request $request){
+
         ini_set('max_execution_time', 0);
         ini_set('memory_limit', '512M');
         $periodo_array = explode('-', $request->periodo);
@@ -3280,327 +2536,425 @@ class ReporteController extends Controller
                      and ca.area_id = a1.id
                    order by 1";
         $dbDetalle = DB::select($query, ["periodo" => $periodo, "rubro" => $rubro]);
+        dd($dbDetalle);
         $detalle = array();
         foreach ($dbDetalle as $key => $item) {
-            // Efectivo Anual Garantizado
+            
             $efectivoAnual = $item->salario_anual + 
                              $item->gratificacion + 
                              $item->aguinaldo;
+            
+            $adicionalNav = $item->adicional_amarre + 
+                            $item->adicional_tipo_combustible + 
+                            $item->adicional_embarque + 
+                            $item->adicional_carga;
+            
+            $adicionalOtros = ( $item->fallo_caja + 
+                                $item->fallo_caja_ext + 
+                                $item->comision + 
+                                $item->gratificacion_contrato + 
+                                $item->adicional_nivel_cargo + 
+                                $item->adicional_titulo) * 12;
+            
+            $efectivoTotalAnualNav = $efectivoAnual + 
+                                     $item->plus_rendimiento + 
+                                     $adicionalNav + 
+                                     $item->bono_anual;
 
-            // Total Adicional Anual
-            if($rubro == 4){
-                $adicional = $item->adicional_amarre + 
-                $item->adicional_tipo_combustible + 
-                $item->adicional_embarque + 
-                $item->adicional_carga +
-                ( ( $item->fallo_caja + 
-                $item->fallo_caja_ext + 
-                $item->comision + 
-                $item->gratificacion_contrato + 
-                $item->adicional_nivel_cargo + 
-                $item->adicional_titulo) * 12);
+            $efectivoTotalAnual = $efectivoAnual + $adicionalOtros + $item->bono_anual;
 
-            }elseif($rubro == 1){
-                $adicional = ( $item->fallo_caja + 
-                $item->fallo_caja_ext + 
-                $item->comision + 
-                $item->gratificacion_contrato + 
-                $item->adicional_nivel_cargo + 
-                $item->adicional_titulo) * 12;
-
-            }else{
-                $adicional = ( $item->fallo_caja + 
-                $item->fallo_caja_ext + 
-                $item->comision + 
-                $item->gratificacion_contrato + 
-                $item->adicional_nivel_cargo + 
-                $item->adicional_titulo) * 12;
-
-            }
-
-            // Efectivo Total Anual
-            if($rubro == 4){
-                $efectivoTotalAnual = $item->salario_anual +
-                                      $item->aguinaldo; 
-            }else{
-                $efectivoTotalAnual = $efectivoAnual + 
-                                      $adicional + 
-                                      $item->bono_anual;
-            }
-            // Aguinaldo impactado
-            if($rubro == 1){
-                $aguinaldoImpactado = round( (  $item->salario_anual + 
-                                                $item->gratificacion + 
-                                                $adicional + 
-                                                $item->bono_anual ) / 12, 0);
-            }elseif($rubro == 4){
-                $aguinaldoImpactado = round( (  $item->salario_anual + 
-                                                $item->gratificacion + 
-                                                $adicional + 
-                                                $item->bono_anual ) / 12, 0);
-            }else{
-                $aguinaldoImpactado = round( (  $item->salario_anual + 
-                                                $item->gratificacion + 
-                                                $adicional + 
-                                                $item->bono_anual ) / 12, 0);
-            }
-           
-            // Total Compensación Efectiva Anual
+            $totalBeneficios =  $item->refrigerio + 
+                                $item->costo_seguro_medico * ($item->cobertura_seguro_medico/100) + 
+                                $item->costo_seguro_vida + 
+                                //$item->costo_poliza_muerte_accidente +
+                                //$item->costo_poliza_muerte_natural +
+                                $item->monto_movil / 60 +
+                                $item->monto_tarjeta_flota+
+                                $item->seguro_movil +
+                                $item->monto_km_recorrido +
+                                $item->monto_ayuda_escolar +
+                                $item->monto_comedor_interno +
+                                $item->monto_curso_idioma * ($item->cobertura_curso_idioma/100) +
+                                $item->monto_post_grado * ($item->cobertura_post_grado/100)/ 24 +
+                                $item->monto_celular_corporativo +
+                                $item->monto_vivienda +
+                                $item->monto_colegiatura_hijos;
+         
+            $aguinaldoImpactado = ( $item->salario_anual + 
+                                    $item->gratificacion + 
+                                    $adicionalOtros + 
+                                    $item->bono_anual ) / 12;
+            
             $compensacionEfectiva = ( $item->salario_anual + 
                                       $item->gratificacion + 
                                       $item->aguinaldo + 
-                                      $adicional + 
-                                      $item->bono_anual );   
-            
-            $totalBeneficios =  $item->refrigerio * 12 + 
-                                ($item->costo_seguro_medico * ($item->cobertura_seguro_medico/100)) * 12 + 
-                                $item->costo_seguro_vida * 12 + 
-                                ($item->monto_movil / 60) * 12 +
-                                $item->gratificacion_contrato * 12+
-                                $item->monto_tarjeta_flota * 12+
-                                $item->seguro_movil * 12+
-                                $item->monto_ayuda_escolar +
-                                $item->monto_comedor_interno * 12+
-                                ($item->monto_curso_idioma * ($item->cobertura_curso_idioma/100)) * 12 +
-                                ($item->monto_post_grado * ($item->cobertura_post_grado/100))/ 2 +
-                                $item->monto_celular_corporativo * 12 +
-                                $item->monto_vivienda * 12+
-                                $item->monto_colegiatura_hijos;
-         
-                        
-         
-            if($rubro == 1){
-                $detalle[] = array( "id_encuesta"=>$item->cabecera_encuesta_id,
-                                    "id_empresa"=>$item->empresa_id,
-                                    "Empresa"=>$item->empresa, 
-                                    "Cant. Empleados"=>$item->cantidad_empleados,
-                                    "Excluir"=>$item->excluir,
-                                    "Periodo"=>$item->periodo, 
-                                    "id_cargo_cliente"=>$item->encuestas_cargo_id, 
-                                    "Cargo Cliente"=> $item->cargo_cliente, 
-                                    "id_area"=>$item->area_id, 
-                                    "Area"=>$item->area_cliente, 
-                                    "id_nivel"=>$item->nivel_id, 
-                                    "Nivel"=>$item->nivel_cliente,
-                                    "id_rubro"=> $item->rubro_id, 
-                                    "Rubro"=> $item->rubro,
-                                    "id_cargo_oficial"=> $item->id, 
-                                    "Cargo Oficial"=> $item->cargo_oficial, 
-                                    "id_area_oficial"=>$item->id_area_oficial, 
-                                    "Area Oficial"=>$item->area_oficial, 
-                                    "id_nivel_oficial"=>$item->id_nivel_oficial, 
-                                    "Nivel Oficial"=>$item->nivel_oficial,
-                                    "Ocupantes"=>$item->cantidad_ocupantes, 
-                                    "Salario Base"=>$item->salario_base, 
-                                    "Salario Anual"=>$item->salario_anual,
-                                    "Gratificación"=> $item->gratificacion, 
-                                    "Aguinaldo"=> $item->aguinaldo,
-                                    "Efectivo Anual Garantizado" => $efectivoAnual,
-                                    "Comision"=> $item->comision, 
-                                    "Fallo Caja"=> $item->fallo_caja,
-                                    "Fallo Caja Ext."=> $item->fallo_caja_ext, 
-                                    "Gratif. Contrato"=>$item->gratificacion_contrato, 
-                                    "Adicional Nivel Cargo"=>$item->adicional_nivel_cargo, 
-                                    "Adicional Título"=>$item->adicional_titulo,
-                                    "Total Adicional"=>$adicional,
-                                    "Bono Anual"=>$item->bono_anual, 
-                                    "Incentivo a Largo Plazo"=>$item->incentivo_largo_plazo, 
-                                    "Refrigerio"=>$item->refrigerio, 
-                                    "Costo Seguro Médico"=>$item->costo_seguro_medico, 
-                                    "Cobertura Seguro Médico"=>$item->cobertura_seguro_medico, 
-                                    "Costo Seguro Vida"=>$item->costo_seguro_vida, 
-                                    "Car Company"=>$item->car_company, 
-                                    "Movilidad Full"=>$item->movilidad_full, 
-                                    "Monto Tarj. Flota"=>$item->monto_tarjeta_flota, 
-                                    "Tarj. Flota"=>$item->tarjeta_flota, 
-                                    "Monto Automóvil"=>$item->monto_movil, 
-                                    "Seguro Automóvil"=>$item->seguro_movil, 
-                                    "Mantenimiento Automóvil"=>$item->mantenimiento_movil, 
-                                    "Km recorrido"=>$item->monto_km_recorrido, 
-                                    "Ayuda Escolar"=>$item->monto_ayuda_escolar, 
-                                    "Comedor Interno"=>$item->monto_comedor_interno, 
-                                    "Curso Idioma"=>$item->monto_curso_idioma, 
-                                    "Cobertura idioma"=>$item->cobertura_curso_idioma, 
-                                    "Post Grado"=>$item->monto_post_grado, 
-                                    "Cobertura Post Grado"=>$item->cobertura_post_grado, 
-                                    "Celular"=>$item->monto_celular_corporativo, 
-                                    "Vivienda"=>$item->monto_vivienda, 
-                                    "Colegiatura"=>$item->monto_colegiatura_hijos, 
-                                    "Condición Ocupante"=>$item->condicion_ocupante,
-                                    "Aguinaldo Impactado"=> $aguinaldoImpactado,
-                                    "Total Compensación Efectiva Anual" => $compensacionEfectiva,
-                                    
-                                    
-                                );
+                                      $adicionalOtros + 
+                                      $item->bono_anual );            
 
-            }elseif($rubro == 4){
-                $detalle[] = array( "id_encuesta"=>$item->cabecera_encuesta_id,
-                                    "id_empresa"=>$item->empresa_id,
-                                    "Empresa"=>$item->empresa, 
-                                    "Cant. Empleados"=>$item->cantidad_empleados,
-                                    "Excluir"=>$item->excluir,
-                                    "Periodo"=>$item->periodo, 
-                                    "id_cargo_cliente"=>$item->encuestas_cargo_id, 
-                                    "Cargo Cliente"=> $item->cargo_cliente, 
-                                    "id_area"=>$item->area_id, 
-                                    "Area"=>$item->area_cliente, 
-                                    "id_nivel"=>$item->nivel_id, 
-                                    "Nivel"=>$item->nivel_cliente,
-                                    "id_rubro"=> $item->rubro_id, 
-                                    "Rubro"=> $item->rubro,
-                                    "id_cargo_oficial"=> $item->id, 
-                                    "Cargo Oficial"=> $item->cargo_oficial, 
-                                    "id_area_oficial"=>$item->id_area_oficial, 
-                                    "Area Oficial"=>$item->area_oficial, 
-                                    "id_nivel_oficial"=>$item->id_nivel_oficial, 
-                                    "Nivel Oficial"=>$item->nivel_oficial,
-                                    "Ocupantes"=>$item->cantidad_ocupantes, 
-                                    "Salario Base"=>$item->salario_base, 
-                                    "Salario Anual"=>$item->salario_anual,
-                                    "Gratificación"=> $item->gratificacion, 
-                                    "Aguinaldo"=> $item->aguinaldo,
-                                    "comision"=> $item->comision, 
-                                    "Variable Anual (plus_rendimiento)" => $item->plus_rendimiento,
-                                    "Adicional Amarre"=>$item->adicional_amarre, 
-                                    "Adicional Tipo Combustible"=>$item->adicional_tipo_combustible, 
-                                    "Adicional Embarque"=>$item->adicional_embarque, 
-                                    "Adicional Tipo Carga"=>$item->adicional_carga,
-                                    "Fallo Caja"=> $item->fallo_caja,
-                                    "Fallo Caja Ext."=> $item->fallo_caja_ext, 
-                                    "Gratif. Contrato"=>$item->gratificacion_contrato, 
-                                    "Adicional Nivel Cargo"=>$item->adicional_nivel_cargo, 
-                                    "Adicional Título"=>$item->adicional_titulo,
-                                    "Total Adicional"=>$adicional,
-                                    "Bono Anual"=>$item->bono_anual, 
-                                    "Incentivo a Largo Plazo"=>$item->incentivo_largo_plazo, 
-                                    "Efectivo Total Anual" => $efectivoTotalAnual,
-                                    "Refrigerio"=>$item->refrigerio, 
-                                    "Costo Seguro Médico"=>$item->costo_seguro_medico, 
-                                    "Cobertura Seguro Médico"=>$item->cobertura_seguro_medico, 
-                                    "Costo Seguro Vida"=>$item->costo_seguro_vida, 
-                                    "Car Company"=>$item->car_company, 
-                                    "Movilidad Full"=>$item->movilidad_full, 
-                                    "Monto Tarj. Flota"=>$item->monto_tarjeta_flota, 
-                                    "Tarj. Flota"=>$item->tarjeta_flota, 
-                                    "Monto Automóvil"=>$item->monto_movil, 
-                                    "Seguro Automóvil"=>$item->seguro_movil, 
-                                    "Mantenimiento Automóvil"=>$item->mantenimiento_movil, 
-                                    "Km recorrido"=>$item->monto_km_recorrido, 
-                                    "Ayuda Escolar"=>$item->monto_ayuda_escolar, 
-                                    "Comedor Interno"=>$item->monto_comedor_interno, 
-                                    "Curso Idioma"=>$item->monto_curso_idioma, 
-                                    "Cobertura idioma"=>$item->cobertura_curso_idioma, 
-                                    "Post Grado"=>$item->monto_post_grado, 
-                                    "Cobertura Post Grado"=>$item->cobertura_post_grado, 
-                                    "Celular"=>$item->monto_celular_corporativo, 
-                                    "Vivienda"=>$item->monto_vivienda, 
-                                    "Colegiatura"=>$item->monto_colegiatura_hijos, 
-                                    "Condición Ocupante"=>$item->condicion_ocupante,
-                                    "Total Beneficios Anual"=>$totalBeneficios,
-                                    "Aguinaldo Impactado"=> $aguinaldoImpactado,
-                                    "Compensación Anual Total" => ($totalBeneficios + $efectivoTotalAnual),
-                                    
-                                );
-
-            }else{
-                $detalle[] = array( "id_encuesta"=>$item->cabecera_encuesta_id,
-                                    "id_empresa"=>$item->empresa_id,
-                                    "Empresa"=>$item->empresa, 
-                                    "Cant. Empleados"=>$item->cantidad_empleados,
-                                    "Excluir"=>$item->excluir,
-                                    "Periodo"=>$item->periodo, 
-                                    "id_cargo_cliente"=>$item->encuestas_cargo_id, 
-                                    "Cargo Cliente"=> $item->cargo_cliente, 
-                                    "id_area"=>$item->area_id, 
-                                    "Area"=>$item->area_cliente, 
-                                    "id_nivel"=>$item->nivel_id, 
-                                    "Nivel"=>$item->nivel_cliente,
-                                    "id_rubro"=> $item->rubro_id, 
-                                    "Rubro"=> $item->rubro,
-                                    "id_cargo_oficial"=> $item->id, 
-                                    "Cargo Oficial"=> $item->cargo_oficial, 
-                                    "id_area_oficial"=>$item->id_area_oficial, 
-                                    "Area Oficial"=>$item->area_oficial, 
-                                    "id_nivel_oficial"=>$item->id_nivel_oficial, 
-                                    "Nivel Oficial"=>$item->nivel_oficial,
-                                    "Ocupantes"=>$item->cantidad_ocupantes, 
-                                    "Salario Base"=>$item->salario_base, 
-                                    "salario Anual"=>$item->salario_anual,
-                                    "Gratificación"=> $item->gratificacion, 
-                                    "Aguinaldo"=> $item->aguinaldo,
-                                    "Efectivo Anual Garantizado" => $efectivoAnual,
-                                    "Comision"=> $item->comision, 
-                                    "Fallo Caja"=> $item->fallo_caja,
-                                    "Fallo Caja Ext."=> $item->fallo_caja_ext, 
-                                    "Gratif. Contrato"=>$item->gratificacion_contrato, 
-                                    "Adicional Nivel Cargo"=>$item->adicional_nivel_cargo, 
-                                    "Adicional Título"=>$item->adicional_titulo,
-                                    "Total Adiciona"=>$adicional,
-                                    "Bono Anual"=>$item->bono_anual, 
-                                    "Incentivo a Largo Plazo"=>$item->incentivo_largo_plazo, 
-                                    "Efectivo Total Anual" => $efectivoTotalAnual,
-                                    "Refrigerio"=>$item->refrigerio, 
-                                    "Costo Seguro Médico"=>$item->costo_seguro_medico, 
-                                    "Cobertura Seguro Médico"=>$item->cobertura_seguro_medico, 
-                                    "Costo Seguro Vida"=>$item->costo_seguro_vida, 
-                                    "Car Company"=>$item->car_company, 
-                                    "Movilidad Full"=>$item->movilidad_full, 
-                                    "Monto Tarj. Flota"=>$item->monto_tarjeta_flota, 
-                                    "Tarj. Flota"=>$item->tarjeta_flota, 
-                                    "Monto Automóvil"=>$item->monto_movil, 
-                                    "Seguro Automóvil"=>$item->seguro_movil, 
-                                    "Mantenimiento Automóvil"=>$item->mantenimiento_movil, 
-                                    "Km recorrido"=>$item->monto_km_recorrido, 
-                                    "Ayuda Escolar"=>$item->monto_ayuda_escolar, 
-                                    "Comedor Interno"=>$item->monto_comedor_interno, 
-                                    "Curso Idioma"=>$item->monto_curso_idioma, 
-                                    "Cobertura idioma"=>$item->cobertura_curso_idioma, 
-                                    "Post Grado"=>$item->monto_post_grado, 
-                                    "Cobertura Post Grado"=>$item->cobertura_post_grado, 
-                                    "Celular"=>$item->monto_celular_corporativo, 
-                                    "Vivienda"=>$item->monto_vivienda, 
-                                    "Colegiatura"=>$item->monto_colegiatura_hijos, 
-                                    "Condición Ocupante"=>$item->condicion_ocupante,
-                                    "Compensación Efectiva Anual" => $compensacionEfectiva,
-                                    "Total Beneficios Anual" => $totalBeneficios,
-                                    "Compensación Anual Total" => ($totalBeneficios + $efectivoTotalAnual),
-                                    "Aguinaldo Impactado"=> $aguinaldoImpactado
-                            );
-
-            }
+            $detalle[] = array( "id_encuesta"=>$item->cabecera_encuesta_id,
+                                "id_empresa"=>$item->empresa_id,
+                                "Empresa"=>$item->empresa, 
+                                "Cant. Empleados"=>$item->cantidad_empleados,
+                                "Excluir"=>$item->excluir,
+                                "Periodo"=>$item->periodo, 
+                                "id_cargo_cliente"=>$item->encuestas_cargo_id, 
+                                "Cargo Cliente"=> $item->cargo_cliente, 
+                                "id_area"=>$item->area_id, 
+                                "Area"=>$item->area_cliente, 
+                                "id_nivel"=>$item->nivel_id, 
+                                "Nivel"=>$item->nivel_cliente,
+                                "id_rubro"=> $item->rubro_id, 
+                                "Rubro"=> $item->rubro,
+                                "id_cargo_oficial"=> $item->id, 
+                                "Cargo Oficial"=> $item->cargo_oficial, 
+                                "id_area_oficial"=>$item->id_area_oficial, 
+                                "Area Oficial"=>$item->area_oficial, 
+                                "id_nivel_oficial"=>$item->id_nivel_oficial, 
+                                "Nivel Oficial"=>$item->nivel_oficial,
+                                "Ocupantes"=>$item->cantidad_ocupantes, 
+                                "Salario Base"=>$item->salario_base, 
+                                "salario Anual"=>$item->salario_anual,
+                                "Gratificación"=> $item->gratificacion, 
+                                "Aguinaldo"=> $item->aguinaldo,
+                                "Efectivo Anual Garantizado" => $efectivoAnual,
+                                "comision"=> $item->comision, 
+                                "Variable Anual (plus_rendimiento)" => $item->plus_rendimiento,
+                                "Adicional Amarre"=>$item->adicional_amarre, 
+                                "Adicional Tipo Combustible"=>$item->adicional_tipo_combustible, 
+                                "Adicional Embarque"=>$item->adicional_embarque, 
+                                "Adicional Tipo Carga"=>$item->adicional_carga,
+                                "Total Adicional Naviera" => $adicionalNav,
+                                "Fallo Caja"=> $item->fallo_caja,
+                                "Fallo Caja Ext."=> $item->fallo_caja_ext, 
+                                "Gratif. Contrato"=>$item->gratificacion_contrato, 
+                                "Adicional Nivel Cargo"=>$item->adicional_nivel_cargo, 
+                                "Adicional Título"=>$item->adicional_titulo,
+                                "Total Adicional (Otros)"=>$adicionalOtros,
+                                "Bono Anual"=>$item->bono_anual, 
+//                                "bono_anual_salarios"=>$item->bono_anual_salarios, 
+                                "Incentivo a Largo Plazo"=>$item->incentivo_largo_plazo, 
+                                "Efectivo Total Anual Nav" => $efectivoTotalAnualNav,
+                                "Efectivo Total Anual (Otros)" => $efectivoTotalAnual,
+                                "Refrigerio"=>$item->refrigerio, 
+                                "Costo Seguro Médico"=>$item->costo_seguro_medico, 
+                                "Cobertura Seguro Médico"=>$item->cobertura_seguro_medico, 
+                                "Costo Seguro Vida"=>$item->costo_seguro_vida, 
+//                                "costo_poliza_muerte_natural"=>$item->costo_poliza_muerte_natural,
+//                                "costo_poliza_muerte_accidente"=>$item->costo_poliza_muerte_accidente,
+//                                "aseguradora_id"=>$item->aseguradora_id, 
+                                "Car Company"=>$item->car_company, 
+                                "Movilidad Full"=>$item->movilidad_full, 
+                                "Monto Tarj. Flota"=>$item->monto_tarjeta_flota, 
+//                                "autos_marca_id"=>$item->autos_marca_id, 
+//                                "autos_modelo_id"=>$item->autos_modelo_id, 
+                                "Tarj. Flota"=>$item->tarjeta_flota, 
+                                "Monto Automóvil"=>$item->monto_movil, 
+                                "Seguro Automóvil"=>$item->seguro_movil, 
+                                "Mantenimiento Automóvil"=>$item->mantenimiento_movil, 
+                                "Km recorrido"=>$item->monto_km_recorrido, 
+                                "Ayuda Escolar"=>$item->monto_ayuda_escolar, 
+                                "Comedor Interno"=>$item->monto_comedor_interno, 
+                                "Curso Idioma"=>$item->monto_curso_idioma, 
+                                "Cobertura idioma"=>$item->cobertura_curso_idioma, 
+//                                "tipo clase idioma"=>$item->tipo_clase_idioma, 
+                                "Post Grado"=>$item->monto_post_grado, 
+                                "Cobertura Post Grado"=>$item->cobertura_post_grado, 
+                                "Celular"=>$item->monto_celular_corporativo, 
+                                "Vivienda"=>$item->monto_vivienda, 
+                                "Colegiatura"=>$item->monto_colegiatura_hijos, 
+                                "Condición Ocupante"=>$item->condicion_ocupante,
+                                "Total Beneficios Anual"=>$totalBeneficios*12,
+                                "Compensación Anual Total" => ($totalBeneficios*12 + $efectivoTotalAnual),
+                                "Compensación Anual Total Navieras" => ($totalBeneficios*12 + $efectivoTotalAnualNav),
+                                "Aguinaldo Impactado"=> $aguinaldoImpactado,
+                                "Compensación Efectiva Anual" => $compensacionEfectiva
+                );
 
              
         }
         $periodo = implode('_', explode('/', $periodo));
         $filename = 'Resultados_'.$periodo.'_'.$rubroDesc;
-        Excel::create($filename, function($excel) use($detalle, $periodo, $rubro) {
-            $excel->sheet($periodo, function($sheet) use($detalle, $rubro){
-                if($rubro == 1){
-                    $sheet->cells('A1:BG1', function($cells){
-                        $cells->setBackground('#00897b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                       // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                }elseif($rubro == 4){
-                    $sheet->cells('A1:BM1', function($cells){
-                        $cells->setBackground('#00897b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                       // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                }else{
-                    $sheet->cells('A1:BJ1', function($cells){
-                        $cells->setBackground('#00897b');
-                        $cells->setFontColor("#FFFFFF");
-                        $cells->setFontWeight("bold");
-                       // $cells->setValignment('center');
-                        $cells->setAlignment('center');
-                    });
-                }
-                $sheet->fromArray($detalle, null, 'A1');                
+        Excel::create($filename, function($excel) use($detalle, $periodo) {
+            $excel->sheet($periodo, function($sheet) use($detalle){
+                
+                $sheet->cells('A10:BR10', function($cells){
+                    $cells->setBackground('#00897b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                // Efectivo Anual Garantizado
+                $sheet->cell('A1', function($cell){
+                    $cell->setBackground('#1976d2');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Efectivo Anual Garantizado');
+                });
+                
+                $sheet->cell('B1', function($cell){
+                    $cell->setValue('Salario Base Anual');
+                });
+
+                $sheet->cell('C1', function($cell){
+                    $cell->setValue('Gratificación');
+                });
+
+                $sheet->cell('D1', function($cell){
+                    $cell->setValue('Aguinaldo');
+                });
+
+                // Adicional Navieras
+                $sheet->cell('A2', function($cell){
+                    $cell->setBackground('#ffff00');
+                    $cell->setFontColor("#000000");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Adicional Navieras');
+                });                
+
+                $sheet->cell('B2', function($cell){
+                    $cell->setValue('Adicional Amarre');
+                });
+
+                $sheet->cell('C2', function($cell){
+                    $cell->setValue('Adicional Tipo Combustible');
+                });
+
+                $sheet->cell('D2', function($cell){
+                    $cell->setValue('Adicional Embarque');
+                });
+
+                $sheet->cell('E2', function($cell){
+                    $cell->setValue('Adicional Carga');
+                });
+
+                // Adicional Otros
+                $sheet->cell('A3', function($cell){
+                    $cell->setBackground('#388e3c');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Adicional Otros');
+                });    
+
+                $sheet->cell('B3', function($cell){
+                    $cell->setValue('Fallo Caja');
+                });
+
+                $sheet->cell('C3', function($cell){
+                    $cell->setValue('Fallo Caja Mon. Ext.');
+                });
+
+                $sheet->cell('D3', function($cell){
+                    $cell->setValue('Comisión');
+                });
+
+                $sheet->cell('E3', function($cell){
+                    $cell->setValue('Gratificación por Contrato');
+                });
+
+                $sheet->cell('F3', function($cell){
+                    $cell->setValue('Adicional por Nivel de Cargo');
+                });
+
+                $sheet->cell('F3', function($cell){
+                    $cell->setValue('Adicional por Título');
+                });
+
+                // Efectivo Total Navieras
+                $sheet->cell('A4', function($cell){
+                    $cell->setBackground('#ff80ab');
+                    $cell->setFontColor("#000000");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Efectivo Total Anual Navieras');
+                });   
+
+                $sheet->cell('B4', function($cell){
+                    $cell->setValue('Efectivo Anual Garantizado');
+                });
+
+                $sheet->cell('C4', function($cell){
+                    $cell->setValue('Variable Anual');
+                });
+
+                $sheet->cell('D4', function($cell){
+                    $cell->setValue('Adicional Navieras');
+                });
+
+                $sheet->cell('E4', function($cell){
+                    $cell->setValue('Bono');
+                });
+
+                // Efectivo total anual otros
+                $sheet->cell('A5', function($cell){
+                    $cell->setBackground('#afb42b');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Efectivo Total Anual Otros');
+                });     
+
+                $sheet->cell('B5', function($cell){
+                    $cell->setValue('Efectivo Anual Garantizado');
+                });
+
+                $sheet->cell('C5', function($cell){
+                    $cell->setValue('Adicional Otros');
+                });
+
+                $sheet->cell('D5', function($cell){
+                    $cell->setValue('Bono');
+                });
+
+
+                // Total Beneficios
+                $sheet->cell('A6', function($cell){
+                    $cell->setBackground('#ff9800');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Total Beneficios');
+                });                
+                
+                // Compensación anual Total
+                $sheet->cell('A7', function($cell){
+                    $cell->setBackground('#5d4037');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Compensación Anual Total');
+                }); 
+
+                $sheet->cell('B7', function($cell){
+                    $cell->setValue('Efectivo Total Anual');
+                });
+
+                $sheet->cell('C7', function($cell){
+                    $cell->setValue('Total Beneficios');
+                });
+
+                // Aguinaldo Impactado
+                $sheet->cell('A8', function($cell){
+                    $cell->setBackground('#424242');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Aguinaldo Impactado');
+                });  
+
+                $sheet->cell('B8', function($cell){
+                    $cell->setValue('(Salario Base Anual');
+                });
+
+                $sheet->cell('C8', function($cell){
+                    $cell->setValue('Gratificación');
+                });
+
+                $sheet->cell('D8', function($cell){
+                    $cell->setValue('Adicional Otros');
+                });
+
+                $sheet->cell('E8', function($cell){
+                    $cell->setValue('Bono)/12');
+                });
+
+                // Compensación Efectiva anual Total
+                $sheet->cell('A9', function($cell){
+                    $cell->setBackground('#e53935');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                    $cell->setValue('Compensación Efectiva Anual Total');
+                });                
+
+                $sheet->cell('B9', function($cell){
+                    $cell->setValue('Salario Base Anual');
+                });
+
+                $sheet->cell('C9', function($cell){
+                    $cell->setValue('Gratificación');
+                });
+
+                $sheet->cell('D9', function($cell){
+                    $cell->setValue('Adicional Otros');
+                });
+
+                $sheet->cell('E9', function($cell){
+                    $cell->setValue('Aguinaldo');
+                });
+
+                $sheet->cell('F9', function($cell){
+                    $cell->setValue('Bono');
+                });
+
+                // Efectivo Anual Garantizado
+                $sheet->cell('V10', function($cell){
+                    $cell->setBackground('#1976d2');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Adicional Navieras
+                $sheet->cell('AC10', function($cell){
+                    $cell->setBackground('#ffff00');
+                    $cell->setFontColor("#000000");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Adicional Otros
+                $sheet->cell('AI10', function($cell){
+                    $cell->setBackground('#388e3c');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Efectivo Total Navieras
+                $sheet->cell('AL10', function($cell){
+                    $cell->setBackground('#ff80ab');
+                    $cell->setFontColor("#000000");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Efectivo total anual otros
+                $sheet->cell('AM10', function($cell){
+                    $cell->setBackground('#afb42b');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Total Beneficios
+                $sheet->cell('BJ10', function($cell){
+                    $cell->setBackground('#ff9800');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Compensación anual Total
+                $sheet->cell('BK10', function($cell){
+                    $cell->setBackground('#5d4037');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Aguinaldo Impactado
+                $sheet->cell('BL10', function($cell){
+                    $cell->setBackground('#424242');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                // Compensación Efectiva anual Total
+                $sheet->cell('BM10', function($cell){
+                    $cell->setBackground('#e53935');
+                    $cell->setFontColor("#FFFFFF");
+                    $cell->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cell->setAlignment('center');
+                });                
+                $sheet->fromArray($detalle, null, 'A10');                
 
             });
         })->export('xlsx');
@@ -3790,6 +3144,7 @@ class ReporteController extends Controller
 
         // Recuperamos los datos de las encuestas
         $dbDetalle = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasIds)->get();
+
         // Datos de la encuesta llenada por el cliente
         $dbClienteEnc = $dbDetalle->where('cabecera_encuesta_id', $dbEncuesta->id)->first();
        // dd($dbEncuesta, $dbClienteEnc, $cargo);

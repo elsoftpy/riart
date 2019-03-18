@@ -101,37 +101,51 @@ class Detalle_encuesta extends Model
 	}
 
 	public function getAdicionalesBancosAttribute(){
-		$adicionales = $this->fallo_caja +
-					   $this->fallo_caja_ext +
-					   $this->comision +
-					   $this->gratificacion_contrato +
-					   $this->adicional_nivel_cargo +
-					   $this->adicional_titulo;
+		$adicionales = $this->fallo_caja * 12 +
+					   $this->fallo_caja_ext * 12 +
+					   $this->comision * 12 +
+					   $this->gratificacion_contrato * 12  +
+					   $this->adicional_nivel_cargo * 12 +
+					   $this->adicional_titulo * 12;
 		return $adicionales;
 	}
 
 	public function getAdicionalesRestoAttribute(){
-		$adicionales = $this->fallo_caja +
-					   $this->fallo_caja_ext +
-					   $this->gratificacion_contrato +
-					   $this->adicional_nivel_cargo +
-					   $this->adicional_titulo;
+		$adicionales = $this->fallo_caja * 12 +
+					   $this->fallo_caja_ext * 12 +
+					   $this->comision * 12 +
+					   $this->gratificacion_contrato * 12  +
+					   $this->adicional_nivel_cargo * 12 +
+					   $this->adicional_titulo * 12;
 
 		return $adicionales;
 
 	}
+
+	public function getAdicionalesNavierasAttribute(){
+		$adicionales = $this->fallo_caja * 12 +
+					   $this->fallo_caja_ext * 12 +
+					   $this->comision * 12 +
+					   $this->gratificacion_contrato * 12  +
+					   $this->adicional_nivel_cargo * 12 +
+					   $this->adicional_titulo * 12 +
+					   $this->adicional_amarre +
+					   $this->adicional_tipo_combustible +
+					   $this->adicional_embarque + 
+					   $this->adicional_carga;
+
+		return $adicionales;
+
+	}	
 
 	public function getBeneficiosBancosAttribute(){
 		$beneficios = 	$this->refrigerio + 
 						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
 						$this->costo_seguro_vida + 
-						//$this->costo_poliza_muerte_accidente +
-						//$this->costo_poliza_muerte_natural +
 						$this->monto_movil / 60 +
 						$this->gratificacion_contrato +
 						$this->flota+
 						$this->seguro_movil +
-						$this->monto_km_recorrido +
 						$this->monto_ayuda_escolar +
 						$this->monto_comedor_interno +
 						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100) +
@@ -145,45 +159,40 @@ class Detalle_encuesta extends Model
 
 
 	public function getBeneficiosNavierasAttribute(){
-		$beneficios = 	$this->refrigerio + 
-						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
-						$this->costo_seguro_vida + 
-						//$this->costo_poliza_muerte_accidente +
-						//$this->costo_poliza_muerte_natural +
-						$this->monto_movil / 60 +
-						$this->flota+
-						$this->seguro_movil +
-						$this->monto_km_recorrido +
+		$beneficios = 	$this->refrigerio * 12+ 
+						($this->costo_seguro_medico * ($this->cobertura_seguro_medico/100)) * 12+ 
+						$this->costo_seguro_vida  * 12+ 
+						($this->monto_movil / 60) * 12 +
+						$this->flota * 12+
+						$this->seguro_movil * 12 +
 						$this->monto_ayuda_escolar +
-						$this->monto_comedor_interno +
-						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100) +
-						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 24 +
-						$this->monto_celular_corporativo +
-						$this->monto_vivienda +
-						$this->monto_colegiatura_hijos /12;
+						$this->monto_comedor_interno * 12 +
+						($this->monto_curso_idioma * ($this->cobertura_curso_idioma/100)) * 12 +
+						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 2 +
+						$this->monto_celular_corporativo * 12+
+						$this->monto_vivienda * 12 +
+						$this->monto_colegiatura_hijos;
 
 		return $beneficios;
 	}	
 
 	public function getBeneficiosRestoAttribute(){
-		$beneficios = 	$this->refrigerio + 
-						$this->costo_seguro_medico * ($this->cobertura_seguro_medico/100) + 
-						$this->costo_seguro_vida + 
-						//$this->costo_poliza_muerte_accidente +
-						//$this->costo_poliza_muerte_natural +
-						$this->monto_movil / 60 +
-						$this->flota+
-						$this->seguro_movil +
-						$this->monto_km_recorrido +
+		$beneficios = 	$this->refrigerio * 12+ 
+						($this->costo_seguro_medico * ($this->cobertura_seguro_medico/100)) * 12+ 
+						$this->costo_seguro_vida  * 12+ 
+						($this->monto_movil / 60) * 12 +
+						$this->flota * 12+
+						$this->seguro_movil * 12 +
 						$this->monto_ayuda_escolar +
-						$this->monto_comedor_interno +
-						$this->monto_curso_idioma * ($this->cobertura_curso_idioma/100) +
-						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 24 +
-						$this->monto_celular_corporativo +
-						$this->monto_vivienda +
-						$this->monto_colegiatura_hijos/12;
+						$this->monto_comedor_interno * 12 +
+						($this->monto_curso_idioma * ($this->cobertura_curso_idioma/100)) * 12 +
+						$this->monto_post_grado * ($this->cobertura_post_grado/100)/ 2 +
+						$this->monto_celular_corporativo * 12+
+						$this->monto_vivienda * 12 +
+						$this->monto_colegiatura_hijos;
 
 		return $beneficios;
 	}	
 
+	
 }

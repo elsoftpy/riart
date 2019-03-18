@@ -129,7 +129,8 @@ class CargosController extends Controller
     }
 
     public function destroy($id){
-		$dbData = Cargo::find($id);
+        $dbData = Cargo::find($id);
+        $dbDataEn = Cargo_en::find($id);
         $dbData->delete();            
 
 		return redirect()->route('cargos.index');    	

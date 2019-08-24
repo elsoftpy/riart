@@ -309,8 +309,9 @@
 					    </div>
 					</div>
 					<div class="row">
-						<input ng-model="carCompany" name="excluir" id="excluir" value="1" type="checkbox" class="with-gap"  />
+						<input name="excluir" id="excluir" value="1" type="checkbox" class="with-gap"  />
 						<label for="excluir">Excluir</label>
+						
 					</div> 
 					<div class="row">
 						<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />

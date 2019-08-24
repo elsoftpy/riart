@@ -49,6 +49,11 @@
 				@endif
 			</form>
 		</div>
+		<div class="col s3">
+			@if (Session::has('especial'))
+				<strong>Reporte Especial</strong>
+			@endif
+		</div>
 		<div class="col s12">
 			<h4>{{$dbCargo->descripcion}} - {{$periodo}}</h4>
 			@if ($convertir)

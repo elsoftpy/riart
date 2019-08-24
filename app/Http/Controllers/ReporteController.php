@@ -162,32 +162,52 @@ class ReporteController extends Controller
     }
 
     public function ficha($id){
+        $reporteEspecial = Session::get('especial');
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);
         $rubro = $empresa->rubro_id;
+        $subRubro = $empresa->sub_rubro_id;
         $locale = $this->getIdioma();
         
         if(Session::has('periodo')){
             $per = Session::get('periodo');
-            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw("periodo = '". $per."'")->first();
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)
+                                           ->whereRaw("periodo = '". $per."'")
+                                           ->first();
             $dbFicha = Ficha_dato::where('rubro_id', $rubro)
                                  ->where('periodo', $per)
                                  ->first();
-        }else{
-            $dbFicha = Ficha_dato::activa()->where('rubro_id', $rubro)->first();
+            
             if($dbFicha){
                 $periodo = $dbFicha->periodo;
-                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->where('periodo', $periodo)->first();    
             }else{
-                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();            
+                $periodo = $per;
+            }
+            
+        }else{
+            $dbFicha = Ficha_dato::activa()
+                                 ->where('rubro_id', $rubro)
+                                 ->first();
+            
+            if($dbFicha){
+                $periodo = $dbFicha->periodo;
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)
+                                               ->where('periodo', $periodo)->first();    
+            }else{
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)
+                                               ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')
+                                               ->first();           
             }    
             
         }
-        $cargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)->get()->count();
-        $periodo = $dbEncuesta->periodo;
         
         if($dbFicha){
-            $cargos = $dbFicha->cargos_emergentes;
+            if($reporteEspecial){
+                $cargos = $this->countEmergentesSegmento($rubro, $subRubro, $periodo);
+            }else{
+                $cargos = $dbFicha->cargos_emergentes;
+            }
+            
             $tipoCambio = $dbFicha = $dbFicha->tipo_cambio;
         }else{
             if ($rubro == 4){
@@ -205,8 +225,17 @@ class ReporteController extends Controller
             }
             $tipoCambio = 5600;
         }
+        if($reporteEspecial){
+            $participantes = Cabecera_encuesta::where('periodo', $periodo)
+                                              ->where('rubro_id', $rubro)
+                                              ->where('sub_rubro_id', $subRubro)
+                                              ->get();
+        }else{
+            $participantes = Cabecera_encuesta::where('periodo', $periodo)
+                                               ->where('rubro_id', $rubro)
+                                               ->get();
+        }
         
-        $participantes = Cabecera_encuesta::where('periodo', $periodo)->where('rubro_id', $rubro)->get();
 
         $participantes = $participantes->map(function($item){
             return $item->empresa;    
@@ -225,6 +254,27 @@ class ReporteController extends Controller
                                    ->with('locale', $locale)
                                    ->with('participantes', $participantes);
     }
+
+    private function countEmergentesSegmento($rubro, $subRubro, $periodo){
+
+        $results = DB::select( DB::raw(
+            "SELECT count(distinct cargo_id) cargos
+               FROM encuestas_cargos e 
+              WHERE cabecera_encuesta_id in ( select id 
+                                                from cabecera_encuestas
+                                               where rubro_id = :rubro
+                                                 and sub_rubro_id = :subRubro
+                                                 and periodo = :periodo)"), 
+            array('rubro' => $rubro, 'subRubro' => $subRubro, 'periodo' => $periodo));
+            //return $results;
+            if($results){
+                $count = $results[0]->cargos;
+            }else{
+                $count = 0;
+            }
+            return $count;
+    }
+
 
     /**
      * Display the specified resource.
@@ -282,8 +332,6 @@ class ReporteController extends Controller
             }
         }
 
-        
-
         $groupedCargosEmpresas = $cargosEmpresas->groupBy('cargo');
         
         $cargosIds = $groupedCargosEmpresas->map(function($item, $key){
@@ -293,7 +341,7 @@ class ReporteController extends Controller
         })->values()->reject(function($value, $key){
             return is_null($value); 
         })->sort();
-        
+
         $cargos = Cargos_rubro::where('rubro_id', $rubro)
                               ->whereIn('cargo_id', $cargosIds)->get();
         //$cargos = Cargos_rubro::where('rubro_id', $rubro)->get();
@@ -317,7 +365,7 @@ class ReporteController extends Controller
         }else{
             $niveles = Nivel_en::whereIn('id', $colNiveles->unique())->orderBy('descripcion')->get();
         }
-        
+
         return view('report.cargos_club')->with('dbEmpresa', $dbEmpresa)
                                          ->with('club', $club)       
                                          ->with('niveles', $niveles)
@@ -327,12 +375,21 @@ class ReporteController extends Controller
 
     public function cargoReport(Request $request){
 
-        return $this->cargoReportAll($request, "view");
+        if(Session::get('especial')){
+            return $this->cargoReportEspecial($request, "view");
+        }else{
+            return $this->cargoReportAll($request, "view");
+        }
+        
     }
 
     public function cargoReportExcel(Request $request){
         
-        return $this->cargoReportAll($request, "excel");
+        if(Session::get('especial')){
+            return $this->cargoReportEspecial($request, "excel");
+        }else{
+            return $this->cargoReportAll($request, "excel");
+        }
     }
 
     public function cargoReportClubExcel(Request $request){
@@ -346,6 +403,7 @@ class ReporteController extends Controller
         }else{
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')->first();            
         }
+        $reporteEspecial = Session::get('especial');
         // periodo de la encuesta actual (semestral para navieras)
         $periodo = $dbEncuesta->periodo;    
         // rubro de la empresa del cliente        
@@ -353,6 +411,7 @@ class ReporteController extends Controller
         // recupera los cargos del periodo para todos los que tengan homologación
         $encuestasCargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)
                                           ->whereNotNull('cargo_id')
+                                          ->where('incluir', 1)
                                           ->get();
         // variables de detalle para cada segmento
         $detalleUniverso = collect();
@@ -362,7 +421,14 @@ class ReporteController extends Controller
         foreach ($encuestasCargos as $encuestaCargo) {
             $request->request->add(["cargo_id"=> $encuestaCargo->cargo->id]);
             // procesamos el reporte
-            $respuesta = $this->cargoReportAll($request, "clubExcel", true);
+            if($reporteEspecial){
+                $respuesta = $this->cargoReportEspecial($request, "clubExcel", true);
+                $filename = 'Resultados_especial_'.$periodo;
+            }else{
+                $respuesta = $this->cargoReportAll($request, "clubExcel", true);
+                $filename = 'Resultados_'.$periodo;
+            }
+            
             // preparamos los datos para el array final del cargo
             $itemArray = array( $encuestaCargo->descripcion, 
                                 $encuestaCargo->cargo->descripcion, 
@@ -392,7 +458,7 @@ class ReporteController extends Controller
             $detalleNacional->push($itemArrayNac);
             $detalleInternacional->push($itemArrayInt);                 
         }
-        $filename = 'Resultados_'.$periodo;
+        
 
         Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro) {
             $excel->sheet("universo", function($sheet) use($detalleUniverso, $rubro){
@@ -1508,6 +1574,457 @@ class ReporteController extends Controller
         })->export('xlsx');
     }
 
+    public function cargoReportClubEspecial(Request $request){
+        ini_set('max_execution_time', 0);
+        // datos de la empresa del cliente
+        $dbEmpresa = Empresa::find($request->empresa_id);   
+        // si la variable de sesion "periodo" está cargada (solo se carga con navieras)
+        if(Session::has('periodo')){
+            $per = Session::get('periodo');
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                           ->where('periodo', $per)
+                                           ->first();
+        }else{
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                           ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
+                                           ->first();            
+        }
+        // periodo de la encuesta actual (semestral para navieras)
+        $periodo = $dbEncuesta->periodo;
+        
+        $periodoArray = explode("/", $periodo);
+        $yearAnt = intval($periodoArray[1]) - 1;
+        $periodoAnt = $periodoArray[0]."/".$yearAnt;
+        // buscamos la encuesta del año pasado
+        $dbEncuestaAnt = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                          ->where('periodo', $periodoAnt)
+                                          ->first();
+        
+        if(!$dbEncuestaAnt){
+            $dbEncuestaAnt = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                              ->where('id', '<', $dbEncuesta->id)  
+                                              ->orderBy('id', 'DESC')    
+                                              ->first();
+        }
+
+        $dbEncuestasId = Cabecera_encuesta::where('periodo', $periodo)
+                                          ->pluck('id');
+
+        // rubro de la empresa del cliente        
+        $rubro = $dbEmpresa->rubro_id;  
+        
+        $cargosTrip = Cargo::where('area_id', 57)
+                           ->pluck('id');
+        // recupera los cargos del periodo para todos los que tengan homologación
+        $encuestasCargos = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)
+                                          ->whereIn('cargo_id', $cargosTrip)
+                                          ->whereNotNull('cargo_id')
+                                          ->where('incluir', 1)
+                                          ->get();
+        
+        // variables de detalle para cada segmento
+        $salarioBase = collect();
+        $efectivoTotalAnual = collect();
+        $variable = collect();
+        $adicionalTotal = collect();
+        $contratoNuevo = collect();
+
+        // Procesamiento por cargo
+        foreach ($encuestasCargos as $encuestaCargo) {
+            $cargoId = $encuestaCargo->cargo->id;
+            // procesamos el reporte
+            if(!$encuestaCargo->es_contrato_periodo){
+                $respuesta = $this->cargoComparativoEspecial($dbEncuesta, $dbEncuestaAnt, $dbEmpresa, $cargoId, false);
+            }else{
+                $respuesta = $this->cargoComparativoEspecial($dbEncuesta, $dbEncuestaAnt, $dbEmpresa, $cargoId, true);
+            }
+
+            $filename = 'Comparativo_interanual_'.$periodo.'_'.$periodoAnt;
+            
+            // preparamos los datos para el array final del cargo
+            $itemArray = array( $encuestaCargo->cargo->descripcion);
+            $itemArrayETA = array( $encuestaCargo->cargo->descripcion);
+            $itemArrayVar = array( $encuestaCargo->cargo->descripcion);
+            $itemArrayATA = array( $encuestaCargo->cargo->descripcion);
+            if($encuestaCargo->es_contrato_periodo){
+                $itemArrayContNuevo = array($encuestaCargo->cargo->descripcion);
+            }
+            
+            // por cada item del detalle
+            foreach ($respuesta as $key => $item) {
+                //dd($item);
+                switch ($key) {
+                    case 'detalle_salario_base':
+                        
+                        if($encuestaCargo->es_contrato_periodo){
+                            $this->CargaDetalleComparativo($item[0], $itemArrayContNuevo, 1);     
+                        }else{
+                            $this->CargaDetalleComparativo($item[0], $itemArray, 0);    
+                        }
+                        break;
+
+                    case 'detalle_efectivo_total_anual':
+                        $this->CargaDetalleComparativo($item[0], $itemArrayETA, 0);            
+                        break;
+                    case 'detalle_variable':
+                        $this->CargaDetalleComparativo($item[0], $itemArrayVar, 0);            
+                        break;
+                    case 'detalle_adicional_total_anual':
+                        $this->CargaDetalleComparativo($item[0], $itemArrayATA, 0);            
+                        break;                                                
+                }
+
+            }
+
+            $salarioBase->push($itemArray);
+            $efectivoTotalAnual->push($itemArrayETA);
+            $variable->push($itemArrayVar);
+            $adicionalTotal->push($itemArrayATA);
+            if($encuestaCargo->es_contrato_periodo){
+                $contratoNuevo->push($itemArrayContNuevo);
+            }
+        }
+        
+        Excel::create($filename, function($excel) use($salarioBase, $efectivoTotalAnual, $variable, $adicionalTotal, $contratoNuevo, $periodo, $periodoAnt) {
+            $excel->sheet("Salario Base", function($sheet) use($salarioBase, $periodo, $periodoAnt){
+                $salarioBase = $salarioBase->reject(function($item){
+                                    if(count($item) < 13){
+                                        return $item;
+                                    }
+                                    
+                                    return false;
+                                });
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);            
+
+                
+                
+                // Título
+                $sheet->cell('A5', function($cell){
+                    $cell->setValue('COMPARATIVO INTERANUAL SALARIO BASE');
+                });
+                $sheet->mergeCells('A5:M5');
+                $sheet->cells('A5:M5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('B6', function($cell) use($periodoAnt){
+                    $cell->setValue('PERIODO '.$periodoAnt);
+                });
+                $sheet->mergeCells('B6:G6');
+                $sheet->cells('B6:G6', function($cells){
+                    $cells->setBackground('#7cb342');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('H6', function($cell) use($periodo){
+                    $cell->setValue('PERIODO '.$periodo);
+                });
+                $sheet->mergeCells('H6:M6');
+                $sheet->cells('H6:M6', function($cells){
+                    $cells->setBackground('#ffb300');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $topeHeader = 2;
+                $rango = 'A7:M7';
+                       
+                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+                $cargoHeader = array("Cargo Oficial");
+
+                for ($i= 0; $i < $topeHeader; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                    
+                }
+                   
+                $sheet->row(7, $cargoHeader);
+                $sheet->rows($salarioBase);
+                $sheet->cells($rango, function($cells){
+                    $cells->setBackground('#a7ffeb');
+                });                 
+                $sheet->setFreeze('A7');  
+            });
+
+            $excel->sheet("Efectivo Total Anual", function($sheet) use($efectivoTotalAnual, $periodo, $periodoAnt){
+                
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);            
+
+                
+                
+                // Título
+                $sheet->cell('A5', function($cell){
+                    $cell->setValue('COMPARATIVO INTERANUAL EFECTIVO TOTAL ANUAL');
+                });
+                $sheet->mergeCells('A5:M5');
+                $sheet->cells('A5:M5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('B6', function($cell) use($periodoAnt){
+                    $cell->setValue('PERIODO '.$periodoAnt);
+                });
+                $sheet->mergeCells('B6:G6');
+                $sheet->cells('B6:G6', function($cells){
+                    $cells->setBackground('#7cb342');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('H6', function($cell) use($periodo){
+                    $cell->setValue('PERIODO '.$periodo);
+                });
+                $sheet->mergeCells('H6:M6');
+                $sheet->cells('H6:M6', function($cells){
+                    $cells->setBackground('#ffb300');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $topeHeader = 2;
+                $rango = 'A7:M7';
+                       
+                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+                $cargoHeader = array("Cargo Oficial");
+
+                for ($i= 0; $i < $topeHeader; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                    
+                }
+                   
+                $sheet->row(7, $cargoHeader);
+                $sheet->rows($efectivoTotalAnual);
+                $sheet->cells($rango, function($cells){
+                    $cells->setBackground('#a7ffeb');
+                });                 
+                $sheet->setFreeze('A7');  
+            });     
+            
+            $excel->sheet("Variable", function($sheet) use($variable, $periodo, $periodoAnt){
+                
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);            
+
+                
+                
+                // Título
+                $sheet->cell('A5', function($cell){
+                    $cell->setValue('COMPARATIVO INTERANUAL VARIABLE');
+                });
+                $sheet->mergeCells('A5:M5');
+                $sheet->cells('A5:M5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('B6', function($cell) use($periodoAnt){
+                    $cell->setValue('PERIODO '.$periodoAnt);
+                });
+                $sheet->mergeCells('B6:G6');
+                $sheet->cells('B6:G6', function($cells){
+                    $cells->setBackground('#7cb342');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('H6', function($cell) use($periodo){
+                    $cell->setValue('PERIODO '.$periodo);
+                });
+                $sheet->mergeCells('H6:M6');
+                $sheet->cells('H6:M6', function($cells){
+                    $cells->setBackground('#ffb300');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $topeHeader = 2;
+                $rango = 'A7:M7';
+                       
+                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+                $cargoHeader = array("Cargo Oficial");
+
+                for ($i= 0; $i < $topeHeader; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                    
+                }
+                   
+                $sheet->row(7, $cargoHeader);
+                $sheet->rows($variable);
+                $sheet->cells($rango, function($cells){
+                    $cells->setBackground('#a7ffeb');
+                });                 
+                $sheet->setFreeze('A7');  
+            }); 
+
+            $excel->sheet("Adicional Total Anual", function($sheet) use($adicionalTotal, $periodo, $periodoAnt){
+                
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);            
+
+                
+                
+                // Título
+                $sheet->cell('A5', function($cell){
+                    $cell->setValue('COMPARATIVO INTERANUAL ADICIONAL TOTAL ANUAL');
+                });
+                $sheet->mergeCells('A5:M5');
+                $sheet->cells('A5:M5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('B6', function($cell) use($periodoAnt){
+                    $cell->setValue('PERIODO '.$periodoAnt);
+                });
+                $sheet->mergeCells('B6:G6');
+                $sheet->cells('B6:G6', function($cells){
+                    $cells->setBackground('#7cb342');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $sheet->cell('H6', function($cell) use($periodo){
+                    $cell->setValue('PERIODO '.$periodo);
+                });
+                $sheet->mergeCells('H6:M6');
+                $sheet->cells('H6:M6', function($cells){
+                    $cells->setBackground('#ffb300');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $topeHeader = 2;
+                $rango = 'A7:M7';
+                       
+                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+                $cargoHeader = array("Cargo Oficial");
+
+                for ($i= 0; $i < $topeHeader; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                    
+                }
+                   
+                $sheet->row(7, $cargoHeader);
+                $sheet->rows($adicionalTotal);
+                $sheet->cells($rango, function($cells){
+                    $cells->setBackground('#a7ffeb');
+                });                 
+                $sheet->setFreeze('A7');  
+            }); 
+
+            $excel->sheet("Tripulacion Incorporada", function($sheet) use($contratoNuevo, $periodo){
+                
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);            
+
+                
+                
+                // Título
+                $sheet->cell('A5', function($cell){
+                    $cell->setValue('TRIPULACION INCORPORADA EN EL PERIODO');
+                });
+                $sheet->mergeCells('A5:H5');
+                $sheet->cells('A5:H5', function($cells){
+                    $cells->setBackground('#0288d1');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                
+
+                $sheet->cell('B6', function($cell) use($periodo){
+                    $cell->setValue('PERIODO '.$periodo);
+                });
+                $sheet->mergeCells('B6:H6');
+                $sheet->cells('B6:H6', function($cells){
+                    $cells->setBackground('#ffb300');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                   // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+
+                $topeHeader = 1;
+                $rango = 'A7:H7';
+                       
+                $itemsHeader = array("Ocupantes","Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+                $cargoHeader = array("Cargo Oficial");
+
+                for ($i= 0; $i < $topeHeader; $i++) {
+                    foreach ($itemsHeader as $key => $value) {
+                        array_push($cargoHeader, $value);
+                    }
+                    
+                }
+                   
+                $sheet->row(7, $cargoHeader);
+                $sheet->rows($contratoNuevo);
+                $sheet->cells($rango, function($cells){
+                    $cells->setBackground('#a7ffeb');
+                });                 
+                $sheet->setFreeze('A7');  
+            });
+            $excel->setActiveSheetIndex(0);    
+        })->export('xlsx');
+    }
+
     public function nivelReportClubExcel(Request $request){
         ini_set('max_execution_time', 0);
         // periodo de la encuesta actual (semestral para navieras)
@@ -1836,14 +2353,7 @@ class ReporteController extends Controller
                 
             }
         }
-        //dd($item);
-        /*if(!$variableAnual){
-            // agregamos 0 a los lugares de Variable Anual
-            $aux = array_slice($itemArray, 0, 16, true);
-            array_push($aux, 0,0,0,0,0,0);
-            $aux2 = array_merge($aux, array_slice($itemArray, 16));
-            $itemArray = $aux2; 
-        }*/
+       
         // comparativo salario base
         if($itemArray[4] > 0){
             $compMinSal = round($salarioEmpresa/$itemArray[4] - 1, 2); 
@@ -2056,6 +2566,31 @@ class ReporteController extends Controller
         }
         
         
+    }
+    private function cargaDetalleComparativo($value, &$itemArray, $contNuevo){
+        
+        if($contNuevo){
+            array_push($itemArray, $value["Ocupantes"]);
+            array_push($itemArray, $value["Min"]);
+            array_push($itemArray, $value["25 Percentil"]);
+            array_push($itemArray, round($value["Promedio"], 2));
+            array_push($itemArray, $value["Mediana"]);
+            array_push($itemArray, $value["75 Percentil"]);
+            array_push($itemArray, $value["Max"]);       
+        }else{
+            array_push($itemArray, $value["Min Ant"]);
+            array_push($itemArray, $value["25P Ant"]);
+            array_push($itemArray, round($value["Prom Ant"], 2));
+            array_push($itemArray, $value["Med Ant"]);
+            array_push($itemArray, $value["75P Ant"]);
+            array_push($itemArray, $value["Max Ant"]);
+            array_push($itemArray, $value["Min"]);
+            array_push($itemArray, $value["25 Percentil"]);
+            array_push($itemArray, round($value["Promedio"], 2));
+            array_push($itemArray, $value["Mediana"]);
+            array_push($itemArray, $value["75 Percentil"]);
+            array_push($itemArray, $value["Max"]);       
+        }
     }
     private function cargador($value, &$itemArray, $casos){
             if($casos){
@@ -3282,6 +3817,7 @@ class ReporteController extends Controller
         $dbDetalle = DB::select($query, ["periodo" => $periodo, "rubro" => $rubro]);
         $detalle = array();
         foreach ($dbDetalle as $key => $item) {
+            
             // Efectivo Anual Garantizado
             $efectivoAnual = $item->salario_anual + 
                              $item->gratificacion + 
@@ -3571,6 +4107,12 @@ class ReporteController extends Controller
 
              
         }
+        /* foreach($detalle as $det){
+            if($det["id_cargo_cliente"] == 23066){
+                dd($det);
+            }
+            
+        } */
         $periodo = implode('_', explode('/', $periodo));
         $filename = 'Resultados_'.$periodo.'_'.$rubroDesc;
         Excel::create($filename, function($excel) use($detalle, $periodo, $rubro) {
@@ -3610,9 +4152,33 @@ class ReporteController extends Controller
     public function panel($id){
         $dbEmpresa = $id;
         $rubro = Auth::user()->empresa->rubro_id;
+        $subRubro = Auth::user()->empresa->sub_rubro_id;
+        $reporteEspecial = Session::get('especial');
+        
         $club = $this->club($rubro);
-        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')->first();
-        $participantes = Cabecera_encuesta::where('periodo', $dbEncuesta->periodo)->where('rubro_id', $rubro)->get();
+        $periodo = Session::get('periodo');
+        if($periodo){
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)
+                                           ->where('periodo', $periodo)
+                                           ->first();
+
+        }else{
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)
+                                           ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $id.')')
+                                           ->first();
+
+        }
+        if($reporteEspecial){
+            $participantes = Cabecera_encuesta::where('periodo', $dbEncuesta->periodo)
+                                              ->where('rubro_id', $rubro)
+                                              ->where('sub_rubro_id', $subRubro)
+                                              ->get();
+        }else{
+            $participantes = Cabecera_encuesta::where('periodo', $dbEncuesta->periodo)
+                                              ->where('rubro_id', $rubro)
+                                              ->get();
+        }
+        //dd($participantes, $subRubro, $dbEncuesta);
         $dbData = $participantes->map(function($item){
             return $item->empresa;    
         })->reject(function($item){
@@ -3696,9 +4262,15 @@ class ReporteController extends Controller
 
     public function setSession(Request $request){
         $request->session()->put('periodo', $request->periodo); 
+        $request->session()->forget('especial');
         return "ok";
     }
 
+    public function setSessionEspecial(Request $request){
+        $request->session()->put('periodo', $request->periodo); 
+        $request->session()->put('especial', "true"); 
+        return "ok";
+    }    
     private function cargoReportAll(Request $request, $tipo, $muestraComision = true){
         //dd($request->all());
 
@@ -4031,6 +4603,909 @@ class ReporteController extends Controller
 
     }
 
+    private function cargoReportEspecial(Request $request, $tipo, $muestraComision = true){
+        //dd($request->all());
+
+        $dbEmpresa = Empresa::find($request->empresa_id);   // datos de la empresa del cliente
+        if(Session::has('periodo')){
+            $per = Session::get('periodo');
+            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                           ->whereRaw("periodo = '". $per."'")
+                                           ->first();
+        }else{
+            if(Auth::user()->is_admin){
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                               ->whereRaw("periodo = '". $request->periodo."'")
+                                               ->first();
+                //dd($dbEncuesta, $request->periodo);
+            }else{
+                $ficha = Ficha_dato::activa()->where('rubro_id', $dbEmpresa->rubro_id)->first();
+                if($ficha){
+                    $per = $ficha->periodo;
+                }else{
+                    $per = null;
+                }
+                if($per){
+                    $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                                   ->where("periodo",$per)
+                                                   ->first();
+                }else{
+                    if($dbEmpresa->rubro_id == '1'){
+                        $per = '06/2018';
+                        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                               ->whereRaw("periodo = '". $per."'")
+                                               ->first();
+                    }else{
+                        $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                        ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
+                        ->first();
+                    }
+                }
+                
+                            
+
+            }
+        }
+        //dd($dbEmpresa, $ficha, $per);
+        $periodo = $dbEncuesta->periodo;    // periodo de la encuesta actual
+
+        $rubro = $dbEmpresa->rubro_id;      // rubro de la empresa del cliente
+        $subRubro = $dbEmpresa->sub_rubro_id;
+        // cargo oficial para el informe
+        $cargo = $request->cargo_id; 
+        if($this->getIdioma() == "es"){
+            $dbCargo = Cargo::find($cargo);
+        }else{
+            $dbCargo = Cargo_en::find($cargo);
+        }    
+          
+        // empresas y cabeceras de encuestas de este periodo para empresas del rubro del cliente
+        $dbEncuestadas = Cabecera_encuesta::where('periodo', $periodo)
+                                          ->where('rubro_id', $rubro)
+                                          ->where('sub_rubro_id', $subRubro)
+                                          ->get();
+
+        $encuestadasIds = $dbEncuestadas->pluck("id");  // Ids de las encuestas para where in
+        // conteo de encuestas según origen
+        $dbNacionales = 0;
+        $dbInternacionales = 0;
+        $dbUniverso = $dbEncuestadas->count();
+        $encuestadasNacIds = collect();
+        $encuestadasInterIds = collect();
+        foreach ($dbEncuestadas as $key => $value) {
+            if($value->empresa->tipo == 0){
+                $dbNacionales++;
+                $encuestadasNacIds[] = $value->id;
+            }else{
+                $dbInternacionales++;
+                $encuestadasInterIds[] = $value->id;
+            };
+        }
+        // Recuperamos los datos de los cargos proveídos por las empresas encuestadas
+        $dbCargosEncuestas = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasIds)
+                                            ->where('cargo_id', $cargo)
+                                            ->where('incluir', 1)
+                                            ->get();
+
+        $dbCargosEncuestasNac = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasNacIds)->where('cargo_id', $cargo)->where('incluir', 1)->get();
+        $dbCargosEncuestasInter = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasInterIds)->where('cargo_id', $cargo)->where('incluir', 1)->get();
+        
+        $cargosEncuestasIds = $dbCargosEncuestas->pluck('id');
+        $cargosEncuestasNacIds = $dbCargosEncuestasNac->pluck('id');
+        $cargosEncuestasInterIds = $dbCargosEncuestasInter->pluck('id');
+
+        // Recuperamos los datos de las encuestas
+        $dbDetalle = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasIds)->get();
+        // Datos de la encuesta llenada por el cliente
+        $dbClienteEnc = $dbDetalle->where('cabecera_encuesta_id', $dbEncuesta->id)->first();
+       // dd($dbEncuesta, $dbClienteEnc, $cargo);
+        if(empty($dbClienteEnc)){
+            // get the column names for the table
+            $columns = Schema::getColumnListing('detalle_encuestas');
+            // create array where column names are keys, and values are null
+            $columns = array_fill_keys($columns, 0);        
+            $dbClienteEnc = new Detalle_encuesta();
+            $dbClienteEnc = $dbClienteEnc->newInstance($columns, true);
+        }
+        // conteo de casos encontrados
+        $countCasos = $dbDetalle->where('cantidad_ocupantes', '>', '0')
+                                ->unique('cabecera_encuesta_id')
+                                ->count();
+        $countOcupantes = $dbDetalle->sum('cantidad_ocupantes');
+        $countCasosGratif = $dbDetalle->where('cantidad_ocupantes', '>', '0')
+                                      ->where('gratificacion', '>', '0')
+                                      ->unique('cabecera_encuesta_id')->count();
+        $countCasosAguinaldo = $dbDetalle->where('cantidad_ocupantes', '>', '0')
+                                         ->where('aguinaldo', '>', '0')
+                                         ->unique('cabecera_encuesta_id')->count();
+        //$countCasosBeneficios = $dbDetalle->where('beneficios_bancos', '>', 0)->unique('cabecera_encuesta_id')->count();
+        $countCasosBono = $dbDetalle->where('cantidad_ocupantes', '>', '0')
+                                    ->where('bono_anual', '>', 0)
+                                    ->unique('cabecera_encuesta_id')->count();
+
+
+
+        $universo = collect();
+        $segmento = "universo";
+        $this->segmenter( $universo, 
+                          $dbUniverso, 
+                          $dbDetalle, 
+                          $countCasos,
+                          $countCasosGratif,
+                          $countCasosAguinaldo,
+                         // $countCasosBeneficios, 
+                          $countCasosBono,
+                          $dbClienteEnc, 
+                          $rubro, 
+                          $segmento, 
+                          $dbCargo, 
+                          $muestraComision);
+
+        // conteo de casos encontrados nacionales
+        $countCasosNac = $encuestadasNacIds->count();
+        // buscamos los detalles de las encuestas
+        $dbDetalleNac = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasNacIds)->get();
+        // conteo de casos encontrados
+        $countOcupantesNac = $dbDetalleNac->sum('cantidad_ocupantes');
+        $countCasos = $dbDetalleNac->where('cantidad_ocupantes', '>', '0')
+                                   ->unique('cabecera_encuesta_id')
+                                   ->count();
+        $countCasosGratif = $dbDetalleNac->where('cantidad_ocupantes', '>', '0')
+                                         ->where('gratificacion', '>', '0')
+                                         ->unique('cabecera_encuesta_id')->count();
+        $countCasosAguinaldo = $dbDetalleNac->where('cantidad_ocupantes', '>', '0')
+                                            ->where('aguinaldo', '>', '0')
+                                            ->unique('cabecera_encuesta_id')->count();
+
+        $countCasosBono = $dbDetalleNac->where('cantidad_ocupantes', '>', '0')
+                                       ->where('bono_anual', '>', 0)
+                                       ->unique('cabecera_encuesta_id')
+                                       ->count();
+
+        $nacional = collect();
+        $segmento = "nacional";
+        $this->segmenter(   $nacional, 
+                            $countCasosNac, 
+                            $dbDetalleNac, 
+                            $countCasos, 
+                            $countCasosGratif, 
+                            $countCasosAguinaldo, 
+                        //    $countCasosBeneficios, 
+                            $countCasosBono, 
+                            $dbClienteEnc, 
+                            $rubro, 
+                            $segmento, 
+                            $dbCargo, 
+                            $muestraComision);
+
+        // conteo de casos encontrados internacionales
+        $countCasosInt = $encuestadasInterIds->count();
+        // buscamos los detalles de las encuestas
+        $dbDetalleInt = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasInterIds)->get();
+        $countOcupantesInt = $dbDetalleInt->sum('cantidad_ocupantes');
+        // conteo de casos encontrados
+        $countCasos = $dbDetalleInt->where('cantidad_ocupantes', '>', '0')
+                                   ->unique('cabecera_encuesta_id')
+                                   ->count();
+        $countCasosGratif = $dbDetalleInt->where('cantidad_ocupantes', '>', '0')
+                                         ->where('gratificacion', '>', '0')
+                                         ->unique('cabecera_encuesta_id')
+                                         ->count();
+        $countCasosAguinaldo = $dbDetalleInt->where('cantidad_ocupantes', '>', '0')
+                                            ->where('aguinaldo', '>', '0')
+                                            ->unique('cabecera_encuesta_id')
+                                            ->count();
+        
+        //$countCasosBeneficios = $dbDetalleInt->where('beneficios_bancos', '>', 0)->unique('cabecera_encuesta_id')->count();
+
+
+
+
+        $countCasosBono = $dbDetalleInt->where('cantidad_ocupantes', '>', '0')
+                                       ->where('bono_anual', '>', 0)
+                                       ->unique('cabecera_encuesta_id')
+                                       ->count();
+
+        $internacional = collect();
+        $segmento = "internacional";
+
+        $this->segmenter(   $internacional, 
+                            $countCasosInt, 
+                            $dbDetalleInt, 
+                            $countCasos, 
+                            $countCasosGratif, 
+                            $countCasosAguinaldo, 
+                           // $countCasosBeneficios, 
+                            $countCasosBono, 
+                            $dbClienteEnc,
+                            $rubro, 
+                            $segmento, 
+                            $dbCargo, 
+                            $muestraComision);
+        if($tipo == "view"){
+            if($request->tour){
+                $tour = true;
+            }else{
+                $tour = false;
+            }
+
+            if($request->moneda == "local"){
+                $convertir = false;
+            }else{
+                $convertir = true;
+            }
+
+            $ficha = Ficha_dato::where('periodo', $periodo)->first();
+            //dd($ficha);
+            if($ficha){
+                $tipoCambio = $ficha->tipo_cambio;
+            }else{
+                $tipoCambio = 5600;
+            }
+            
+
+            return view('report.report')->with('dbCargo', $dbCargo)
+                                        ->with('dbEmpresa', $dbEmpresa)
+                                        ->with('universo', $universo)
+                                        ->with('nacional', $nacional)
+                                        ->with('internacional', $internacional)
+                                        ->with('countOcupantes', $countOcupantes)
+                                        ->with('countOcupantesNac', $countOcupantesNac)
+                                        ->with('countOcupantesInt', $countOcupantesInt)
+                                        ->with('tour', $tour)
+                                        ->with('tipoCambio', $tipoCambio)
+                                        ->with('periodo', $periodo)
+                                        ->with('convertir', $convertir);            
+
+        }elseif($tipo == "excel"){
+            $periodo = implode('_', explode('/', $periodo));
+            $cargoFileName = str_replace("-", "_", str_replace(" ", "_", $dbCargo->descripcion));
+            $filename = 'Resultados_'.$periodo.'_'.$cargoFileName;
+            $detalleUniverso = $this->segmentArrayFactory($universo);
+            $detalleNacional = $this->segmentArrayFactory($nacional);
+            $detalleInternacional = $this->segmentArrayFactory($internacional);
+
+            Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional ) {
+                $excel->sheet("universo", function($sheet) use($detalleUniverso){
+                    $sheet->fromArray($detalleUniverso);
+                });
+                $excel->sheet("nacional", function($sheet) use($detalleNacional){
+                    $sheet->fromArray($detalleNacional);
+                });
+                $excel->sheet("internacional", function($sheet) use($detalleInternacional){
+                    $sheet->fromArray($detalleInternacional);
+                });
+
+            })->export('xlsx');
+            return redirect()->route('resultados');
+        }elseif ($tipo == "clubExcel") {
+            
+            $cargoFileName = str_replace("-", "_", str_replace(" ", "_", $dbCargo->descripcion));
+            $filename = 'Resultados_'.$periodo.'_'.$cargoFileName;
+            $detalleUniverso = array();
+            $detalleNacional = array();
+            $detalleInternacional = array();
+            foreach ($universo as $value) {
+
+                $detalleUniverso[] = array( "Concepto"=>$value["concepto"], 
+                                            "ocupantes"=> $countOcupantes,
+                                            "Casos"=>$value["casos"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "Empresa"=>$value["empresa"] 
+                                          );
+            }
+            foreach ($nacional as $value) {
+                $detalleNacional[] = array( "Concepto"=>$value["concepto"],
+                                            "ocupantes"=> $countOcupantesNac, 
+                                            "Casos"=>$value["casos"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "Empresa"=>$value["empresa"] 
+                                          );
+            }
+
+            foreach ($internacional as $value) {
+                $detalleInternacional[] = array( "Concepto"=>$value["concepto"], 
+                                            "ocupantes"=> $countOcupantesInt,
+                                            "Casos"=>$value["casos"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "Empresa"=>$value["empresa"] 
+                                          );
+            }
+            $resultado = collect([  
+                                    "detalle_universo"=> $detalleUniverso, 
+                                    "detalle_nacional"=> $detalleNacional, 
+                                    "detalleInternacional"=>$detalleInternacional
+                                ]);
+
+            return $resultado;         
+        }
+
+    }
+
+    private function cargoComparativoEspecial($encuesta, $encuestaAnt, $empresa, $cargo, $contNuevo){
+        
+        //dd($dbEmpresa, $ficha, $per);
+        $periodo = $encuesta->periodo;    // periodo de la encuesta actual
+        $periodoAnt = $encuestaAnt->periodo;
+
+        $rubro = $empresa->rubro_id;      // rubro de la empresa del cliente
+        $subRubro = $empresa->sub_rubro_id;
+        // cargo oficial para el informe
+        if($this->getIdioma() == "es"){
+            $dbCargo = Cargo::find($cargo);
+        }else{
+            $dbCargo = Cargo_en::find($cargo);
+        }    
+          
+        // empresas y cabeceras de encuestas de este periodo para empresas del rubro del cliente
+        $dbEncuestadas = Cabecera_encuesta::where('periodo', $periodo)
+                                          ->where('rubro_id', $rubro)
+                                          ->where('sub_rubro_id', $subRubro)
+                                          ->get();
+
+        $encuestadasIds = $dbEncuestadas->pluck("id");  // Ids de las encuestas para where in
+        // Recuperamos los datos de los cargos proveídos por las empresas encuestadas
+        $dbCargosEncuestas = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasIds)
+                                            ->where('cargo_id', $cargo)
+                                            ->where('incluir', 1)
+                                            ->get();
+
+        $cargosEncuestasIds = $dbCargosEncuestas->pluck('id');
+
+        // Recuperamos los datos de las encuestas
+        $dbDetalle = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasIds)->get();
+        // Datos de la encuesta llenada por el cliente
+        $dbClienteEnc = $dbDetalle->where('cabecera_encuesta_id', $encuesta->id)->first();
+       // dd($dbEncuesta, $dbClienteEnc, $cargo);
+        if(empty($dbClienteEnc)){
+            // get the column names for the table
+            $columns = Schema::getColumnListing('detalle_encuestas');
+            // create array where column names are keys, and values are null
+            $columns = array_fill_keys($columns, 0);        
+            $dbClienteEnc = new Detalle_encuesta();
+            $dbClienteEnc = $dbClienteEnc->newInstance($columns, true);
+        }        
+
+        // empresas y cabeceras de encuestas de este periodo para empresas del rubro del cliente
+        $dbEncuestadasAnt = Cabecera_encuesta::where('periodo', $periodoAnt)
+                                             ->where('rubro_id', $rubro)
+                                             ->where('sub_rubro_id', $subRubro)
+                                             ->get();
+
+        $encuestadasAntIds = $dbEncuestadasAnt->pluck("id");  // Ids de las encuestas para where in
+        // Recuperamos los datos de los cargos proveídos por las empresas encuestadas
+        $dbCargosEncuestasAnt = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasAntIds)
+                                               ->where('cargo_id', $cargo)
+                                               ->where('incluir', 1)
+                                               ->get();
+
+        $cargosEncuestasAntIds = $dbCargosEncuestasAnt->pluck('id');
+
+        // Recuperamos los datos de las encuestas
+        $dbDetalleAnt = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasAntIds)->get();
+        // Datos de la encuesta llenada por el cliente
+        $dbClienteEncAnt = $dbDetalleAnt->where('cabecera_encuesta_id', $encuestaAnt->id)->first();
+       // dd($dbEncuesta, $dbClienteEnc, $cargo);
+        if(empty($dbClienteEncAnt)){
+            // get the column names for the table
+            $columns = Schema::getColumnListing('detalle_encuestas');
+            // create array where column names are keys, and values are null
+            $columns = array_fill_keys($columns, 0);        
+            $dbClienteEnc = new Detalle_encuesta();
+            $dbClienteEnc = $dbClienteEnc->newInstance($columns, true);
+        }   
+
+        if($contNuevo){
+            $cargosNuevosID = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasIds)
+                                                ->where('cargo_id', $cargo)
+                                                ->where('es_contrato_periodo', 1)
+                                                ->where('incluir', 1)
+                                                ->pluck('id');
+
+            $countCasos =  $dbDetalle->where('cantidad_ocupantes', '>', '0')
+                                     ->whereIn('encuestas_cargo_id', $cargosNuevosID)  
+                                     ->sum('cantidad_ocupantes');
+        }else{
+            $countCasos  = 0;
+        }
+        $salBase = collect();
+        
+        $this->segmenterComparativo( $salBase, 
+                                     $dbDetalle,
+                                     $dbDetalleAnt, 
+                                     $dbClienteEnc,
+                                     $dbClienteEncAnt, 
+                                     "SB",
+                                     $dbCargo, 
+                                     $countCasos); 
+
+        
+        //dd($salBase);
+        
+        $detalleSalarioBase = array();
+        
+        foreach ($salBase as $value) {
+            if($contNuevo){
+                $detalleSalarioBase[] = array(  "Concepto"=>$value["concepto"],
+                "Ocupantes" => $value["ocupantes"],
+                "Min"=>$value["min"], 
+                "25 Percentil"=>$value["per25"], 
+                "Promedio"=>$value["prom"], 
+                "Mediana"=>$value["med"], 
+                "75 Percentil"=>$value["per75"], 
+                "Max"=>$value["max"], 
+                "Empresa"=>$value["empresa"]
+                );
+            }else{
+                $detalleSalarioBase[] = array(  "Concepto"=>$value["concepto"],
+                "Min Ant"=>$value["min_ant"], 
+                "25P Ant"=>$value["per25_ant"], 
+                "Prom Ant"=>$value["prom_ant"], 
+                "Med Ant"=>$value["med_ant"], 
+                "75P Ant"=>$value["per75_ant"], 
+                "Max Ant"=>$value["max_ant"], 
+                "Min"=>$value["min"], 
+                "25 Percentil"=>$value["per25"], 
+                "Promedio"=>$value["prom"], 
+                "Mediana"=>$value["med"], 
+                "75 Percentil"=>$value["per75"], 
+                "Max"=>$value["max"], 
+                "Empresa"=>$value["empresa"]
+                );
+            }
+            
+        }
+        
+        $efectivoTotalAnual = collect();
+        
+        $this->segmenterComparativo( $efectivoTotalAnual, 
+                                     $dbDetalle,
+                                     $dbDetalleAnt, 
+                                     $dbClienteEnc,
+                                     $dbClienteEncAnt, 
+                                     "ETA",
+                                     $dbCargo); 
+
+        
+        //dd($salBase);
+        
+        $detalleETA = array();
+        
+        foreach ($efectivoTotalAnual as $value) {
+
+            $detalleETA[] = array(  "Concepto"=>$value["concepto"],
+                                            "Min Ant"=>$value["min_ant"], 
+                                            "25P Ant"=>$value["per25_ant"], 
+                                            "Prom Ant"=>$value["prom_ant"], 
+                                            "Med Ant"=>$value["med_ant"], 
+                                            "75P Ant"=>$value["per75_ant"], 
+                                            "Max Ant"=>$value["max_ant"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "Empresa"=>$value["empresa"]
+                                            );
+        }
+
+        $variable = collect();
+        
+        $this->segmenterComparativo( $variable, 
+                                     $dbDetalle,
+                                     $dbDetalleAnt, 
+                                     $dbClienteEnc,
+                                     $dbClienteEncAnt, 
+                                     "VAR",
+                                     $dbCargo); 
+
+        
+        //dd($salBase);
+        
+        $detalleVar = array();
+        
+        foreach ($variable as $value) {
+
+            $detalleVar[] = array(  "Concepto"=>$value["concepto"],
+                                            "Min Ant"=>$value["min_ant"], 
+                                            "25P Ant"=>$value["per25_ant"], 
+                                            "Prom Ant"=>$value["prom_ant"], 
+                                            "Med Ant"=>$value["med_ant"], 
+                                            "75P Ant"=>$value["per75_ant"], 
+                                            "Max Ant"=>$value["max_ant"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "Empresa"=>$value["empresa"]
+                                            );
+        }
+
+        $adicionalTotal = collect();
+        
+        $this->segmenterComparativo( $adicionalTotal, 
+                                     $dbDetalle,
+                                     $dbDetalleAnt, 
+                                     $dbClienteEnc,
+                                     $dbClienteEncAnt, 
+                                     "ATA",
+                                     $dbCargo); 
+
+        
+        //dd($salBase);
+        
+        $detalleATA = array();
+        
+        foreach ($adicionalTotal as $value) {
+
+            $detalleATA[] = array(  "Concepto"=>$value["concepto"],
+                                            "Min Ant"=>$value["min_ant"], 
+                                            "25P Ant"=>$value["per25_ant"], 
+                                            "Prom Ant"=>$value["prom_ant"], 
+                                            "Med Ant"=>$value["med_ant"], 
+                                            "75P Ant"=>$value["per75_ant"], 
+                                            "Max Ant"=>$value["max_ant"], 
+                                            "Min"=>$value["min"], 
+                                            "25 Percentil"=>$value["per25"], 
+                                            "Promedio"=>$value["prom"], 
+                                            "Mediana"=>$value["med"], 
+                                            "75 Percentil"=>$value["per75"], 
+                                            "Max"=>$value["max"], 
+                                            "Empresa"=>$value["empresa"]
+                                            );
+        }
+        $resultado = collect([  
+                                "detalle_salario_base"=> $detalleSalarioBase, 
+                                "detalle_efectivo_total_anual" => $detalleETA,
+                                "detalle_variable" => $detalleVar,
+                                "detalle_adicional_total_anual" => $detalleATA
+                            ]);
+
+        return $resultado;         
+        
+
+    }
+
+    private function segmenterComparativo( &$collection, 
+                                            $detalle, 
+                                            $detalleAnt,
+                                            $dbClienteEnc,
+                                            $dbClienteEncAnt,
+                                            $concepto, 
+                                            $dbCargo, 
+                                            $countCasos = 0){
+
+            // Salario Base Anterior
+            $salariosBaseAnt = $detalleAnt->where('salario_base', '>', '0')->pluck('salario_base');
+            $salarioMinAnt   = $salariosBaseAnt->min();
+            $salarioMaxAnt   = $salariosBaseAnt->max();
+            $salarioPromAnt  = $salariosBaseAnt->avg();
+            $salarioMedAnt   = $this->median($salariosBaseAnt);
+            $salario25PerAnt = $this->percentile(25,$salariosBaseAnt);
+            $salario75PerAnt = $this->percentile(75, $salariosBaseAnt);                                 
+        
+            // Salario Base
+            $salariosBase = $detalle->where('salario_base', '>', '0')->pluck('salario_base');
+            $salarioMin = $salariosBase->min();
+            $salarioMax = $salariosBase->max();
+            $salarioProm = $salariosBase->avg();
+            $salarioMed = $this->median($salariosBase);
+            $salario25Per = $this->percentile(25,$salariosBase);
+            $salario75Per = $this->percentile(75, $salariosBase);
+
+            if($concepto == "SB"){
+                $collection->push([ "concepto"     => Lang::get('reportReport.concept_salary'),
+                                    "ocupantes"    => $countCasos, 
+                                    "min_ant"      => $salarioMinAnt, 
+                                    "max_ant"      => $salarioMaxAnt, 
+                                    "prom_ant"     => round($salarioPromAnt, 0), 
+                                    "med_ant"      => round($salarioMedAnt, 0), 
+                                    "per25_ant"    => round($salario25PerAnt, 0),
+                                    "per75_ant"    => round($salario75PerAnt, 0), 
+                                    "min"          => $salarioMin, 
+                                    "max"          => $salarioMax, 
+                                    "prom"         => round($salarioProm, 0), 
+                                    "med"          => round($salarioMed, 0), 
+                                    "per25"        => round($salario25Per, 0),
+                                    "per75"        => round($salario75Per, 0), 
+                                    "empresa"      => $dbClienteEnc->salario_base,
+                                    "indicador"    => "SA"
+                ]);
+                
+            }
+                   
+            // Salario Base Anual     
+            $salariosBaseAnual = $salariosBase->map(function($item){
+                return $item * 12;
+            });
+
+            $salarioAnualMin = $salariosBaseAnual->min();
+            $salarioAnualMax = $salariosBaseAnual->max();
+            $salarioAnualProm = $salariosBaseAnual->avg();
+            $salarioAnualMed = $this->median($salariosBaseAnual);
+            $salarioAnual25Per = $this->percentile(25,$salariosBaseAnual);
+            $salarioAnual75Per = $this->percentile(75, $salariosBaseAnual);
+           
+            //Aguinaldo
+            $aguinaldos = $detalle->where('aguinaldo', '>', '0')->pluck('aguinaldo');
+            $aguinaldoMin = $aguinaldos->min();
+            $aguinaldoMax = $aguinaldos->max();
+            $aguinaldoProm = $aguinaldos->avg();
+            $aguinaldoMed = $this->median($aguinaldos);
+            $aguinaldo25Per = $this->percentile(25, $aguinaldos);
+            $aguinaldo75Per = $this->percentile(75, $aguinaldos);
+                     
+            // Variable Anual Anterior
+            $plusRendimientoAnt = $detalleAnt->where('plus_rendimiento', '>', '0')->pluck('plus_rendimiento');
+            $plusMinAnt = $plusRendimientoAnt->min();
+            $plusMaxAnt = $plusRendimientoAnt->max();
+            $plusPromAnt = $plusRendimientoAnt->avg();
+            $plusMedAnt = $this->median($plusRendimientoAnt);
+            $plus25PerAnt = $this->percentile(25,$plusRendimientoAnt);
+            $plus75PerAnt = $this->percentile(75, $plusRendimientoAnt);
+
+            // Variable Anual
+            $plusRendimiento = $detalle->where('plus_rendimiento', '>', '0')->pluck('plus_rendimiento');
+            $plusMin = $plusRendimiento->min();
+            $plusMax = $plusRendimiento->max();
+            $plusProm = $plusRendimiento->avg();
+            $plusMed = $this->median($plusRendimiento);
+            $plus25Per = $this->percentile(25,$plusRendimiento);
+            $plus75Per = $this->percentile(75, $plusRendimiento);
+            $countCasosPlus = $detalle->where('plus_rendimiento', '>', '0')->unique('cabecera_encuesta_id')->count();  
+
+            if($concepto == "VAR"){
+                $collection->push([ "concepto"     => Lang::get('reportReport.concept_variable_pay'),
+                                    "min_ant"      => $plusMinAnt, 
+                                    "max_ant"      => $plusMaxAnt, 
+                                    "prom_ant"     => round($plusPromAnt, 0), 
+                                    "med_ant"      => round($plusMedAnt, 0), 
+                                    "per25_ant"    => round($plus25PerAnt, 0),
+                                    "per75_ant"    => round($plus75PerAnt, 0), 
+                                    "min"          => $plusMin, 
+                                    "max"          => $plusMax, 
+                                    "prom"         => round($plusProm, 0), 
+                                    "med"          => round($plusMed, 0), 
+                                    "per25"        => round($plus25Per, 0),
+                                    "per75"        => round($plus75Per, 0), 
+                                    "empresa"      => 0,
+                                    "indicador"    => "ATA"
+                ]);
+                
+            }
+
+            // Adicional Amarre
+            $adicionalAmarre = $detalle->where('adicional_amarre', '>', '0')->pluck('adicional_amarre');
+            $amarreMin = $adicionalAmarre->min();
+            $amarreMax = $adicionalAmarre->max();
+            $amarreProm = $adicionalAmarre->avg();
+            $amarreMed = $this->median($adicionalAmarre);
+            $amarre25Per = $this->percentile(25,$adicionalAmarre);
+            $amarre75Per = $this->percentile(75, $adicionalAmarre);
+            $countCasosAmarre = $detalle->where('adicional_amarre', '>', '0')->unique('cabecera_encuesta_id')->count();
+
+            // Adicional Tipo de Combustible
+            $adicionalTipoCombustible = $detalle->where('adicional_tipo_combustible', '>', '0')->pluck('adicional_tipo_combustible');
+            $TipoCombustibleMin = $adicionalTipoCombustible->min();
+            $TipoCombustibleMax = $adicionalTipoCombustible->max();
+            $TipoCombustibleProm = $adicionalTipoCombustible->avg();
+            $TipoCombustibleMed = $this->median($adicionalTipoCombustible);
+            $TipoCombustible25Per = $this->percentile(25,$adicionalTipoCombustible);
+            $TipoCombustible75Per = $this->percentile(75, $adicionalTipoCombustible);
+            $countCasosTipoCombustible = $detalle->where('adicional_tipo_combustible', '>', '0')->unique('cabecera_encuesta_id')->count();      
+
+            // Adicional por disponiblidad/embarque
+            $adicionalEmbarque = $detalle->where('adicional_embarque', '>', '0')->pluck('adicional_embarque');
+            $embarqueMin = $adicionalEmbarque->min();
+            $embarqueMax = $adicionalEmbarque->max();
+            $embarqueProm = $adicionalEmbarque->avg();
+            $embarqueMed = $this->median($adicionalEmbarque);
+            $embarque25Per = $this->percentile(25,$adicionalEmbarque);
+            $embarque75Per = $this->percentile(75, $adicionalEmbarque);
+            $countCasosEmbarque = $detalle->where('adicional_embarque', '>', '0')->unique('cabecera_encuesta_id')->count();
+            
+            // Adicional Carga
+            $adicionalCarga = $detalle->where('adicional_carga', '>', '0')->pluck('adicional_carga');
+            $cargaMin = $adicionalCarga->min();
+            $cargaMax = $adicionalCarga->max();
+            $cargaProm = $adicionalCarga->avg();
+            $cargaMed = $this->median($adicionalCarga);
+            $carga25Per = $this->percentile(25,$adicionalCarga);
+            $carga75Per = $this->percentile(75, $adicionalCarga);
+            $countCasosCarga = $detalle->where('adicional_carga', '>', '0')->unique('cabecera_encuesta_id')->count();
+                   
+
+            // Total Adicional Anterior
+
+            $adicionalAnualAnt = $detalleAnt->where('adicionales_navieras', '>', '0')->pluck('adicionales_navieras');
+            $totalAdicionalMinAnt = $adicionalAnualAnt->min();
+            $totalAdicionalMaxAnt = $adicionalAnualAnt->max();
+            $totalAdicionalPromAnt = $adicionalAnualAnt->avg();
+            $totalAdicionalMedAnt = $this->median($adicionalAnualAnt);
+            $totalAdicional25PerAnt = $this->percentile(25, $adicionalAnualAnt);
+            $totalAdicional75PerAnt = $this->percentile(75, $adicionalAnualAnt);
+
+            // Total Adicional 
+            $casosAdicionales = $detalle->where('adicionales_navieras', '>', '0')->unique('cabecera_encuesta_id')->count();   
+            $adicionalAnual = $detalle->where('adicionales_navieras', '>', '0')->pluck('adicionales_navieras');
+            $totalAdicionalMin = $adicionalAnual->min();
+            $totalAdicionalMax = $adicionalAnual->max();
+            $totalAdicionalProm = $adicionalAnual->avg();
+            $totalAdicionalMed = $this->median($adicionalAnual);
+            $totalAdicional25Per = $this->percentile(25, $adicionalAnual);
+            $totalAdicional75Per = $this->percentile(75, $adicionalAnual);
+            
+            if($concepto == "ATA"){
+                $collection->push([ "concepto"     => Lang::get('reportReport.concept_total_incentives'),
+                                    "min_ant"      => $totalAdicionalMinAnt, 
+                                    "max_ant"      => $totalAdicionalMaxAnt, 
+                                    "prom_ant"     => round($totalAdicionalPromAnt, 0), 
+                                    "med_ant"      => round($totalAdicionalMedAnt, 0), 
+                                    "per25_ant"    => round($totalAdicional25PerAnt, 0),
+                                    "per75_ant"    => round($totalAdicional75PerAnt, 0), 
+                                    "min"          => $totalAdicionalMin, 
+                                    "max"          => $totalAdicionalMax, 
+                                    "prom"         => round($totalAdicionalProm, 0), 
+                                    "med"          => round($totalAdicionalMed, 0), 
+                                    "per25"        => round($totalAdicional25Per, 0),
+                                    "per75"        => round($totalAdicional75Per, 0), 
+                                    "empresa"      => 0,
+                                    "indicador"    => "ATA"
+                ]);
+                
+            }
+
+            //Bono
+            $bonos = $detalle->where('bono_anual', '>', '0')->pluck('bono_anual');
+            $bonoMin = $bonos->min();
+            $bonoMax = $bonos->max();
+            $bonoProm = $bonos->avg();
+            $bonoMed = $this->median($bonos);
+            $bono25Per = $this->percentile(25, $bonos);
+            $bono75Per = $this->percentile(75, $bonos);
+
+            // Efectivo Total Anual Anteior
+            $detalleAnt = $detalleAnt->map(function($item){
+                $item['efectivo_total_anual'] =  $item['salario_base'] * 12 +
+                                                 $item['aguinaldo'];
+                return $item;
+            });                                                
+           
+            $efectivoTotalMinAnt = $detalleAnt->pluck('efectivo_total_anual')->min();
+            $efectivoTotalMaxAnt = $detalleAnt->pluck('efectivo_total_anual')->max();
+            $efectivoTotalPromAnt = $detalleAnt->pluck('efectivo_total_anual')->avg();
+            $efectivoTotalMedAnt = $this->median($detalleAnt->pluck('efectivo_total_anual'));
+            $efectivoTotal25PerAnt = $this->percentile(25, $detalleAnt->pluck('efectivo_total_anual'));
+            $efectivoTotal75PerAnt = $this->percentile(75, $detalleAnt->pluck('efectivo_total_anual'));
+                        
+            // Efectivo Total Anual
+            $detalle = $detalle->map(function($item){
+                $item['efectivo_total_anual'] =  $item['salario_base'] * 12 +
+                                                 $item['aguinaldo'];
+                return $item;
+            });                                                
+           
+            $efectivoTotalMin = $detalle->pluck('efectivo_total_anual')->min();
+            $efectivoTotalMax = $detalle->pluck('efectivo_total_anual')->max();
+            $efectivoTotalProm = $detalle->pluck('efectivo_total_anual')->avg();
+            $efectivoTotalMed = $this->median($detalle->pluck('efectivo_total_anual'));
+            $efectivoTotal25Per = $this->percentile(25, $detalle->pluck('efectivo_total_anual'));
+            $efectivoTotal75Per = $this->percentile(75, $detalle->pluck('efectivo_total_anual'));
+            
+            $found = $detalle->where('cabecera_encuesta_id', $dbClienteEnc->cabecera_encuesta_id)
+                             ->first();
+            if($found){
+                $efectivoTotalEmpresa = $found->efectivo_total_anual;
+            }else{
+                $efectivoTotalEmpresa = 0;    
+            }
+
+            if($concepto == "ETA"){
+                $collection->push([ "concepto"     => Lang::get('reportReport.concept_annual_cash_total'),
+                                    "min_ant"      => $efectivoTotalMinAnt, 
+                                    "max_ant"      => $efectivoTotalMaxAnt, 
+                                    "prom_ant"     => round($efectivoTotalPromAnt, 0), 
+                                    "med_ant"      => round($efectivoTotalMedAnt, 0), 
+                                    "per25_ant"    => round($efectivoTotal25PerAnt, 0),
+                                    "per75_ant"    => round($efectivoTotal75PerAnt, 0), 
+                                    "min"          => $efectivoTotalMin, 
+                                    "max"          => $efectivoTotalMax, 
+                                    "prom"         => round($efectivoTotalProm, 0), 
+                                    "med"          => round($efectivoTotalMed, 0), 
+                                    "per25"        => round($efectivoTotal25Per, 0),
+                                    "per75"        => round($efectivoTotal75Per, 0), 
+                                    "empresa"      => $efectivoTotalEmpresa,
+                                    "indicador"    => "ETA"
+                ]);
+                
+            }
+
+            //Beneficios
+            $beneficiosNavieras = $detalle->where('beneficios_navieras', '>', '0')->pluck('beneficios_navieras');
+            //dd($detalle->where('beneficios_navieras', 1));
+            $beneficiosMin = $beneficiosNavieras->min();
+            $beneficiosMax = $beneficiosNavieras->max();
+            $beneficiosProm = $beneficiosNavieras->avg();
+            $beneficiosMed = $this->median($beneficiosNavieras);
+            $beneficios25Per = $this->percentile(25, $beneficiosNavieras);
+            $beneficios75Per = $this->percentile(75, $beneficiosNavieras);
+            $casosBeneficiosNavieras = $detalle->where('beneficios_navieras', '>', '0')->unique('cabecera_encuesta_id')->count();
+
+            //Aguinaldo Impactado
+            $aguinaldoImpMin = 0;
+            $aguinaldoImpMax = 0;
+            $aguinaldoImpProm = 0;
+            $aguinaldoImpMed = 0;
+            $aguinaldoImp25Per = 0;
+            $aguinaldoImp75Per = 0;
+            $aguinaldoImpEmpresa = 0;
+
+            $detalle = $detalle->map(function($item){
+                $item['aguinaldo_impactado'] = (($item['salario_base'] * 12) + 
+                                                $item['gratificacion'] + 
+                                                $item['bono_anual'] +
+                                                $item['adicionales_navieras'])/12;
+                return $item;
+            });                                                
+
+            $aguinaldoImpMin = $detalle->pluck('aguinaldo_impactado')->min();
+            $aguinaldoImpMax = $detalle->pluck('aguinaldo_impactado')->max();
+            $aguinaldoImpProm = $detalle->pluck('aguinaldo_impactado')->avg();
+            $aguinaldoImpMed = $this->median($detalle->pluck('aguinaldo_impactado'));
+            $aguinaldoImp25Per = $this->percentile(25, $detalle->pluck('aguinaldo_impactado'));
+            $aguinaldoImp75Per = $this->percentile(75, $detalle->pluck('aguinaldo_impactado'));
+
+            $found = $detalle->where('cabecera_encuesta_id', $dbClienteEnc->cabecera_encuesta_id)
+                            ->first();
+            if($found){
+                $aguinaldoImpEmpresa = $found->aguinaldo_impactado;
+            }else{
+                $aguinaldoImpEmpresa = 0;    
+            }
+
+         
+            //Total Compensación anual
+            $detalle = $detalle->map(function($item){
+                $item['total_comp_anual'] = $item['efectivo_total_anual'] +
+                                            $item['beneficios_navieras'];
+                return $item;
+            });                                                
+           
+            $totalCompAnualMin = $detalle->pluck('total_comp_anual')->min();
+            $totalCompAnualMax = $detalle->pluck('total_comp_anual')->max();
+            $totalCompAnualProm = $detalle->pluck('total_comp_anual')->avg();
+            $totalCompAnualMed = $this->median($detalle->pluck('total_comp_anual'));
+            $totalCompAnual25Per = $this->percentile(25, $detalle->pluck('total_comp_anual'));
+            $totalCompAnual75Per = $this->percentile(75, $detalle->pluck('total_comp_anual'));
+            
+            $found = $detalle->where('cabecera_encuesta_id', $dbClienteEnc->cabecera_encuesta_id)
+                             ->first();
+            if($found){
+                $totalCompAnualEmpresa = $found->total_comp_anual;
+            }else{
+                $totalCompAnualEmpresa = 0;    
+            }
+
+
+    }
     private function segmentArrayFactory($segmentArray){
         foreach ($segmentArray as $value) {
 

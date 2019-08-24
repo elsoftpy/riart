@@ -130,8 +130,9 @@ class BeneficiosController extends Controller
     {
         if(Auth::user()->is_admin){
           $dbData = beneficios_cabecera_encuesta::find($id);
+          $dbEmpresa = Empresa::find($dbData->empresa_id);
         }else{
-          $empresa = Empresa::find($id);  
+          $dbEmpresa = Empresa::find($id);  
           $dbData = beneficios_cabecera_encuesta::where('empresa_id', $id)
                                                 ->orderBy('id', 'DESC')
                                                 ->first();          
@@ -163,6 +164,7 @@ class BeneficiosController extends Controller
         return view('beneficios.complete')->with('dbData', $dbData)
                                           ->with('dbMarca', $dbMarca)
                                           ->with('dbModelo', $dbModelo)
+                                          ->with('dbEmpresa', $dbEmpresa)
                                           ->with('dbAseguradora', $dbAseguradora)
                                           ->with('dbDetalle', $dbDetalle);
 
@@ -336,6 +338,7 @@ class BeneficiosController extends Controller
       
       return view('beneficios_report.charts')->with('dbEmpresa', $dbEmpresa)
                                              ->with('item', $item)
+                                             ->with('encuesta', $encuesta)
                                              ->with('practicas', $practicas) ;
     }
 
@@ -353,7 +356,10 @@ class BeneficiosController extends Controller
       $rubro = $empresa->rubro_id;
 
       // Ultima encuesta de la empresa
-      $encuesta = beneficios_cabecera_encuesta::where("empresa_id", $empresa->id)->orderBy('id', 'DESC')->skip(1)->first();
+      $encuesta = beneficios_cabecera_encuesta::where("empresa_id", $empresa->id)
+                                              ->orderBy('id', 'DESC')
+                                              ->skip(1)
+                                              ->first();
 
       // Encuestas del rubro
       $encuestas = beneficios_cabecera_encuesta::where('rubro_id', $rubro)
@@ -479,9 +485,14 @@ class BeneficiosController extends Controller
       // Recuperamos el Item a mostrar
       $item = $otrosItems->first();
       $pregunta = $item->pregunta;
+      $encuesta = beneficios_cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                              ->orderBy('id', 'DESC')
+                                              ->skip(1)
+                                              ->first();
 
       return view('beneficios_report.composicion_charts')->with('dbEmpresa', $dbEmpresa)
                                              ->with('item', $item)
+                                             ->with('encuesta', $encuesta)
                                              ->with('otrosItems', $otrosItems) ;
     }
 

@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Crear Nueva Encuesta tasa</h4>
+	          <h4>Crear Nueva Encuesta</h4>
 	        </div>
 	        <div class="content">
 				<form class="col s12" id="realForm" action="{{route('encuestas.store')}}" method="POST">

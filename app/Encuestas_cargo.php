@@ -8,7 +8,7 @@ class Encuestas_cargo extends Model
 {
     protected $table = "encuestas_cargos";
 
-    protected $fillable = ['descripcion', 'cabecera_encuesta_id', 'cargo_id', 'incluir', 'revisado'];
+    protected $fillable = ['descripcion', 'cabecera_encuesta_id', 'cargo_id', 'incluir', 'revisado', 'es_contrato_periodo'];
 
     protected $casts = ["incluir" => "boolean", "revisado"=>"boolean"];
 

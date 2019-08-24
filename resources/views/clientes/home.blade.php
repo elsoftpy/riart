@@ -2,7 +2,7 @@
 
 @section('content')
 	<div class="row">
-		<div class="browser-window">
+		<div class="browser-window col s12">
 			<div class="top-bar">
 	          <h4>{{ $club }}</h4>
 	        </div>
@@ -57,7 +57,12 @@
 								<form id="update-form{{$dbEncuesta->id}}" action="{{ route('encuestas.update', $dbEncuesta->id) }}" method="POST" style="display: none;">
 					                {{ csrf_field() }}
 					                {{ method_field('PUT') }}
-					            </form>
+								</form>
+								@if ($dbEmpresa->sub_rubro_id == 25)
+								<a href="#" class="btn waves-light waves-effect blue white-text" style="margin-bottom: 1em;" id="select_encuesta_esp">
+									<i class="material-icons left">dashboard</i>Reporte Especial
+								</a>
+								@endif
                     		</td>
                 		</tr>
                 		@endif
@@ -69,40 +74,72 @@
 	<div class="modal" id="modal-options">
 		<div class="modal-content">
 			<h5> @lang('homepage.modal_survey') </h5>
-			@if($dbEncuestaAnt)
-				<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja" >
-					12/2017
-				</a>
-				<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
-					{{$dbEncuestaAnt->periodo}}
-				</a>	
-				<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
-					{{$dbEncuesta->periodo}}
-				</a>	
-				<input type="hidden" id="periodo_viejo" name="periodo_viejo" value="12/2017"/>
-				<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
-				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
-			@else
-				<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
-					{{$dbEncuesta->periodo}}
-				</a>				
-				<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>				
+			@if($dbEncuesta)
+				@if($dbEncuestaAnt)
+					<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja" >
+						{{$dbEncuestaOld->periodo}}
+					</a>
+					<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
+						{{$dbEncuestaAnt->periodo}}
+					</a>	
+					<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
+						{{$dbEncuesta->periodo}}
+					</a>	
+					<input type="hidden" id="periodo_viejo" name="periodo_viejo" value="12/2017"/>
+					<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
+					<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
+				@else
+					<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
+						{{$dbEncuesta->periodo}}
+					</a>				
+					<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>				
+				@endif
 			@endif
 		</div>
 		<div class="modal-footer">
 			<a class="modal-close waves-light waves-effect btn " id="close-modal">@lang('homepage.modal_button_close')</a>
 		</div>
 	</div>
-
+	<div class="modal" id="modal-options-esp">
+		<div class="modal-content">
+			<h5> @lang('homepage.modal_survey') </h5>
+			@if($dbEncuesta)
+				@if($dbEncuestaAnt)
+					<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja_esp" >
+						{{$dbEncuestaOld->periodo}}
+					</a>
+					<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior_esp" >
+						{{$dbEncuestaAnt->periodo}}
+					</a>	
+					<a class="waves-light waves-effect btn green" id="encuesta-actual_esp" periodo="{{$dbEncuesta->periodo}}">
+						{{$dbEncuesta->periodo}}
+					</a>	
+					<input type="hidden" id="periodo_viejo_esp" name="periodo_viejo" value="12/2017"/>
+					<input type="hidden" id="periodo_ant_esp" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
+					<input type="hidden" id="periodo_esp" name="periodo" value="{{$dbEncuesta->periodo}}"/>
+				@else
+					<a class="waves-light waves-effect btn green" id="encuesta-actual_esp" periodo="{{$dbEncuesta->periodo}}">
+						{{$dbEncuesta->periodo}}
+					</a>				
+					<input type="hidden" id="periodo_esp" name="periodo" value="{{$dbEncuesta->periodo}}"/>				
+				@endif
+			@endif
+		</div>
+		<div class="modal-footer">
+			<a class="modal-close waves-light waves-effect btn " id="close-modal_esp">@lang('homepage.modal_button_close')</a>
+		</div>
+	</div>
 @stop
 @push('scripts')
 	<script type="text/javascript">
 		var modal = M.Modal.getInstance($("#modal-options"));
+		var modalEsp = M.Modal.getInstance($("#modal-options-esp"));
 
 		var test = RegExp('multipage=2', 'gi').test(window.location.search);
       	var finalizar = RegExp('multipage=4', 'gi').test(window.location.search);
       	$("#tour").click(function(e){
         	e.preventDefault();
+			console.log("hello");
         	tour.start();
       	});
 
@@ -151,6 +188,10 @@
 			modal.open();	
 		});
 
+		$("#select_encuesta_esp").click(function(){
+			modalEsp.open();	
+		});
+
 		$('#close-modal').click(function(e){
 			$("#modal-options").closeModal();	
 		});
@@ -178,5 +219,33 @@
 				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
 			});
 		});		
+
+		$("#encuesta-actual_esp").click(function(e){
+			e.preventDefault();
+			var periodo = $("#periodo_esp").val();
+			$.post('{{route('periodo_especial')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
+				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
+			});
+		});
+		$("#encuesta-anterior_esp").click(function(e){
+			e.preventDefault();
+			var periodo = $("#periodo_ant").val();
+			$.post('{{route('periodo_especial')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(){
+				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
+			});
+		});
+		$("#encuesta-vieja_esp").click(function(e){
+			e.preventDefault();
+			var periodo = $("#periodo_viejo").val();
+			console.log(periodo);
+			$.post('{{route('periodo_especial')}}', {periodo: periodo, "_token": "{{ csrf_token() }}"}, function(json){
+				console.log(json);
+				window.location.href = "{{route('encuestas.show', $dbEmpresa->id)}}";
+			});
+		});		
+
+		$('#close-modal-esp').click(function(e){
+			$("#modal-options-esp").closeModal();	
+		});
 	</script>
 @endpush

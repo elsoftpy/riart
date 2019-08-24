@@ -7,7 +7,7 @@
         {!! MaterializeCSS::include_css() !!}
         <link rel="stylesheet" href="{{ asset('css/flash.css')}}">
         <style type="text/css"></style>
-        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="{{asset('fonts/material-icons.css')}}">
         
         <!-- Datatables css -->
         <link href="{{ asset('/plugins/datatables/dataTables-materialize.css') }}" rel="stylesheet"/>
@@ -49,10 +49,104 @@
             <li><a href="{{route('admin.reporte.filter.niveles')}}">Reporte - Niveles</a></li>
           </ul>
 
+          @if(Auth::check())
+            @if(Auth::user()->is_admin)
+              <div class="row" style="margin-bottom:0px !important;">
+                <ul id="nav-mobile-target" class="sidenav">
+                  <li>
+                    <a href="{{ route('usuarios.index') }}">Usuarios</a>
+                  </li>                      
+                  <li>
+                    <a href="{{ route('empresas.index') }}">Empresas</a>
+                  </li>
+                  <li>
+                    <a href="{{ route('encuestas.index') }}">Encuestas</a>
+                  </li>
+                  <li>
+                    <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
+                  </li>                        
+                  <li>
+                    <a href="{{ route('admin_ficha.index') }}">Ficha</a>
+                  </li>
+                  <li>
+                  <a href="{{ route('areas.index') }}">Areas</a>
+                  </li>
+                  <li>
+                    <a href="{{ route('niveles.index') }}">Niveles</a>
+                  </li>                        
+                  <li>  
+                    <a href="{{ route('cargos.index') }}">Cargos Oficiales</a>
+                  </li>
+                  <li>
+                    <a href="#!" class="dropdown-trigger" data-target="dropdown4">
+                      Resultados
+                      <i class="material-icons right">arrow_drop_down</i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="row">
+                <ul class="sidenav">
+                  <li>
+                    <a href="{{ route('file_attachment') }}">Attachment</a>
+                  </li>
+                  <li>
+                      <a href="#!" class="dropdown-trigger" data-target="dropdown3">
+                        Beneficios
+                        <i class="material-icons right">arrow_drop_down</i>
+                      </a>
+                  </li> 
+                  <li>
+                    <a href="#!" class="dropdown-trigger" data-target="dropdown2">
+                      <i class="material-icons left">account_circle</i> 
+                      {{ Auth::user()->username }}
+                      <i class="material-icons right">arrow_drop_down</i>
+                    </a>
+                  </li>                         
+                  <li>
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                      {{ csrf_field() }}
+                    </form>                    
+                  </li>
+                </ul>
+              </div>
+            @elseif(Auth::user()->is_benefit)
+              @yield('nav_mobile')
+            @else
+              <ul id="nav-mobile-target" class="sidenav">
+                @if(\Request::is('home'))
+                  <li>
+                    <a href="#" id="tourMov">Tour</a>
+                  </li>
+                @endif
+                <li>
+                  <a href="#!" class="dropdown-trigger" data-target="dropdown2">
+                    <i class="material-icons left">account_circle</i> 
+                    {{ Auth::user()->username }}
+                    <i class="material-icons right">arrow_drop_down</i>
+                  </a>
+                </li> 
+                <li>
+                  <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout
+                  </a>
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    {{ csrf_field() }}
+                  </form>                    
+                </li>
+              </ul>
+            @endif
+          @else
+            <ul class="right hide-on-med-and-on-down">
+              <li><a href="{{ route('login')}}"> Login </a></li>
+            </ul>
+          @endif          
 
           <nav class="nav-extended">
               <div class="nav-wrapper teal">
                    <a href="{{route('home.page')}}" class="brand-logo"><i class="material-icons left">poll</i>S&B</a> 
+                   <a href="#" data-target="nav-mobile-target" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                   @if(Auth::check())
                     @if(Auth::user()->is_admin)
                       <div class="row" style="margin-bottom:0px !important;">
@@ -64,14 +158,14 @@
                             <a href="{{ route('empresas.index') }}">Empresas</a>
                           </li>
                           <li>
-                            <a href="{{ route('encuestas.index') }}">Encuestas</a>
-                          </li>
-                          <li>
-                            <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
+                            <a href="{{ route('rubros.index') }}">Rubros</a>
                           </li>                        
                           <li>
-                            <a href="{{ route('admin_ficha.index') }}">Ficha</a>
+                            <a href="{{ route('sub_rubros.index') }}">Segmento</a>
                           </li>
+                          <li>
+                              <a href="{{ route('encuestas.index') }}">Encuestas</a>
+                            </li>
                           <li>
                           <a href="{{ route('areas.index') }}">Areas</a>
                           </li>
@@ -87,12 +181,16 @@
                               <i class="material-icons right">arrow_drop_down</i>
                             </a>
                           </li>
-                         
-
                         </ul>
                       </div>
                       <div class="row">
                         <ul class="right hide-on-med-and-down">
+                          <li>
+                            <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
+                          </li>                        
+                          <li>
+                            <a href="{{ route('admin_ficha.index') }}">Ficha</a>
+                          </li>
                           <li>
                              <a href="{{ route('file_attachment') }}">Attachment</a>
                           </li>
@@ -217,6 +315,10 @@
           }
           
 
+      });
+
+      $(document).ready(function(){
+          $('.sidenav').sidenav();
       });
     </script>
     @include('includes.translation_script')

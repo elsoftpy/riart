@@ -83,12 +83,34 @@ class HomeController extends Controller
                 
                 
                 $dbEncuestaAnt = $dbEncuestas->get(1);
-                //dd($dbEmpresa->rubro_id);
+                if($dbEncuestaAnt){
+                    if($dbEncuestaAnt->periodo == $dbEncuesta->periodo){
+                        $dbEncuestaAnt = $dbEncuestas->get(2);
+                        if(!$dbEncuestaAnt){
+                            // busca la tercera encuesta (descendente) de navemar para obtener el periodo en el caso de que no tengan  encuestas en periodos anteriores
+                            $dbEncuestas = Cabecera_encuesta::where('empresa_id', 22)  
+                                                             ->orderBy('id', 'DESC')
+                                                             ->get();  
+                            $dbEncuestaAnt = $dbEncuestas->get(2);
+                        }
+                    }
+                    $dbEncuestaOld = $dbEncuestas->get(3);
+
+                    if(!$dbEncuestaOld){
+                        $dbEncuestas = Cabecera_encuesta::where('empresa_id', 22)  
+                                                             ->orderBy('id', 'DESC')
+                                                             ->get();  
+                        $dbEncuestaAnt = $dbEncuestas->get(3);
+                    }
+                }
+                
                 $club = $this->club($dbEmpresa->rubro_id);
+                
                 return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
                                             ->with('club', $club)
                                             ->with('dbEncuesta', $dbEncuesta)
-                                            ->with('dbEncuestaAnt' , $dbEncuestaAnt);
+                                            ->with('dbEncuestaAnt' , $dbEncuestaAnt)
+                                            ->with('dbEncuestaOld', $dbEncuestaOld);
 
             }
         }

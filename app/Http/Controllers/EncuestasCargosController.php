@@ -233,5 +233,56 @@ class EncuestasCargosController extends Controller
         
     }
 
+    public function getCargos($id){
+        ini_set('memory_limit', '1020M');
+        ini_set('max_execution_time', 300);
+        $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $id)->get();
+        $dbEncuesta = Cabecera_encuesta::find($id);
+        $dbEmpresa = $dbEncuesta->empresa->descripcion;
+        $dbPeriodo = $dbEncuesta->periodo;
+        $dbCargos = Cargo::pluck('descripcion', 'id');
+        //$dbCargos->prepend("Elija una opción", "0");
+        $index = 0;
+        $dbData = $dbData->map(function($item) use($dbCargos, $index){
+            $cargos = '';
+            foreach ($dbCargos as $id => $cargo) {
+                //dd($cargo, $item);
+                if($id == $item->cargo_id ){
+                    $cargos = $cargos.'<option value="'.$id.'" selected>'.$cargo.'</option>'; 
+                }else{
+                    $cargos = $cargos.'<option value="'.$id.'">'.$cargo.'</option>'; 
+                } 
+            }
+            $item['cargos'] = '<select id="cargos" class="select2">'.$cargos.'</select>';
+            $item['salario_base'] = $item->detalleEncuestas->salario_base;
+            if($item->incluir){
+                $item['incluye'] = 'Sí';
+            }else{
+                $item['incluye'] = 'No';
+            }
+            $item['editar'] = '<a href="'.route('cargos_clientes.edit', $item->id).'" class="btn waves-light waves-effect lighten-1 white-text amber"><i class="material-icons left">edit</i>Revisar</a>';
+            $item['guardar'] = '<a href="" class="guardar btn waves-light waves-effect lighten-1 white-text" id="guardar" index="'.$index.'"><i class="material-icons left">save</i>Guardar</a>';
+            $index++;
+
+            return $item;
+        });
+        
+        $data = array();
+        foreach ($dbData as $item) {
+            $data[] = [ $item->descripcion, 
+                        $item->cargos, 
+                        $item->salario_base, 
+                        $item->incluye, 
+                        $item->editar, 
+                        $item->guardar, 
+                        $item->id 
+                    ];
+        }
+
+        $response = ["data" => $data];
+
+        return $response;
+    }
+
 
 }

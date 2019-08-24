@@ -19,6 +19,7 @@
 @endsection
 
 @section('content')
+	<h5><strong>Fecha de Corte:</strong>{{$encuesta->periodo}}</h5>
 	<form style="display: none" action="POST">
 		<input type="hidden" name="pregunta" id="pregunta" value="{{$item->pregunta->id}}">
 	</form>

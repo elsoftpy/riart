@@ -8,7 +8,7 @@ class Rubro extends Model
 {
     protected $table = "rubros";
 
-    protected $fillable = ["decripcion"];
+    protected $fillable = ["descripcion"];
 
     public function subRubro(){
     	return $this->hasMany("App\Sub_rubro");

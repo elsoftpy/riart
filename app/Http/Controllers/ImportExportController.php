@@ -146,7 +146,7 @@ class ImportExportController extends Controller
                          adicional_amarre, adicional_tipo_combustible, adicional_embarque, adicional_carga,
                          bono_anual, bono_anual_salarios, incentivo_largo_plazo, refrigerio, costo_seguro_medico, 
                          cobertura_seguro_medico, costo_seguro_vida, costo_poliza_muerte_natural,
-                         costo_poliza_muerte_accidente, aseguradora_id, car_company, movilidad_full, flota monto_tarjeta_flota, autos_marca_id, autos_modelo_id, tarjeta_flota, monto_movil, 
+                         costo_poliza_muerte_accidente, aseguradora_id, car_company, movilidad_full, flota, autos_marca_id, autos_modelo_id, tarjeta_flota, monto_movil, 
                          seguro_movil, mantenimiento_movil, monto_km_recorrido, monto_ayuda_escolar, 
                          monto_comedor_interno, monto_curso_idioma, cobertura_curso_idioma, tipo_clase_idioma, 
                          monto_post_grado, cobertura_post_grado, monto_celular_corporativo, monto_vivienda, 
@@ -212,8 +212,8 @@ class ImportExportController extends Controller
                                 "CostoSeguroVida"=>$item->costo_seguro_vida, 
                                 "CarCompany"=>$item->car_company, 
                                 "MovilidadFull"=>$item->movilidad_full, 
-                                "MontoTarjFlota"=>$item->monto_tarjeta_flota, 
-                                "TarjFlota"=>$item->tarjeta_flota, 
+                                "TarjFlota"=>$item->flota, 
+                                "MontoTarjFlota"=>$item->tarjeta_flota, 
                                 "MontoAutomovil"=>$item->monto_movil, 
                                 "SeguroAutomovil"=>$item->seguro_movil, 
                                 "MantenimientoAutomovil"=>$item->mantenimiento_movil, 
@@ -294,7 +294,9 @@ class ImportExportController extends Controller
                         }
                         $cargoClienteDesc = trim($row->cargocliente);
                         $cargoOficialId = trim($row->id_cargo_oficial);
-                        
+                        if($cargoOficialId == ''){
+                            $cargoOficialId = null;
+                        }
                         $excluir = trim($row->excluir);
                         if($excluir == "NO"){
                             $incluir = 1;
@@ -339,8 +341,8 @@ class ImportExportController extends Controller
                         $detalle->costo_seguro_vida = $row->costosegurovida;
                         $detalle->car_company = $row->carcompany;
                         $detalle->movilidad_full = $row->movilidadfull;
-                        $detalle->flota = $row->montotarjetaflota;
-                        $detalle->tarjeta_flota = $row->tarjetaflota;
+                        $detalle->flota = $row->tarjflota;
+                        $detalle->tarjeta_flota = $row->montotarjflota;
                         $detalle->monto_movil = $row->montoautomovil;
                         $detalle->seguro_movil = $row->seguroautomovil;
                         $detalle->mantenimiento_movil = $row->mantenimientoautomovil;

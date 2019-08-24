@@ -1,5 +1,21 @@
-@extends('layout')
+@extends('layouts.report')
+@include('includes.benefit_nav')
+@section('breadcrumbs')
+  <nav>
+    <div class="nav-wrapper teal lighten-3">
+      <div class="col s12">
+        <a href="{{route('home')}}" class="breadcrumb">
+        	<i class="material-icons left">home</i>Inicio
+        </a>
+        <a class="breadcrumb">
+        	Completar Encuesta
+        </a>
+      </div>
+    </div>
+  </nav>
+@endsection
 @section('content')
+<h5><strong>Fecha de Corte:</strong> {{$dbData->periodo}}</h5>
   <div class="content">
     <form  name="cuestionario" id="cuestionario" action="{{route('beneficios.update', $dbData->id)}}" method="POST" >
       <div class="row">

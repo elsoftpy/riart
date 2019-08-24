@@ -344,10 +344,26 @@
 					    </div>
 					</div>
 					<div class="row">
-						<label for="excluir">
-							<input name="excluir" id="excluir" value="1" type="checkbox">
-							<span>@lang("cargosClientesEdit.checkbox_label_exclude")</span>
-						</label>
+						<div class="col s4">
+							<label for="excluir">
+								@if ($dbData->incluir)
+									<input name="excluir" id="excluir" value="1" type="checkbox">	
+								@else
+									<input name="excluir" id="excluir" value="1" type="checkbox" checked>
+								@endif								
+								<span>@lang("cargosClientesEdit.checkbox_label_exclude")</span>
+							</label>
+						</div>
+						<div class="col s4">
+							<label for="es_contrato_periodo">
+								@if ($dbData->es_contrato_periodo)
+									<input name="es_contrato_periodo" id="es_contrato_periodo" value="1" type="checkbox" checked/>
+								@else
+									<input name="es_contrato_periodo" id="es_contrato_periodo" value="1" type="checkbox"/>
+								@endif
+								<span>Contratado en periodo actual</span>
+							</label>
+						</div>
 					</div> 
 					<div class="row">
 						<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />

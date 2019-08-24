@@ -60,12 +60,19 @@ class EncuestasController extends Controller
 
         
         $oldCargos = Encuestas_cargo::where('cabecera_encuesta_id', $id)->get();
-
         foreach ($oldCargos as $key => $value) {
             $cargo = new Encuestas_cargo();
             $cargo->descripcion = $value->descripcion;
             $cargo->cabecera_encuesta_id = $nuevoId;
             $cargo->cargo_id = $value->cargo_id;
+            $cargo->incluir = $value->incluir;
+            if($value->es_contrato_periodo){
+                $cargo->es_contrato_periodo = $value->es_contrato_perido;
+            }else{
+                $cargo->es_contrato_periodo = 0;
+            }
+            
+            $cargo->revisado = $value->revisado;
             $cargo->save();
            
             $oldDetalle = Detalle_encuesta::where('encuestas_cargo_id', $value->id)->get();

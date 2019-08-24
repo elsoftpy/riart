@@ -222,6 +222,12 @@ class CargosClientesController extends Controller
             $dbData->incluir = 1;
         };
 
+        if($request->es_contrato_periodo){
+            $dbData->es_contrato_periodo = 1;
+        }else{
+            $dbData->es_contrato_periodo = 0;
+        }
+
 
     	$dbData->save();
         $dbDetalle->save();

@@ -34,6 +34,8 @@ Route::group(["middleware"=>"auth"], function(){
 		'uses'=> 'EncuestasCargosController@showHistory', 
 		'as'=> 'encuestas_cargos.showHistory'
 	]);	
+
+	Route::get('encuestas_cargos/cargos/{id}', 'EncuestasCargosController@getCargos')->name('encuestas_cargos.getCargos');
 	
 	Route::resource('encuestas_cargos', 'EncuestasCargosController');
 
@@ -74,7 +76,8 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('reportes_conceptos/{id}', 'ReporteController@conceptos')->name('reportes.conceptos');
 	Route::get('reportes_metodologia/{id}', 'ReporteController@metodologia')->name('reportes.metodologia');
 	Route::post('reportes_cargo_excel', 'ReporteController@cargoReportExcel')->name('reportes.cargoExcel');
-	Route::post('reportes_cargos_club_excel', 'ReporteController@cargoReportClubExcel')->name('reportes.cargosClubExcel');	
+	Route::post('reportes_cargos_club_excel', 'ReporteController@cargoReportClubExcel')->name('reportes.cargosClubExcel');
+	Route::post('reportes_cargos_club_especial', 'ReporteController@cargoReportClubEspecial')->name('reportes.cargosClubEspecial');	
 	Route::resource('reportes', 'ReporteController');
 
 	Route::post('import_export/download', 'ImportExportController@download')->name('import_export.download');
@@ -91,6 +94,7 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('resultados', 'ReporteController@resultados')->name('resultados');
 	Route::post('resultados_excel', 'ReporteController@resultadosExcel')->name('resultados.excel');
 	Route::post('periodo', 'ReporteController@setSession')->name('periodo');
+	Route::post('periodo_especial', 'ReporteController@setSessionEspecial')->name('periodo_especial');
 
 	Route::get('panel_empresas/{id}', 'ReporteController@panel')->name('reportes.panel');
 
@@ -138,6 +142,10 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::resource('areas', 'AreasController');
 
 	Route::resource('niveles', 'NivelesController');
+
+	Route::resource('rubros', 'RubrosController');
+
+	Route::resource('sub_rubros', 'SubRubrosController');
 
 
 });

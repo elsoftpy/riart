@@ -8,7 +8,7 @@
 	</div>	
 
 	@if($dbData)
-		<div class="col m12" id="table-container">
+		<div class="col m12">
 			<div class="browser-window">
 				<div class="top-bar">
                   <h4>Listado de Cargos - {{$dbEmpresa or ''}} {{$dbPeriodo or ''}}</h4>
@@ -21,8 +21,7 @@
 	                      	 <th style="width: 10%">Cargo Oficial</th>
 	                      	 <th style="width: 5%">Salario</th>
 	                      	 <th style="width: 5%">Incluir</th>
-							<th style="width: 20%">Opciones</th>
-							<th></th>   
+	                      	 <th style="width: 20%" colspan="2">Opciones</th>
 	                      	 <th style="display: none;"></th>
 	                      </tr>
 	                      <tr>
@@ -35,7 +34,49 @@
 	                      	 <th style="display: none;"></th>
 	                      </tr>
 	                    </thead>
-	                    
+	                    <tbody id="details">
+	                    	@foreach($dbData as $est) 
+	                    		<tr>
+		                    		<td>{{ $est->descripcion }}</td>
+		                    		<td>
+		                    			<select id="cargos" class="select2">
+		                    				@foreach($dbCargos as $key=>$cargo)
+		                    					@if($est->cargo_id == $key)
+		                    						<option value={{$key}}  selected>{{$cargo}}</option>
+		                    					@else
+													<option value={{$key}}>{{$cargo}}</option>
+		                    					@endif
+		                    				@endforeach
+		                    			</select>
+		                    		</td>
+		                    		<td>
+		                    			{{ DB::table('detalle_encuestas')
+		                    		         ->where('encuestas_cargo_id', $est->id)
+		                    		         ->where('cabecera_encuesta_id', $est->cabecera_encuesta_id)
+		                    		                 ->value('salario_base')}}
+		                    		</td>
+		                    		<td>
+		                    			@if($est->incluir)
+		                    				Sí
+		                    			@else
+		                    				No
+		                    			@endif
+		                    			
+		                    		</td>
+		                    		<td>
+		                    			<a href="{{ route('cargos_clientes.edit', $est->id) }}" class="btn waves-light waves-effect lighten-1 white-text amber">
+		                    				<i class="material-icons left">edit</i>Revisar
+		                    			</a>
+									</td>
+									<td>
+										<a href="" class="guardar btn waves-light waves-effect lighten-1 white-text" id="guardar" index="{{$loop->index}}">
+		                    				<i class="material-icons left">save</i>Guardar
+		                    			</a>		                    			
+		                    		</td>
+		                    		<td style="display: none;"><input type="hidden" name="cargo_id" value="{{$est->id}}"></td>
+	                    		</tr>
+	                    	@endforeach
+	                    </tbody>
 	                </table>
                 </div>
 			</div>
@@ -66,23 +107,8 @@
 		        var title = $(this).text();
 		        $(this).html( '<input type="text" placeholder="Buscar '+title+'" />' );
 		    } );
-
-			var spinner = '<div class="preloader-wrapper big active" style="position:absolute; top:0; left:0; right:0; bottom:0; margin:auto;">'+
-							'<div class="spinner-layer spinner-green-only">'+
-								'<div class="circle-clipper left">'+
-									'<div class="circle"></div>'+
-								'</div>'+
-								'<div class="gap-patch">'+
-									'<div class="circle"></div>'+
-								'</div>'+
-								'<div class="circle-clipper right">'+
-									'<div class="circle"></div>'+
-								'</div>'+
-							'</div>'+
-						  '</div>';
+	   		
 	   		var table = $('#listado_cargos').DataTable({
-				   			processing: true,
-							ajax: "{{route('encuestas_cargos.getCargos', $id)}}",
 			   				"scrollX": false,
 			            	"scrollCollapse": false,
 			            	"lengthChange": false,
@@ -103,12 +129,7 @@
 			        			    "width":"15%", 					
 			        				"orderable": false, 
 			        				"searchable": false,
-			        			},
-								{
-									targets:[6],
-									visible: false
-								}
-
+			        			}
 
 			        			
 			        		],
@@ -119,8 +140,7 @@
 				                "zeroRecords": "No hay registros - Lo sentimos",
 				                "info": "Página _PAGE_ de _PAGES_",
 				                "infoEmpty": "No hay registros disponibles",
-				                "infoFiltered": "(Filtrado de un total de _MAX_ registros)",
-								processing: spinner
+				                "infoFiltered": "(Filtrado de un total de _MAX_ registros)"	        
 				            }, 
 							 drawCallback: function() {
 							     $('.select2').select2();
@@ -128,18 +148,24 @@
 
 	    				});
 
-				table.columns().every(function(){
-					var that = this;
-					$('input', this.header()).on('keyup change', function(){
-						if ( that.search() !== this.value ) {
-							that
-								.search( this.value )
-								.draw();
-						}
-				});
-    		});
+	   		table.columns().every(function(){
+        		var that = this;
+ 		        $('input', this.header()).on('keyup change', function(){
+		            if ( that.search() !== this.value ) {
+		                that
+		                    .search( this.value )
+		                    .draw();
+		            }
+		    });
+    } );
 	    	
    		});
+
+		/*$("#listado").on('change', '.cargo_select', function(e){
+			var id = $(this).val();
+			var input = $(this).closest("tr").find("input[name=cargo_id]");
+			input.val(id);
+		});*/
 
 		$("#listado_cargos").on('click', '.guardar', function(e){
 			e.preventDefault();

@@ -23,10 +23,13 @@
           @foreach ($dbDetalle as $detalle)
             <div class="row">
               <p style="padding-left: 1em;">
-                <strong>{{$loop->iteration}} ) {{$detalle->pregunta}}</strong>
+                @if (App::isLocale('en'))
+                  <strong>{{$detalle->orden}} ) {{$detalle->pregunta_en}}</strong>
+                @else 
+                  <strong>{{$loop->iteration}} ) {{$detalle->pregunta}}</strong>
+                @endif
+                
               </p>
-
-
             @if($detalle->cerrada != 'S')
               <div class="input-field col s11" style="width: 88% !important">
                 @if($dbData->detalleBeneficio->where('beneficios_pregunta_id', $detalle->id)->first())
@@ -113,20 +116,25 @@
                             @php
                               $existe = $dbData->detalleBeneficio->where('beneficios_pregunta_id', $detalle->id)->first();
                               $opcionId = $dbData->detalleBeneficio->where('beneficios_pregunta_id', $detalle->id)->where('beneficios_opcion_id', $option->id)->first();
+                              if(App::isLocale('en')){
+                                $opcion = $option->opcion_en;
+                              }else{
+                                $opcion = $option->opcion;
+                              }
                             @endphp
                             @if($opcionId)
                               @if ($opcionId->beneficios_opcion_id == $option->id)
                                 <p>
                                   <label for="{{$option->id}}" style="padding-right: 1em;">
                                     <input type="checkbox" value="{{$option->id}}" checked="checked" id="{{$option->id}}" name="checks[]" question="{{$detalle->id}}"/>
-                                    <span>{{$option->opcion}}</span>
+                                    <span>{{$opcion}}</span>    
                                   </label></br>
                                 </p>
                               @else
                                 <p>
                                   <label for="{{$option->id}}" style="padding-right: 1em;">
                                     <input type="checkbox" value="{{$option->id}}" id="{{$option->id}}" name="checks[]" question="{{$detalle->id}}"/>
-                                    <span>{{$option->opcion}}</span>
+                                    <span>{{$opcion}}</span>
                                   </label></br>
                                 </p>
                               @endif
@@ -134,7 +142,7 @@
                         <p>
                           <label for="{{$option->id}}">      
                             <input type="checkbox" value="{{$option->id}}" id="{{$option->id}}" name="checks[]" question="{{$detalle->id}}"/>
-                            <span>{{$option->opcion}}</span>
+                            <span>{{$opcion}}</span>
                           </label></br>
                         </p>
                       @endif
@@ -144,14 +152,21 @@
                     <select name="{{$detalle->id}}" class="select2" style="padding-right: 2em;" placeholder="Elija una opción" > 
                     <option></option> 
                     @foreach( $detalle->beneficiosOpcion as $option)
+                        @php
+                            if(App::isLocale('en')){
+                              $opcion = $option->opcion_en;
+                            }else{
+                              $opcion = $option->opcion;
+                            }
+                        @endphp
                             @if($dbData->detalleBeneficio->where('beneficios_pregunta_id', $detalle->id)->first())
                               @if ($dbData->detalleBeneficio->where('beneficios_pregunta_id', $detalle->id)->first()->beneficios_opcion_id == $option->id)
-                                <option value="{{$option->id}}" selected="selected">{{$option->opcion}}</option>
+                                <option value="{{$option->id}}" selected="selected">{{$opcion}}</option>
                               @else
-                                <option value="{{$option->id}}">{{$option->opcion}}</option>
+                                <option value="{{$option->id}}">{{$opcion}}</option>
                               @endif
                           @else
-                              <option value="{{$option->id}}">{{$option->opcion}}</option>
+                              <option value="{{$option->id}}">{{$opcion}}</option>
                           @endif 
                             
                         @endforeach

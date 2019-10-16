@@ -254,7 +254,12 @@ class EncuestasCargosController extends Controller
                 } 
             }
             $item['cargos'] = '<select id="cargos" class="select2">'.$cargos.'</select>';
-            $item['salario_base'] = $item->detalleEncuestas->salario_base;
+            if($item->detalleEncuestas){
+                $item['salario_base'] = $item->detalleEncuestas->salario_base;
+            }else{
+                $item['salario_base'] = 0;
+            }
+            
             if($item->incluir){
                 $item['incluye'] = 'Sí';
             }else{
@@ -262,6 +267,7 @@ class EncuestasCargosController extends Controller
             }
             $item['editar'] = '<a href="'.route('cargos_clientes.edit', $item->id).'" class="btn waves-light waves-effect lighten-1 white-text amber"><i class="material-icons left">edit</i>Revisar</a>';
             $item['guardar'] = '<a href="" class="guardar btn waves-light waves-effect lighten-1 white-text" id="guardar" index="'.$index.'"><i class="material-icons left">save</i>Guardar</a>';
+            $item['input'] =  '<td style="display: none;"><input type="hidden" name="cargo_id" value="'.$item->id.'"></td>';
             $index++;
 
             return $item;
@@ -275,7 +281,7 @@ class EncuestasCargosController extends Controller
                         $item->incluye, 
                         $item->editar, 
                         $item->guardar, 
-                        $item->id 
+                        $item->input
                     ];
         }
 

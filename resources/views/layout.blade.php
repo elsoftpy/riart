@@ -63,6 +63,12 @@
                     <a href="{{ route('encuestas.index') }}">Encuestas</a>
                   </li>
                   <li>
+                    <a href="{{ route('import_export.index') }}">Clonar Bancard</a>
+                  </li>
+                  <li>
+                    <a href="{{ route('import_export.index') }}">Clonar Puente</a>
+                  </li>
+                  <li>
                     <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
                   </li>                        
                   <li>
@@ -185,6 +191,12 @@
                       </div>
                       <div class="row">
                         <ul class="right hide-on-med-and-down">
+                          <li>
+                            <a href="{{ route('clonar.puente') }}">Clonar Puente</a>
+                          </li>
+                          <li>
+                            <a href="{{ route('clonar.bancard') }}">Clonar Bancard</a>
+                          </li>
                           <li>
                             <a href="{{ route('import_export.index') }}">Importar/Exportar</a>
                           </li>                        

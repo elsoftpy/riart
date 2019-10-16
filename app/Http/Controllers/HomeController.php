@@ -81,7 +81,6 @@ class HomeController extends Controller
                     $dbEncuesta = $dbEncuestas->first();
                 }
                 
-                
                 $dbEncuestaAnt = $dbEncuestas->get(1);
                 if($dbEncuestaAnt){
                     if($dbEncuestaAnt->periodo == $dbEncuesta->periodo){
@@ -102,7 +101,10 @@ class HomeController extends Controller
                                                              ->get();  
                         $dbEncuestaAnt = $dbEncuestas->get(3);
                     }
+                }else{
+                    $dbEncuestaOld = null;
                 }
+
                 
                 $club = $this->club($dbEmpresa->rubro_id);
                 

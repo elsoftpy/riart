@@ -20,6 +20,7 @@ class Detalle_encuesta extends Model
 							'comision',
 							'cantidad_comision',
 							'plus_rendimiento',
+							'variable_viaje',
 							'cantidad_plus_rendimiento',
 							'fallo_caja',
 							'cantidad_fallo_caja',
@@ -194,5 +195,11 @@ class Detalle_encuesta extends Model
 		return $beneficios;
 	}	
 
+	public function getSalBaseVarViajeNavierasAttribute(){
+		$salBaseVarViaje = $this->salario_base + $this->variable_viaje;
+
+		return $salBaseVarViaje;
+
+	}	
 	
 }

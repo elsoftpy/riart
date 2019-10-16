@@ -103,11 +103,7 @@
 			        			    "width":"15%", 					
 			        				"orderable": false, 
 			        				"searchable": false,
-			        			},
-								{
-									targets:[6],
-									visible: false
-								}
+			        			}
 
 
 			        			
@@ -145,7 +141,7 @@
 			e.preventDefault();
 			var id = $(this).closest("tr").find("input[name=cargo_id]").val();
 			var cargoId = $(this).closest("tr").find("#cargos").val();
-			console.log(cargoId);
+			console.log(id);
 			$.post("{{route('homologacion.store')}}", {"id": id, "cargo_id": cargoId, "_token": "{{csrf_token()}}"},
 				function(data){
 					alert(data);

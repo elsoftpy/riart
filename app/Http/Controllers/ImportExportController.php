@@ -141,7 +141,7 @@ class ImportExportController extends Controller
                          d.encuestas_cargo_id, convert(e.descripcion using utf8) cargo_cliente, d.area_id, convert(a.descripcion using utf8) area_cliente, d.nivel_id, n.descripcion nivel_cliente, c.rubro_id, 
                          r.descripcion rubro, ca.id, ca.descripcion cargo_oficial, ca.area_id id_area_oficial, convert(a1.descripcion using utf8) area_oficial, ca.nivel_id id_nivel_oficial, n1.descripcion nivel_oficial, cantidad_ocupantes, 
                          
-                         salario_base, salario_base * 12 salario_anual, gratificacion, aguinaldo, comision, plus_rendimiento, fallo_caja,
+                         salario_base, salario_base * 12 salario_anual, gratificacion, aguinaldo, comision, plus_rendimiento, variable_viaje, fallo_caja,
                          fallo_caja_ext, gratificacion_contrato, adicional_nivel_cargo, adicional_titulo,
                          adicional_amarre, adicional_tipo_combustible, adicional_embarque, adicional_carga,
                          bono_anual, bono_anual_salarios, incentivo_largo_plazo, refrigerio, costo_seguro_medico, 
@@ -195,6 +195,7 @@ class ImportExportController extends Controller
                                 "Aguinaldo"=> $item->aguinaldo,
                                 "comision"=> $item->comision, 
                                 "VariableAnual" => $item->plus_rendimiento,
+                                "VariableViaje" => $item->variable_viaje,
                                 "AdicionalAmarre"=>$item->adicional_amarre, 
                                 "AdicionalTipoCombustible"=>$item->adicional_tipo_combustible, 
                                 "AdicionalEmbarque"=>$item->adicional_embarque, 
@@ -238,7 +239,7 @@ class ImportExportController extends Controller
         Excel::create($filename, function($excel) use($detalle, $periodo) {
             $excel->sheet($periodo, function($sheet) use($detalle){
                 
-                $sheet->cells('A1:BF1', function($cells){
+                $sheet->cells('A1:BG1', function($cells){
                     $cells->setBackground('#00897b');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
@@ -258,7 +259,7 @@ class ImportExportController extends Controller
                     $cell->setBackground('#fd8282');
                 });
 
-                $sheet->cell('BF1', function($cell){
+                $sheet->cell('BG1', function($cell){
                     $cell->setBackground('#fd8282');
                 });
 
@@ -323,6 +324,7 @@ class ImportExportController extends Controller
                         $detalle->aguinaldo = $row->aguinaldo;
                         $detalle->comision = $row->comision;
                         $detalle->plus_rendimiento = $row->variableanual;
+                        $detalle->variable_viaje = $row->variableviaje;
                         $detalle->salario_base = $row->salariobase;
                         $detalle->adicional_amarre = $row->adicionalamarre;
                         $detalle->adicional_tipo_combustible = $row->adicionaltipocombustible;

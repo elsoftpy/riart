@@ -214,4 +214,177 @@ class EncuestasController extends Controller
 
         return view('encuestas.create')->with('dbData', $dbData);
     }
+
+    public function cloneBancard()
+    {
+        return view('encuestas.clonar_bancard')->with('toast', false);
+    }
+
+    public function clonarBancard(Request $request){
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '500M');
+        $periodo = $request->periodo;
+
+        $encuestas = Cabecera_encuesta::where('periodo', $periodo)
+                                      ->where('rubro_id', 1)
+                                      ->get();
+        foreach($encuestas as $encuesta){
+            $cabecera = $encuesta->replicate();
+            $cabecera->rubro_id = 12;
+
+            switch ($cabecera->empresa_id) {
+                case 1:
+                    $cabecera->empresa_id = 130;
+                    break;
+                case 2:
+                    $cabecera->empresa_id = 131;
+                    break;
+                case 3:
+                    $cabecera->empresa_id = 132;
+                    break;
+                
+                case 4:
+                    $cabecera->empresa_id = 133;
+                    break;
+                case 5:
+                    $cabecera->empresa_id = 134;
+                    break;
+                case 6:
+                    $cabecera->empresa_id = 135;
+                    break;
+                case 7:
+                    $cabecera->empresa_id = 136;
+                    break;
+                case 8:
+                    $cabecera->empresa_id = 137;
+                    break;
+                case 9:
+                    $cabecera->empresa_id = 138;
+                    break;
+                case 10:
+                    $cabecera->empresa_id = 139;
+                    break;
+                case 11:
+                    $cabecera->empresa_id = 140;
+                    break;
+                case 12:
+                    $cabecera->empresa_id = 141;
+                    break;
+                case 53:
+                    $cabecera->empresa_id = 142;
+                    break;
+                case 83:
+                    $cabecera->empresa_id = 143;
+                    break;
+                case 127:
+                    $cabecera->empresa_id = 147;
+                    break;
+                
+                default:
+                    $cabecera->empresa_id = 130;
+                    break;
+            }
+            $cabecera->save();
+            $encuestaCargo = $encuesta->encuestasCargo;
+            foreach($encuestaCargo as $cargo){
+                $newCargo = $cargo->replicate();
+                $newCargo->cabecera_encuesta_id = $cabecera->id;
+                $newCargo->save();
+                $detalle = $cargo->detalleEncuestas;
+                if($detalle){
+                    $newDetalle = $detalle->replicate();
+                    $newDetalle->cabecera_encuesta_id = $cabecera->id;
+                    $newDetalle->encuestas_cargo_id = $newCargo->id;
+                    $newDetalle->save();
+                }
+            }
+
+        }
+        $toast = true;
+
+        return redirect()->route('clonar.bancard')->with('toast', $toast);
+    }
+
+    public function clonePuente()
+    {
+        return view('encuestas.clonar_puente')->with('toast', false);
+    }
+
+    public function clonarPuente(Request $request){
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '500M');
+        $periodo = $request->periodo;
+
+        $encuestas = Cabecera_encuesta::where('periodo', $periodo)
+                                      ->where('rubro_id', 1)
+                                      ->get();
+        foreach($encuestas as $encuesta){
+            $cabecera = $encuesta->replicate();
+            $cabecera->rubro_id = 13;
+
+            switch ($cabecera->empresa_id) {
+                case 1:
+                    $cabecera->empresa_id = 149;
+                    break;
+                case 2:
+                    $cabecera->empresa_id = 150;
+                    break;
+                case 3:
+                    $cabecera->empresa_id = 151;
+                    break;
+                
+                case 4:
+                    $cabecera->empresa_id = 152;
+                    break;
+                case 5:
+                    $cabecera->empresa_id = 153;
+                    break;
+                case 6:
+                    $cabecera->empresa_id = 154;
+                    break;
+                case 7:
+                    $cabecera->empresa_id = 155;
+                    break;
+                case 8:
+                    $cabecera->empresa_id = 156;
+                    break;
+                case 9:
+                    $cabecera->empresa_id = 157;
+                    break;
+                case 10:
+                    $cabecera->empresa_id = 158;
+                    break;
+                case 11:
+                    $cabecera->empresa_id = 159;
+                    break;
+                case 12:
+                    $cabecera->empresa_id = 160;
+                    break;
+                case 53:
+                    $cabecera->empresa_id = 161;
+                    break;
+                default:
+                    $cabecera->empresa_id = 149;
+                    break;
+            }
+            $cabecera->save();
+            $encuestaCargo = $encuesta->encuestasCargo;
+            foreach($encuestaCargo as $cargo){
+                $newCargo = $cargo->replicate();
+                $newCargo->cabecera_encuesta_id = $cabecera->id;
+                $newCargo->save();
+                $detalle = $cargo->detalleEncuestas;
+                if($detalle){
+                    $newDetalle = $detalle->replicate();
+                    $newDetalle->cabecera_encuesta_id = $cabecera->id;
+                    $newDetalle->encuestas_cargo_id = $newCargo->id;
+                    $newDetalle->save();
+                }
+            }
+
+        }
+        $toast = true;
+
+        return redirect()->route('clonar.puente')->with('toast', $toast);
+    }
 }

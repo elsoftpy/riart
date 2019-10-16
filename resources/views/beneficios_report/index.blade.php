@@ -33,14 +33,25 @@
 								<div class="card-image">
 									<img src="{{asset($element->file_path.$element->file_name)}}">
 								</div>				
+								@php
+									if(App::isLocale('en')){
+										$descripcion = $element->descripcion_en;
+										$titulo = $element->titulo_en;
+										$english = true;
+									}else{
+										$descripcion = $element->descripcion;
+										$titulo = $element->titulo;
+										$english = false;
+									}
+								@endphp
 								<div class="card-content">
-									{{$element->descripcion}}
+									{{$descripcion}}
 								</div>
 								<div class="card-action">
 									<ul class="collapsible collapsible-inCard" data-collapsible="expandable" id="collapsible_{{$element->id}}">
 										<li>
 											<div class="collapsible-header" style="height:5em;">
-												<strong>{{$element->titulo}}</strong>
+												<strong>{{$titulo}}</strong>
 											</div>
 											<div class="collapsible-body teal lighten-4">
 												<ul class="items">
@@ -53,8 +64,7 @@
 																			<input type="hidden" name="item_id" value="{{$item->id}}"/>
 																			<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 																			<div class="flat" id="btn_{{$item->id}}">
-																				<button class="flat wrap" type="submit" name="submitForm">{{$item->titulo}}
-													      						</button>
+																				<button class="flat wrap" type="submit" name="submitForm">{{$item->titulo}}</button>	
 													      					</div>
 																		</form>
 																	@else
@@ -62,7 +72,11 @@
 																			<input type="hidden" name="item_id" value="{{$item->id}}"/>
 																			<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 																			<div class="flat" id="btn_{{$item->id}}">
-																				<button class="flat wrap" type="submit" name="submitForm" style="text-transform: uppercase;">{{$item->titulo}}
+																				@if ($english)
+																				<button class="flat wrap" type="submit" name="submitForm">{{$item->titulo_en}}</button>	
+																				@else
+																					<button class="flat wrap" type="submit" name="submitForm">{{$item->titulo}}</button>	
+																				@endif
 													      						</button>
 													      					</div>
 																		</form>

@@ -38,6 +38,7 @@ return [
     "concept_13month_impacted"  => "Aguinaldo Impactado por Adicional, Gratificación y Bono",
     "concept_total_compensation"=> "Compensación Anual Total",
     "concept_variable_pay"      => "Variable Anual",
+    "concept_variable_pay_trip" => "Variable por Viaje",
     "concept_mooring"           => "Adicional por Amarre",
     "concept_fuel_type"         => "Adicional por Tipo de Combustible",
     "concept_shipping"          => "Adicional por Disponibilidad/Emarque",

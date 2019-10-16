@@ -19,15 +19,31 @@
 @endsection
 
 @section('content')
-	<h5><strong>Fecha de Corte:</strong>{{$encuesta->periodo}}</h5>
+	@if (App::isLocale('en'))
+	<h5><strong>Date:</strong>{{$encuesta->periodo}}</h5>
+	@else
+		<h5><strong>Fecha de Corte:</strong>{{$encuesta->periodo}}</h5>	
+	@endif
+
 	<form style="display: none" action="POST">
 		<input type="hidden" name="pregunta" id="pregunta" value="{{$item->pregunta->id}}">
 	</form>
 	
 	<div class="row">
+		@php
+			if(App::isLocale('en')){
+				$english = true;
+			}else{
+				$english = false;
+			}
+		@endphp
 		<div class="hoverable bordered"  >
 			<div class="col s11 offset-s1 center" style="text-transform:uppercase;">
-				<h4 id="titulo">{{$item->titulo}}</h4>	
+				@if (!$english)
+					<h4 id="titulo">{{$item->titulo_en}}</h4>	
+				@else
+					<h4 id="titulo">{{$item->titulo}}</h4>		
+				@endif
 			</div>
 			<div id="chart-canvas">
 				<canvas id="myChart" height= "80%"></canvas>		
@@ -50,7 +66,12 @@
 									<li style="padding-top: 0.5em;">
 										<div class="flat" id="btn_{{$element->id}}">
 											<button class="flat" value="{{$element->id}}" id="{{$element->id}}}" style="text-transform:uppercase;">
-												{{$element->item->titulo}}
+												@if ($english)
+												{{$element->item->titulo_en}}	
+												@else
+												{{$element->item->titulo}}	
+												@endif
+												
 					      					</button>
 					      				</div>
 										<div class="clearfix"></div>

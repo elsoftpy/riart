@@ -174,7 +174,7 @@ class FlashNotifier
                 break;
             case 10:
                 if($modal){
-                    $this->overlay('El Reporte no está disponible por el momento </br> Favor comuníquese con al consultora para mayor información', 'info', 'S&B - 10');
+                    $this->overlay('El Reporte no está disponible por el momento </br> Favor comuníquese con la consultora para mayor información', 'info', 'S&B - 10');
                 }else{
                     $this->info('El Reporte no está disponible por el momento </br> Favor comuníquese con al consultora para mayor información', 'info');
                 }

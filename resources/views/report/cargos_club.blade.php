@@ -14,12 +14,13 @@
 				<form id="excel_form" action="{{ route('reportes.cargosClubExcel') }}" method="POST">
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>
+					<input type="hidden" name="periodo" value="{{$periodo}}"/>
 					<button class="btn waves-effect waves-light lighten-1 white-text" type="submit" name="submit" data-intro="<p class='intro-title'><strong>EXCEL</strong></p>Click para habilitar la descarga de su universo de cargos y del mercado.</br>Una vez descargado, abrir el archivo y guardar" data-step="20">
 						<i class="material-icons left">cloud_download</i>Excel
 					</button>
 				</form>		
 			</div>
-			<div class="col l4">
+			<div class="col l3">
 				<form id="excel_especial_form" action="{{route('reportes.cargosClubEspecial')}}" method="POST">
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>
@@ -29,7 +30,18 @@
 						</button>					
 					@endif
 				</form>
-
+			</div>
+			<div class="col l4">
+				<form id="excel_especial_form_usd" action="{{route('reportes.cargosClubEspecial')}}" method="POST">
+					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
+					<input type="hidden" name="empresa_id" value="{{$dbEmpresa}}"/>
+					<input type="hidden" name="usd" value="1"/>
+					@if (session('especial'))
+						<button class="btn waves-effect waves-light red lighten-1 white-text" type="submit" name="submit">
+							<i class="material-icons left">cloud_download</i>Excel Comp. Interanual USD
+						</button>					
+					@endif
+				</form>
 			</div>
 		</div>		
 		<div class="col s12">

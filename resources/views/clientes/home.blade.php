@@ -76,9 +76,11 @@
 			<h5> @lang('homepage.modal_survey') </h5>
 			@if($dbEncuesta)
 				@if($dbEncuestaAnt)
-					<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja" >
-						{{$dbEncuestaOld->periodo}}
-					</a>
+					@if ($dbEncuestaOld)
+						<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja" >
+							{{$dbEncuestaOld->periodo}}
+						</a>						
+					@endif
 					<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior" >
 						{{$dbEncuestaAnt->periodo}}
 					</a>	
@@ -105,9 +107,11 @@
 			<h5> @lang('homepage.modal_survey') </h5>
 			@if($dbEncuesta)
 				@if($dbEncuestaAnt)
-					<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja_esp" >
-						{{$dbEncuestaOld->periodo}}
-					</a>
+					@if ($dbEncuestaOld)
+						<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja_esp" >
+							{{$dbEncuestaOld->periodo}}
+						</a>						
+					@endif
 					<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior_esp" >
 						{{$dbEncuestaAnt->periodo}}
 					</a>	

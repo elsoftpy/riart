@@ -40,7 +40,11 @@
               <li><a href="{{ route('beneficios_admin.index') }}">Encuestas</a></li>
               <li><a href="{{ route('beneficios_preguntas.index') }}">Preguntas</a></li>
           </ul>
-
+          <ul id="dropdown4" class="dropdown-content">
+            <li><a href="{{route('resultados')}}">Excel</a></li>
+            <li><a href="{{route('admin.reporte.filter')}}">Reporte - Cargos</a></li>
+            <li><a href="{{route('admin.reporte.filter.niveles')}}">Reporte - Niveles</a></li>
+          </ul>
           @if(Auth::check())
             @if(Auth::user()->is_admin)
               <div class="row" style="margin-bottom:0px !important;">

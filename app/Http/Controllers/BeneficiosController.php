@@ -17,6 +17,7 @@ use App\beneficios_conclusion_abierta;
 use App\Color;
 use App\Empresa;
 use Carbon\Carbon;
+use App;
 use Hash;
 use Auth;
 use flash;
@@ -355,6 +356,8 @@ class BeneficiosController extends Controller
       // Rubro de la empresa
       $rubro = $empresa->rubro_id;
 
+      $english = App::isLocale('en');
+
       // Ultima encuesta de la empresa
       $encuesta = beneficios_cabecera_encuesta::where("empresa_id", $empresa->id)
                                               ->orderBy('id', 'DESC')
@@ -377,9 +380,19 @@ class BeneficiosController extends Controller
         // temporalmente hasta que las prácticas estén dentro de la tabla Items
         $itemPregunta = beneficios_item::where('beneficios_pregunta_id', $id)->first();
         if(!$itemPregunta){
-          $titulo = $pregunta->pregunta;
+          if($english){
+            $titulo = $pregunta->pregunta_en;
+          }else{
+            $titulo = $pregunta->pregunta;
+          }
+          
         }else{
-          $titulo = $itemPregunta->titulo;  
+          if($english){
+            $titulo = $itemPregunta->titulo_en;  
+          }else{
+            $titulo = $itemPregunta->titulo;    
+          }
+          
         }
           
       }
@@ -425,10 +438,19 @@ class BeneficiosController extends Controller
           ->orderBy('id')
           ->pluck('descripcion');
         }else{
-          $labels = $pregunta->beneficiosOpcion
-          ->whereIn('id', $opcionesRespId)
-          ->sortBy('id')
-          ->pluck('opcion');
+          if($english){
+            $labels = $pregunta->beneficiosOpcion
+            ->whereIn('id', $opcionesRespId)
+            ->sortBy('id')
+            ->pluck('opcion_en');
+
+          }else{
+            $labels = $pregunta->beneficiosOpcion
+            ->whereIn('id', $opcionesRespId)
+            ->sortBy('id')
+            ->pluck('opcion');
+
+          }
         }
         // tabulamos las respuestas
         $respuestas = collect();

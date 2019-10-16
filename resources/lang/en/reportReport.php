@@ -38,6 +38,7 @@ return [
     "concept_13month_impacted"  => "13th Month - Impacted by: (annual base salary + additional fixed + annual total short-term incentives)/12",
     "concept_total_compensation"=> "Annual Total Compensation",
     "concept_variable_pay"      => "Annual Variable Pay",
+    "concept_variable_pay_trip" => "Variable Pay per Trip",
     "concept_mooring"           => "Annual Additional: mooring",
     "concept_fuel_type"         => "Annual Additional: fuel type",
     "concept_shipping"          => "Annual Additional: available shipping",

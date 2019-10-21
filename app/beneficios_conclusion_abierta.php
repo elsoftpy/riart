@@ -8,7 +8,7 @@ class beneficios_conclusion_abierta extends Model
 {
     protected $table = "beneficios_conclusion_abiertas";
 
-    protected $fillable = ["beneficios_pregunta_id", "rubro_id", "conclusion", "periodo"];
+    protected $fillable = ["beneficios_pregunta_id", "rubro_id", "conclusion", "conclusion_en", "periodo"];
 
     public function pregunta(){
     	return $this->belongsTo("App\beneficios_pregunta");

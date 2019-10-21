@@ -51,6 +51,12 @@
 							<textarea name="conclusion" id="conclusion" class="materialize-textarea"></textarea>
 						</div>
 					</div>
+					<div class="row">
+						<div class="input-field cols 12">
+							<label for="conclusion_en">Conclusión (Inglés)</label>
+							<textarea name="conclusion_en" id="conclusion_en" class="materialize-textarea"></textarea>
+						</div>
+					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					<div class="button-group">
 						<button class="btn waves-effect waves-light" type="submit" name="submit">Guardar
@@ -112,8 +118,11 @@
   						'_token':'{{ csrf_token() }}'
   					},
   					function(data){
-  						$("#conclusion").text(data);
-  						$('label[for="conclusion"]').addClass('active');
+						console.log(data);
+  						$("#conclusion").text(data.conclusion);
+						$('label[for="conclusion"]').addClass('active');
+						$("#conclusion_en").text(data.conclusion_en);  
+						$('label[for="conclusion_en"]').addClass('active');
   					}
   			);
 

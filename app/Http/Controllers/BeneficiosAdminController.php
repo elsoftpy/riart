@@ -272,6 +272,7 @@ class BeneficiosAdminController extends Controller
         $dbData->rubro_id = $request->rubro;
         $dbData->periodo = $request->periodo;
         $dbData->conclusion = $request->conclusion;
+        $dbData->conclusion_en = $request->conclusion_en;
         $dbData->save();
 
         return redirect()->route('home');
@@ -287,7 +288,7 @@ class BeneficiosAdminController extends Controller
       if(!$dbData){
         return null;
       }
-      return $dbData->conclusion;
+      return $dbData;
     }
 
     public function panel($id){

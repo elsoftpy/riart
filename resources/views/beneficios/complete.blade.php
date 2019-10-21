@@ -5,17 +5,17 @@
     <div class="nav-wrapper teal lighten-3">
       <div class="col s12">
         <a href="{{route('home')}}" class="breadcrumb">
-        	<i class="material-icons left">home</i>Inicio
+        	<i class="material-icons left">home</i>@lang('beneficiosReportIndex.breadcrumb_home')
         </a>
         <a class="breadcrumb">
-        	Completar Encuesta
+        	@lang('beneficiosReportIndex.breadcrumb_complete')
         </a>
       </div>
     </div>
   </nav>
 @endsection
 @section('content')
-<h5><strong>Fecha de Corte:</strong> {{$dbData->periodo}}</h5>
+<h5><strong>@lang('beneficiosReportIndex.title_date')</strong> {{$dbData->periodo}}</h5>
   <div class="content">
     <form  name="cuestionario" id="cuestionario" action="{{route('beneficios.update', $dbData->id)}}" method="POST" >
       <div class="row">

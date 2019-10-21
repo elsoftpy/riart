@@ -61,9 +61,12 @@ class HomeController extends Controller
                 }else{
                     $dbEncuesta = collect();
                 }
+
+                $club = $this->club($dbEmpresa->rubro_id);
                 
                 return view('beneficios.home')->with('dbEncuesta', $dbEncuesta)
-                                              ->with('dbEmpresa', $dbEmpresa);    
+                                              ->with('dbEmpresa', $dbEmpresa)
+                                              ->with('club', $club);    
 
             }else{
                 $dbEmpresa = $user->empresa;

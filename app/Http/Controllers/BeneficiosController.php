@@ -17,6 +17,7 @@ use App\beneficios_conclusion_abierta;
 use App\Color;
 use App\Empresa;
 use Carbon\Carbon;
+use App\Traits\ClubsTrait;
 use App;
 use Hash;
 use Auth;
@@ -24,6 +25,7 @@ use flash;
 
 class BeneficiosController extends Controller
 {
+    use ClubsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -414,6 +416,7 @@ class BeneficiosController extends Controller
           // Recuperamos las opciones respondidas
           $opcionesResp = beneficios_respuesta::where('beneficios_pregunta_id', $pregunta->id)
                         ->whereIn('beneficios_cabecera_encuesta_id', $aplicables)
+                        ->whereNotNull('beneficios_opcion_id')
                         ->orderBy('beneficios_opcion_id')
                         ->get();
         }else{
@@ -421,6 +424,7 @@ class BeneficiosController extends Controller
           $opcionesResp = beneficios_respuesta::
                           where('beneficios_pregunta_id', $pregunta->id)
                         ->whereIn('beneficios_cabecera_encuesta_id', $encuestas)
+                        ->whereNotNull('beneficios_opcion_id')
                         ->orderBy('beneficios_opcion_id')
                         ->get();
         }
@@ -437,6 +441,15 @@ class BeneficiosController extends Controller
           $labels = Autos_modelo::whereIn('id', $opcionesRespId)
           ->orderBy('id')
           ->pluck('descripcion');
+        }else if($pregunta->id == 74){
+          $labels = Autos_marca::whereIn('id', $opcionesRespId)
+                               ->orderBy('id')
+                               ->pluck('descripcion');
+        }else if($pregunta->id == 80){
+          $labels = Aseguradora::whereIn('id', $opcionesRespId)
+                               ->orderBy('id')
+                               ->pluck('descripcion');
+        
         }else{
           if($english){
             $labels = $pregunta->beneficiosOpcion
@@ -456,11 +469,13 @@ class BeneficiosController extends Controller
         $respuestas = collect();
         $encuestasResp = beneficios_respuesta::where('beneficios_pregunta_id', $id)
                         ->whereIn('beneficios_cabecera_encuesta_id', $encuestas)
-                        ->get();
+                        ->whereNotNull('beneficios_opcion_id')
+                        ->toSql();
+        
         foreach($opcionesResp->groupBy('beneficios_opcion_id') as $element){
           $respuestas->push($element->count());
         };
-
+        
         // sumamos el total de respuestas
         $total = $respuestas->sum();
         
@@ -485,8 +500,21 @@ class BeneficiosController extends Controller
                                                   ->where("rubro_id", $rubro)
                                                   ->where("periodo", $encuesta->periodo )
                                                   ->first();
+        if($respuesta){
+          if($english){
+            $conclusion = $respuesta->conclusion;
+          }else{
+            $conclusion = $respuesta->conclusion;
+          }
+        }else{
+          if($english){
+            $conclusion = 'Sorry, a conclusion for this question has not been found';
+          }else{
+            $conclusion = 'Lo sentimos, no hemos encontrado una conclusión para la pregunta';
+          }
+        }
         $data = array(  "cerrada"=>"N", 
-                        "respuesta"=> $respuesta->conclusion,
+                        "respuesta"=> $conclusion,
                         "titulo"=>$titulo);
       }
       

@@ -4,7 +4,7 @@
   <nav>
     <div class="nav-wrapper teal lighten-3">
       <div class="col s12">
-        <a href="{{route('home')}}" class="breadcrumb"><i class="material-icons left">home</i>Inicio</a>
+        <a href="{{route('home')}}" class="breadcrumb"><i class="material-icons left">home</i>@lang('beneficiosReportIndex.breadcrumb_home')</a>
       </div>
     </div>
   </nav>
@@ -13,12 +13,16 @@
 	<div class="row">
 		<div class="browser-window" data-intro="" data-step="2">
 			<div class="top-bar">
-	          <h4>{{ $dbEmpresa->rubro->descripcion}}</h4>
+	          <h4>{{ $club}}</h4>
 	        </div>
 	        <div class="content">
 				<div class="hoverable bordered">
 	        		<div class="row center">
-	        			<img src="{{asset('/images/benefit-cover.png')}}">	
+						@if (App::isLocale('en'))
+							<img src="{{asset('/images/benefit-cover_en.png')}}">	
+						@else
+							<img src="{{asset('/images/benefit-cover.png')}}">		
+						@endif
 	        		</div>
 	        		
 	        	</div>

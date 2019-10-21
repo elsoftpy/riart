@@ -39,7 +39,7 @@
 		@endphp
 		<div class="hoverable bordered"  >
 			<div class="col s11 offset-s1 center" style="text-transform:uppercase;">
-				@if (!$english)
+				@if ($english)
 					<h4 id="titulo">{{$item->titulo_en}}</h4>	
 				@else
 					<h4 id="titulo">{{$item->titulo}}</h4>		

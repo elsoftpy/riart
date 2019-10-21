@@ -5,13 +5,13 @@
     <div class="nav-wrapper teal lighten-3">
       <div class="col s12">
         <a href="{{route('home')}}" class="breadcrumb">
-        	<i class="material-icons left">home</i>Inicio
+        	<i class="material-icons left">home</i>@lang('beneficiosReportIndex.breadcrumb_home')
         </a>
         <a href="{{ route('beneficios.show', $dbEmpresa->id) }}" class="breadcrumb">
-        	Reporte
+        	@lang('beneficiosReportIndex.breadcrumb_report')
         </a>
         <a class="breadcrumb">
-        	Composición de la Muestra
+        	@lang('beneficiosReportIndex.button_sample')
         </a>
       </div>
     </div>

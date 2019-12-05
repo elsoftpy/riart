@@ -49,7 +49,6 @@ class ReporteController extends Controller
             $imagen = "images/ccfc-caratula.PNG";
         }
 
-
         return view('report.home')->with('dbEmpresa', $id)
                                   ->with('imagen', $imagen)
                                   ->with('club', $club)
@@ -270,7 +269,7 @@ class ReporteController extends Controller
 
         $cargos = Cargos_rubro::where('rubro_id', $rubro)
                               ->whereIn('cargo_id', $cargosIds)->get();
-
+        
         $cargos = $cargos->map(function($item) use($locale){
             if($locale == "es"){
                 $item['nivel_id'] = $item->cargo->nivel->id;

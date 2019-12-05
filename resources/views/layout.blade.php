@@ -192,6 +192,9 @@
                       <div class="row">
                         <ul class="right hide-on-med-and-down">
                           <li>
+                            <a href="{{ route('clonar.industrial') }}">Clonar Ind.</a>
+                          </li>
+                          <li>
                             <a href="{{ route('clonar.puente') }}">Clonar Puente</a>
                           </li>
                           <li>

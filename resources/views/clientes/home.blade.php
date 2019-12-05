@@ -87,7 +87,7 @@
 					<a class="waves-light waves-effect btn green" id="encuesta-actual" periodo="{{$dbEncuesta->periodo}}">
 						{{$dbEncuesta->periodo}}
 					</a>	
-					<input type="hidden" id="periodo_viejo" name="periodo_viejo" value="12/2017"/>
+					<input type="hidden" id="periodo_viejo" name="periodo_viejo" value="{{$dbEncuestaOld->periodo}}"/>
 					<input type="hidden" id="periodo_ant" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
 					<input type="hidden" id="periodo" name="periodo" value="{{$dbEncuesta->periodo}}"/>
 				@else
@@ -118,7 +118,7 @@
 					<a class="waves-light waves-effect btn green" id="encuesta-actual_esp" periodo="{{$dbEncuesta->periodo}}">
 						{{$dbEncuesta->periodo}}
 					</a>	
-					<input type="hidden" id="periodo_viejo_esp" name="periodo_viejo" value="12/2017"/>
+					<input type="hidden" id="periodo_viejo_esp" name="periodo_viejo" value="{{$dbEncuestaOld->periodo}}"/>
 					<input type="hidden" id="periodo_ant_esp" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
 					<input type="hidden" id="periodo_esp" name="periodo" value="{{$dbEncuesta->periodo}}"/>
 				@else

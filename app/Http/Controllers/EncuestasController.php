@@ -387,4 +387,86 @@ class EncuestasController extends Controller
 
         return redirect()->route('clonar.puente')->with('toast', $toast);
     }
+
+    public function cloneIndustrial()
+    {
+        return view('encuestas.clonar_industrial')->with('toast', false);
+    }
+
+    public function clonarIndustrial(Request $request){
+
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '500M');
+        $periodoOriginal = $request->periodo_original;
+        $periodoNuevo = $request->periodo_nuevo;
+        $empresas = [43, 110, 50, 106, 49, 48, 44, 32, 35, 125, 162, 51];
+
+        $encuestas = Cabecera_encuesta::where('periodo', $periodoOriginal)
+                                      ->where('rubro_id', 2)
+                                      ->whereIn('empresa_id', $empresas)
+                                      ->get();
+
+        foreach($encuestas as $encuesta){
+            $cabecera = $encuesta->replicate();
+            $cabecera->rubro_id = 14;
+
+            switch ($cabecera->empresa_id) {
+                case 43:
+                    $cabecera->empresa_id = 166;
+                    break;
+                case 110:
+                    $cabecera->empresa_id = 167;
+                    break;
+                case 50:
+                    $cabecera->empresa_id = 168;
+                    break;
+                
+                case 106:
+                    $cabecera->empresa_id = 169;
+                    break;
+                case 49:
+                    $cabecera->empresa_id = 170;
+                    break;
+                case 48:
+                    $cabecera->empresa_id = 171;
+                    break;
+                case 44:
+                    $cabecera->empresa_id = 172;
+                    break;
+                case 32:
+                    $cabecera->empresa_id = 173;
+                    break;
+                case 35:
+                    $cabecera->empresa_id = 174;
+                    break;
+                case 125:
+                    $cabecera->empresa_id = 175;
+                    break;
+                case 162:
+                    $cabecera->empresa_id = 176;
+                    break;
+                case 51:
+                    $cabecera->empresa_id = 177;
+                    break;
+            }
+            $cabecera->save();
+            $encuestaCargo = $encuesta->encuestasCargo;
+            foreach($encuestaCargo as $cargo){
+                $newCargo = $cargo->replicate();
+                $newCargo->cabecera_encuesta_id = $cabecera->id;
+                $newCargo->save();
+                $detalle = $cargo->detalleEncuestas;
+                if($detalle){
+                    $newDetalle = $detalle->replicate();
+                    $newDetalle->cabecera_encuesta_id = $cabecera->id;
+                    $newDetalle->encuestas_cargo_id = $newCargo->id;
+                    $newDetalle->save();
+                }
+            }
+
+        }
+        $toast = true;
+
+        return redirect()->route('clonar.industrial')->with('toast', $toast);
+    }
 }

@@ -3324,12 +3324,19 @@ trait ReportTrait{
     }
 
     public function getCargosHomologados($rubro, $periodo){
-        $empresasId = Empresa::where('rubro_id', $rubro)->pluck('id');
-        $encuestasRubro = Cabecera_encuesta::whereIn('empresa_id', $empresasId)->where('periodo', $periodo)->pluck('id');
+        $empresasId = Empresa::where('rubro_id', $rubro)
+                             ->pluck('id');
+
+        $encuestasRubro = Cabecera_encuesta::whereIn('empresa_id', $empresasId)
+                                           ->where('periodo', $periodo)
+                                           ->get()
+                                           ->pluck('id');
+        
         $encuestasCargos = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestasRubro)
                                           ->whereNotNull('cargo_id')
                                           ->where('incluir', 1)
                                           ->get();
+
         $cargosEmpresas = collect();
         foreach ($encuestasCargos as $encuestaCargo) {
             if($encuestaCargo->detalleEncuestas){
@@ -3338,10 +3345,10 @@ trait ReportTrait{
                 }
             }
         }
-
+        
         $groupedCargosEmpresas = $cargosEmpresas->groupBy('cargo');
         
-        // lista de cargos existentes en la encuesta (exlcluyendo los que hay en una sola empresa)
+        // lista de cargos existentes en la encuesta (excluyendo los que hay en una sola empresa)
         $cargosIds = $groupedCargosEmpresas->map(function($item, $key){
             if($item->groupBy('empresa')->count() > 1){
                 return $key;

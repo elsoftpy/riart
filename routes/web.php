@@ -52,6 +52,10 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('clone_puente', 'EncuestasController@clonePuente')->name('clonar.puente');
 
 	Route::post('clone_puente', 'EncuestasController@clonarPuente')->name('clonar.puenteAction');
+
+	Route::get('clone_industrial', 'EncuestasController@cloneIndustrial')->name('clonar.industrial');
+
+	Route::post('clone_industrial', 'EncuestasController@clonarIndustrial')->name('clonar.industrialAction');
 	
 	Route::post('encuestas_new', [
 		'uses'=> 'EncuestasController@storeNew', 

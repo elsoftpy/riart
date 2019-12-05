@@ -99,16 +99,20 @@ class HomeController extends Controller
                     $dbEncuestaOld = $dbEncuestas->get(3);
 
                     if(!$dbEncuestaOld){
+                        
                         $dbEncuestas = Cabecera_encuesta::where('empresa_id', 22)  
                                                              ->orderBy('id', 'DESC')
                                                              ->get();  
                         $dbEncuestaAnt = $dbEncuestas->get(3);
+                        $dbEncuestaOld = $dbEncuestas->get(4);
+                        
                     }
                 }else{
+                    
                     $dbEncuestaOld = null;
                 }
 
-                
+                //dd($dbEncuestaOld);                
                 $club = $this->club($dbEmpresa->rubro_id);
                 
                 return view('clientes.home')->with('dbEmpresa', $dbEmpresa)

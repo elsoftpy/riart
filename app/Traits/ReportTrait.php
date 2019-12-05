@@ -17,6 +17,7 @@ use App\Cargo;
 use App\Cargo_en;
 use App\Rubro;
 use App\User;
+use PHPExcel_Worksheet_Drawing;
 use Hash;
 use DB;
 use Auth;
@@ -3358,5 +3359,598 @@ trait ReportTrait{
         })->sort();
 
         return $cargosIds;
+    }
+
+    public function excelClubCargos($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro, $filename, $cubo = false){
+        Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro, $cubo) {
+            // hoja universo
+            $excel->sheet("universo", function($sheet) use($detalleUniverso, $rubro, $cubo){       
+                
+                if(!$cubo){
+                    $rango = $this->cabeceraExcelFactory($sheet, $rubro);
+                    
+                    $sheet->rows($detalleUniverso);
+                    $sheet->cells($rango, function($cells){
+                        $cells->setBackground('#a7ffeb');
+                    });                 
+                    $sheet->setFreeze('A7');  
+                }else{
+                    $rango = $this->cabeceraExcelFactoryCubo($sheet, $rubro);
+
+                    $sheet->rows($detalleUniverso);
+                    $sheet->cells($rango, function($cells){
+                        $cells->setBackground('#a7ffeb');
+                    });                 
+                    $sheet->setFreeze('A6');  
+                }
+                
+                       
+                
+            });
+            // hoja nacional
+            $excel->sheet("nacional", function($sheet) use($detalleNacional, $rubro, $cubo){
+                if(!$cubo){
+                    $rango = $this->cabeceraExcelFactory($sheet, $rubro);
+
+                    $sheet->rows($detalleNacional);
+                    $sheet->cells($rango, function($cells){
+                        $cells->setBackground('#a7ffeb');
+                    });
+                    $sheet->setFreeze('A7');
+                }else{
+                    $rango = $this->cabeceraExcelFactoryCubo($sheet, $rubro);
+
+                    $sheet->rows($detalleNacional);
+                    $sheet->cells($rango, function($cells){
+                        $cells->setBackground('#a7ffeb');
+                    });                 
+                    $sheet->setFreeze('A6');
+                }
+                
+            });
+            // hoja internacional
+            $excel->sheet("internacional", function($sheet) use($detalleInternacional, $rubro, $cubo){
+               
+                if(!$cubo){
+                    $rango = $this->cabeceraExcelFactory($sheet, $rubro);
+                
+                    $sheet->rows($detalleInternacional);
+                    $sheet->cells($rango, function($cells){
+                        $cells->setBackground('#a7ffeb');
+                    });
+                    $sheet->setFreeze('A7');
+                }else{
+                    $rango = $this->cabeceraExcelFactoryCubo($sheet, $rubro);
+
+                    $sheet->rows($detalleInternacional);
+                    $sheet->cells($rango, function($cells){
+                        $cells->setBackground('#a7ffeb');
+                    });                 
+                    $sheet->setFreeze('A6');
+                }
+                
+            });
+
+            $excel->setActiveSheetIndex(0);    
+
+        })->export('xlsx');
+    }
+
+    private function cabeceraExcelFactory($sheet, $rubro){
+
+        $objDrawing = new PHPExcel_Worksheet_Drawing;
+        $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+        $objDrawing->setCoordinates('A1');
+        $objDrawing->setWidthAndHeight(304,60);
+        $objDrawing->setWorksheet($sheet);     
+
+        $sheet->cell('A5', function($cell){
+            $cell->setValue('CARGO');
+        });
+        $sheet->mergeCells('A5:D5');
+        $sheet->cells('A5:D5', function($cells){
+            $cells->setBackground('#00897b');
+            $cells->setFontColor("#FFFFFF");
+            $cells->setFontWeight("bold");
+           // $cells->setValignment('center');
+            $cells->setAlignment('center');
+        });
+        // Salario Base Header
+        $sheet->cell('E5', function($cell){
+            $cell->setValue('SALARIO BASE');
+        });
+        $sheet->mergeCells('E5:J5');
+        $sheet->cells('E5:J5', function($cells){
+            $cells->setBackground('#0288d1');
+            $cells->setFontColor("#FFFFFF");
+            $cells->setFontWeight("bold");
+           // $cells->setValignment('center');
+            $cells->setAlignment('center');
+        });
+        if($rubro == 1){
+                   
+            // Salario Efectivo Anual Garantizado
+            $sheet->cell('K5', function($cell){
+                $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
+            });
+            $sheet->mergeCells('K5:P5');
+            $sheet->cells('K5:P5', function($cells){
+                $cells->setBackground('#388e3c');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+                            
+            // Total Adicional Anual
+            $sheet->cell('Q5', function($cell){
+                $cell->setValue('TOTAL ADICIONAL ANUAL');
+            });
+            $sheet->mergeCells('Q5:V5');
+            $sheet->cells('Q5:V5', function($cells){
+                $cells->setBackground('#fbc02d');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Bono Anual
+            $sheet->cell('W5', function($cell){
+                $cell->setValue('BONO ANUAL');
+            });
+            $sheet->mergeCells('W5:AB5');
+            $sheet->cells('W5:AB5', function($cells){
+                $cells->setBackground('#ffa000');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });    
+            
+            // Comision
+            
+            $sheet->cell('AC5', function($cell){
+                $cell->setValue('COMISION');
+            });
+            $sheet->mergeCells('AC5:AH5');
+            $sheet->cells('AC5:AH5', function($cells){
+                $cells->setBackground('#6a1b9a');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+            
+             
+            // Compensación Total Anual
+            $sheet->cell('AI5', function($cell){
+                $cell->setValue('COMPENSACION TOTAL ANUAL');
+            });
+            $sheet->mergeCells('AI5:AN5');
+            $sheet->cells('AI5:AN5', function($cells){
+                $cells->setBackground('#0288d1');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Salario Variable Anual comp.
+            $sheet->cell('AO5', function($cell){
+                $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+            });
+            $sheet->mergeCells('AO5:AT5');
+            $sheet->cells('AO5:AT5', function($cells){
+                $cells->setBackground('#afb42b');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });           
+            
+            // Salario Variable Anual comp.
+            $sheet->cell('AU5', function($cell){
+                $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL GARANTIZADO');
+            });
+            $sheet->mergeCells('AU5:AZ5');
+            $sheet->cells('AU5:AZ5', function($cells){
+                $cells->setBackground('#388e3c');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+
+            $topeHeader = 8;
+            $rango = 'A6:AZ6';
+
+        }elseif($rubro == 4){
+            // Salario Variable Anual
+            $sheet->cell('K5', function($cell){
+                $cell->setValue('VARIABLE ANUAL');
+            });
+            $sheet->mergeCells('K5:P5');
+            $sheet->cells('K5:P5', function($cells){
+                $cells->setBackground('#afb42b');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });            
+            // Total Adicional Anual
+            $sheet->cell('Q5', function($cell){
+                $cell->setValue('TOTAL ADICIONAL ANUAL');
+            });
+            $sheet->mergeCells('Q5:V5');
+            $sheet->cells('Q5:V5', function($cells){
+                $cells->setBackground('#388e3c');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+                            
+            // Bono Anual
+            $sheet->cell('W5', function($cell){
+                $cell->setValue('BONO ANUAL');
+            });
+            $sheet->mergeCells('W5:AB5');
+            $sheet->cells('W5:AB5', function($cells){
+                $cells->setBackground('#fbc02d');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Comisión
+            $sheet->cell('AC5', function($cell){
+                $cell->setValue('COMISION');
+            });
+            $sheet->mergeCells('AC5:AH5');
+            $sheet->cells('AC5:AH5', function($cells){
+                $cells->setBackground('#ffa000');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });    
+            
+            // Efectivo Total Anual
+            
+            $sheet->cell('AI5', function($cell){
+                $cell->setValue('EFECTIVO TOTAL ANUAL');
+            });
+            $sheet->mergeCells('AI5:AN5');
+            $sheet->cells('AI5:AN5', function($cells){
+                $cells->setBackground('#6a1b9a');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+            
+            // Compensación Total Anual
+            $sheet->cell('AO5', function($cell){
+                $cell->setValue('COMPENSACION ANUAL TOTAL');
+            });
+            $sheet->mergeCells('AO5:AT5');
+            $sheet->cells('AO5:AT5', function($cells){
+                $cells->setBackground('#f57c00');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Salario Base Comparativo Header
+            $sheet->cell('AU5', function($cell){
+                $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+            });
+            $sheet->mergeCells('AU5:AZ5');
+            $sheet->cells('AU5:AZ5', function($cells){
+                $cells->setBackground('#0288d1');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Salario Variable Anual comp.
+            $sheet->cell('BA5', function($cell){
+                $cell->setValue('VARIABLE ANUAL COMPARATIVO ORGANIZACION VS MERCADO');
+            });
+            $sheet->mergeCells('BA5:BF5');
+            $sheet->cells('BA5:BF5', function($cells){
+                $cells->setBackground('#afb42b');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });           
+            
+            // Salario Variable Anual comp.
+            $sheet->cell('BG5', function($cell){
+                $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
+            });
+            $sheet->mergeCells('BG5:BL5');
+            $sheet->cells('BG5:BL5', function($cells){
+                $cells->setBackground('#fbc02d');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+
+            $topeHeader = 10;
+            $rango = 'A6:BL6';
+
+        }else{
+            // Salario Efectivo Anual Garantizado
+            $sheet->cell('K5', function($cell){
+                $cell->setValue('EFECTIVO ANUAL GARANTIZADO');
+            });
+            $sheet->mergeCells('K5:P5');
+            $sheet->cells('K5:P5', function($cells){
+                $cells->setBackground('#388e3c');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+                            
+            // Total Adicional Anual
+            $sheet->cell('Q5', function($cell){
+                $cell->setValue('TOTAL ADICIONAL ANUAL');
+            });
+            $sheet->mergeCells('Q5:V5');
+            $sheet->cells('Q5:V5', function($cells){
+                $cells->setBackground('#fbc02d');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Bono Anual
+            $sheet->cell('W5', function($cell){
+                $cell->setValue('BONO ANUAL');
+            });
+            $sheet->mergeCells('W5:AB5');
+            $sheet->cells('W5:AB5', function($cells){
+                $cells->setBackground('#ffa000');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });    
+
+            // Comision
+
+            $sheet->cell('AC5', function($cell){
+                $cell->setValue('COMISION');
+            });
+            $sheet->mergeCells('AC5:AH5');
+            $sheet->cells('AC5:AH5', function($cells){
+                $cells->setBackground('#6a1b9a');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+
+            // Efectivo Total Anual
+            $sheet->cell('AI5', function($cell){
+                $cell->setValue('EFECTIVO TOTAL ANUAL');
+            });
+            $sheet->mergeCells('AI5:AN5');
+            $sheet->cells('AI5:AN5', function($cells){
+                $cells->setBackground('#f57c00');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Compensación total anual
+            $sheet->cell('AO5', function($cell){
+                $cell->setValue('COMPENSACION TOTAL ANUAL');
+            });
+            $sheet->mergeCells('AO5:AT5');
+            $sheet->cells('AO5:AT5', function($cells){
+                $cells->setBackground('#0288d1');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });                
+            // Salario Variable Anual comp.
+            $sheet->cell('AU5', function($cell){
+                $cell->setValue('SALARIO BASE COMPARATIVO ORGANIZACION VS MERCADO');
+            });
+            $sheet->mergeCells('AU5:AZ5');
+            $sheet->cells('AU5:AZ5', function($cells){
+                $cells->setBackground('#afb42b');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });           
+
+            // Salario Variable Anual comp.
+            $sheet->cell('BA5', function($cell){
+                $cell->setValue('RATIO SALARIO BASE ANUAL / TOTAL EFECTIVO ANUAL');
+            });
+            $sheet->mergeCells('BA5:BF5');
+            $sheet->cells('BA5:BF5', function($cells){
+                $cells->setBackground('#fbc02d');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+
+            $topeHeader = 9;
+            $rango = 'A6:BF6';
+        }
+               
+        $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
+        $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
+
+        for ($i= 0; $i < $topeHeader; $i++) {
+            foreach ($itemsHeader as $key => $value) {
+                array_push($cargoHeader, $value);
+            }
+            
+        }
+           
+        $sheet->row(6, $cargoHeader);
+
+        return $rango;
+
+    }
+
+    private function cabeceraExcelFactoryCubo($sheet, $rubro){
+
+        $objDrawing = new PHPExcel_Worksheet_Drawing;
+        $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+        $objDrawing->setCoordinates('A1');
+        $objDrawing->setWidthAndHeight(304,60);
+        $objDrawing->setWorksheet($sheet);     
+
+        
+        
+        
+        $header = array("CARGO OFICIAL", "OCUPANTES", "CASOS");  
+        
+        
+        $sbHeader = array("SB Min", "SB 25P", "SB Prom", "SB Med", "SB 75P", "SB Max");
+
+        $header = $this->headerFactory($header, $sbHeader);
+
+        if($rubro == 1){
+                   
+            $eagHeader = array("EAG Min", "EAG 25P", "EAG Prom", "EAG Med", "EAG 75P", "EAG Max");
+
+            $header = $this->headerFactory($header, $eagHeader);            
+                            
+            $taHeader = array("TA Min", "TA 25P", "TA Prom", "TA Med", "TA 75P", "TA Max");
+
+            $header = $this->headerFactory($header, $taHeader);                            
+            
+            $baHeader = array("BA Min", "BA 25P", "BA Prom", "BA Med", "BA 75P", "BA Max");
+
+            $header = $this->headerFactory($header, $baHeader);                
+            
+            $caHeader = array("CA Min", "CA 25P", "CA Prom", "CA Med", "CA 75P", "CA Max");
+
+            $header = $this->headerFactory($header, $caHeader);            
+            
+             
+            $ctaHeader = array("CTA Min", "CTA 25P", "CTA Prom", "CTA Med", "CTA 75P", "CTA Max");
+
+            $header = $this->headerFactory($header, $ctaHeader);            
+            
+            $sbmHeader = array("sbm Min", "sbm 25P", "sbm Prom", "sbm Med", "sbm 75P", "sbm Max");
+
+            $header = $this->headerFactory($header, $sbmHeader);                       
+            
+            $sbRatioHeader = array("sbRatio Min", "sbRatio 25P", "sbRatio Prom", "sbRatio Med", "sbRatio 75P", "sbRatio Max");
+
+            $header = $this->headerFactory($header, $sbRatioHeader);            
+
+            $topeHeader = 8;
+            $rango = 'A5:AZ5';
+
+        }elseif($rubro == 4){
+            $varHeader = array("VAR Min", "VAR 25P", "VAR Prom", "VAR Med", "VAR 75P", "VAR Max");
+
+            $header = $this->headerFactory($header, $varHeader);            
+
+            $taHeader = array("TA Min", "TA 25P", "TA Prom", "TA Med", "TA 75P", "TA Max");
+
+            $header = $this->headerFactory($header, $taHeader);                            
+                            
+            $baHeader = array("BA Min", "BA 25P", "BA Prom", "BA Med", "BA 75P", "BA Max");
+
+            $header = $this->headerFactory($header, $baHeader);                
+            
+            $caHeader = array("CA Min", "CA 25P", "CA Prom", "CA Med", "CA 75P", "CA Max");
+
+            $header = $this->headerFactory($header, $caHeader);  
+            
+            $etaHeader = array("ETA Min", "ETA 25P", "ETA Prom", "ETA Med", "ETA 75P", "ETA Max");
+
+            $header = $this->headerFactory($header, $etaHeader);  
+            
+            $ctaHeader = array("CTA Min", "CTA 25P", "CTA Prom", "CTA Med", "CTA 75P", "CTA Max");
+
+            $header = $this->headerFactory($header, $ctaHeader);            
+            
+            $sbmHeader = array("sbm Min", "sbm 25P", "sbm Prom", "sbm Med", "sbm 75P", "sbm Max");
+
+            $header = $this->headerFactory($header, $sbmHeader);                       
+            
+            $varCompHeader = array("VARCOMP Min", "VARCOMP 25P", "VARCOMP Prom", "VARCOMP Med", "VARCOMP 75P", "VARCOMP Max");
+
+            $header = $this->headerFactory($header, $varCompHeader);    
+
+            $header = $this->headerFactory($header, $sbmHeader);                       
+            
+            $sbRatioHeader = array("sbRatio Min", "sbRatio 25P", "sbRatio Prom", "sbRatio Med", "sbRatio 75P", "sbRatio Max");
+
+            $header = $this->headerFactory($header, $sbRatioHeader);                
+            
+
+            $topeHeader = 10;
+            $rango = 'A5:BL5';
+
+        }else{
+            $eagHeader = array("EAG Min", "EAG 25P", "EAG Prom", "EAG Med", "EAG 75P", "EAG Max");
+
+            $header = $this->headerFactory($header, $eagHeader);                         
+                            
+            $taHeader = array("TA Min", "TA 25P", "TA Prom", "TA Med", "TA 75P", "TA Max");
+
+            $header = $this->headerFactory($header, $taHeader);            
+           
+            $baHeader = array("BA Min", "BA 25P", "BA Prom", "BA Med", "BA 75P", "BA Max");
+
+            $header = $this->headerFactory($header, $baHeader);            
+
+            $caHeader = array("CA Min", "CA 25P", "CA Prom", "CA Med", "CA 75P", "CA Max");
+
+            $header = $this->headerFactory($header, $caHeader);            
+
+
+            $etaHeader = array("ETA Min", "ETA 25P", "ETA Prom", "ETA Med", "ETA 75P", "ETA Max");
+
+            $header = $this->headerFactory($header, $etaHeader);            
+              
+            $ctaHeader = array("CTA Min", "CTA 25P", "CTA Prom", "CTA Med", "CTA 75P", "CTA Max");
+
+            $header = $this->headerFactory($header, $ctaHeader);            
+          
+            $sbmHeader = array("SBM Min", "SBM 25P", "SBM Prom", "SBM Med", "SBM 75P", "SBM Max");
+
+            $header = $this->headerFactory($header, $sbmHeader);            
+         
+
+            $sbRatioHeader = array("SBRATIO Min", "SBRATIO 25P", "SBRATIO Prom", "SBRATIO Med", "SBRATIO 75P", "SBRATIO Max");
+
+            $header = $this->headerFactory($header, $sbRatioHeader);            
+
+
+            $topeHeader = 9;
+            $rango = 'A5:BF5';
+        }
+               
+        $sheet->row(5, $header);
+
+        return $rango;
+
+    }
+
+    private function headerFactory($header, $itemHeader){
+
+        foreach ($itemHeader as $key => $value) {
+            array_push($header, $value);
+        }
+
+        return $header;
     }
 }

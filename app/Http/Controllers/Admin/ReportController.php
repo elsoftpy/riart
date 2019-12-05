@@ -38,6 +38,14 @@ class ReportController extends Controller
     								                ->with('rubros', $rubros);
     }
 
+    public function filterCargos(){
+        $rubro = Rubro::first()->id;
+        $periodos = $this->getPeriodos($rubro);
+        $rubros = $this->getRubros();
+    	return view('admin.reportes.filter_cargos')->with('periodos', $periodos)
+    								                ->with('rubros', $rubros);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

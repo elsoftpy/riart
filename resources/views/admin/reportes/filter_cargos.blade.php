@@ -3,10 +3,10 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Reporte de Niveles</h4>
+              <h4>Reporte de Cargos</h4>
 	        </div>
 	        <div class="content">
-				<form class="col s12" action="{{route('reportes.nivelesClubExcel')}}" method="POST">
+				<form class="col s12" action="{{route('reportes.cargosExcel')}}" method="POST">
 					<div class="row">
 						<div class="input-field col s6">
 							<select id="rubro_id"  name="rubro_id">

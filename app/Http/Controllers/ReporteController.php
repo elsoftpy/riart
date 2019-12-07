@@ -340,7 +340,7 @@ class ReporteController extends Controller
         $cargos = Cargos_rubro::where('rubro_id', $rubro)
                               ->whereIn('cargo_id', $cargosIds)
                               ->get();
-        dd($cargosIds);
+
         // variables de detalle para cada segmento
         $detalleUniverso = collect();
         $detalleNacional = collect();
@@ -1200,232 +1200,8 @@ class ReporteController extends Controller
  
         $filename = 'Resultados_Niveles'.$periodo;
 
-        Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional) {
-        //Excel::create($filename, function($excel) use($detalleNacional) {
-             $excel->sheet("universo", function($sheet) use($detalleUniverso){
-                $objDrawing = new PHPExcel_Worksheet_Drawing;
-                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
-                $objDrawing->setCoordinates('A1');
-                $objDrawing->setWidthAndHeight(304,60);
-                $objDrawing->setWorksheet($sheet);  
+        $this->excelNivelClub($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro, $filename);
 
-                $sheet->cell('A5', function($cell){
-                    $cell->setValue('NIVEL');
-                });
-                $sheet->mergeCells('A5:D5');
-                $sheet->cells('A5:D5', function($cells){
-                    $cells->setBackground('#00897b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-                // Salario Base Header
-                $sheet->cell('E5', function($cell){
-                    $cell->setValue('SALARIO BASE');
-                });
-                $sheet->mergeCells('E5:J5');
-                $sheet->cells('E5:J5', function($cells){
-                    $cells->setBackground('#0288d1');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                                
-                // Bono Anual
-                $sheet->cell('K5', function($cell){
-                    $cell->setValue('BONO ANUAL');
-                });
-                $sheet->mergeCells('K5:P5');
-                $sheet->cells('K5:P5', function($cells){
-                    $cells->setBackground('#ffa000');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-
-                // Total efectivo anual
-                $sheet->cell('Q5', function($cell){
-                    $cell->setValue('TOTAL EFECTIVO ANUAL');
-                });
-                $sheet->mergeCells('Q5:V5');
-                $sheet->cells('Q5:V5', function($cells){
-                    $cells->setBackground('#4a148c');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                                
-                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
-                $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-                for ($i= 0; $i < 3; $i++) {
-                    foreach ($itemsHeader as $key => $value) {
-                        array_push($cargoHeader, $value);
-                    }
-                    
-                }
-                
-                $sheet->row(6, $cargoHeader);
-                $sheet->cells('A6:V6', function($cells){
-                    $cells->setBackground('#a7ffeb');
-                });
-                
-                $sheet->rows($detalleUniverso);
-                $sheet->setFreeze('A7');
-                
-            }); 
-            // hoja nacional
-            $excel->sheet("nacional", function($sheet) use($detalleNacional){
-                $objDrawing = new PHPExcel_Worksheet_Drawing;
-                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
-                $objDrawing->setCoordinates('A1');
-                $objDrawing->setWidthAndHeight(304,60);
-                $objDrawing->setWorksheet($sheet);  
-
-                $sheet->cell('A5', function($cell){
-                    $cell->setValue('NIVEL');
-                });
-                $sheet->mergeCells('A5:D5');
-                $sheet->cells('A5:D5', function($cells){
-                    $cells->setBackground('#00897b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-                // Salario Base Header
-                $sheet->cell('E5', function($cell){
-                    $cell->setValue('SALARIO BASE');
-                });
-                $sheet->mergeCells('E5:J5');
-                $sheet->cells('E5:J5', function($cells){
-                    $cells->setBackground('#0288d1');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                                
-                // Bono Anual
-                $sheet->cell('K5', function($cell){
-                    $cell->setValue('BONO ANUAL');
-                });
-                $sheet->mergeCells('K5:P5');
-                $sheet->cells('K5:P5', function($cells){
-                    $cells->setBackground('#ffa000');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-
-                // Total efectivo anual
-                $sheet->cell('Q5', function($cell){
-                    $cell->setValue('TOTAL EFECTIVO ANUAL');
-                });
-                $sheet->mergeCells('Q5:V5');
-                $sheet->cells('Q5:V5', function($cells){
-                    $cells->setBackground('#4a148c');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                                
-                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
-                $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-                for ($i= 0; $i < 3; $i++) {
-                    foreach ($itemsHeader as $key => $value) {
-                        array_push($cargoHeader, $value);
-                    }
-                    
-                }
-                
-                $sheet->row(6, $cargoHeader);
-                $sheet->cells('A6:V6', function($cells){
-                    $cells->setBackground('#a7ffeb');
-                });
-                
-                $sheet->rows($detalleNacional);
-                $sheet->setFreeze('A7');
-            });
-            // hoja internacional
-            $excel->sheet("internacional", function($sheet) use($detalleInternacional){
-                $objDrawing = new PHPExcel_Worksheet_Drawing;
-                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
-                $objDrawing->setCoordinates('A1');
-                $objDrawing->setWidthAndHeight(304,60);
-                $objDrawing->setWorksheet($sheet);  
-
-                $sheet->cell('A5', function($cell){
-                    $cell->setValue('NIVEL');
-                });
-                $sheet->mergeCells('A5:D5');
-                $sheet->cells('A5:D5', function($cells){
-                    $cells->setBackground('#00897b');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-                // Salario Base Header
-                $sheet->cell('E5', function($cell){
-                    $cell->setValue('SALARIO BASE');
-                });
-                $sheet->mergeCells('E5:J5');
-                $sheet->cells('E5:J5', function($cells){
-                    $cells->setBackground('#0288d1');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                
-                                
-                // Bono Anual
-                $sheet->cell('K5', function($cell){
-                    $cell->setValue('BONO ANUAL');
-                });
-                $sheet->mergeCells('K5:P5');
-                $sheet->cells('K5:P5', function($cells){
-                    $cells->setBackground('#ffa000');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                   // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });
-
-                // Total efectivo anual
-                $sheet->cell('Q5', function($cell){
-                    $cell->setValue('TOTAL EFECTIVO ANUAL');
-                });
-                $sheet->mergeCells('Q5:V5');
-                $sheet->cells('Q5:V5', function($cells){
-                    $cells->setBackground('#4a148c');
-                    $cells->setFontColor("#FFFFFF");
-                    $cells->setFontWeight("bold");
-                // $cells->setValignment('center');
-                    $cells->setAlignment('center');
-                });                                
-                $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");
-                $cargoHeader = array("Cargo Company", "Oficial", "Ocupantes", "Casos");
-                for ($i= 0; $i < 3; $i++) {
-                    foreach ($itemsHeader as $key => $value) {
-                        array_push($cargoHeader, $value);
-                    }
-                    
-                }
-                
-                $sheet->row(6, $cargoHeader);
-                $sheet->cells('A6:V6', function($cells){
-                    $cells->setBackground('#a7ffeb');
-                });
-                
-                $sheet->rows($detalleInternacional);
-                $sheet->setFreeze('A7');
-            }); 
-            $excel->setActiveSheetIndex(0);    
-        })->export('xlsx');
     }   
     
     public function cargosReportExcel(Request $request){
@@ -1455,15 +1231,6 @@ class ReporteController extends Controller
             $respuesta = $this->cargoReportAll($request, "clubExcel", true);
             $filename = 'Cubo_Resultados_'.$periodo;
 
-            /* $encuestaCargo = Encuestas_cargo::where('cabecera_encuesta_id', $dbEncuesta->id)
-                                            ->where('cargo_id', $cargo->cargo_id)
-                                            ->where('incluir', 1)
-                                            ->first();
-            if($encuestaCargo){
-                $descripcion = $encuestaCargo->descripcion;
-            }else{
-                $descripcion = 'N/A';
-            } */
             // preparamos los datos para el array final del cargo
             $itemArray = array( //$descripcion, 
                                 $cargo->cargo->descripcion, 
@@ -1473,7 +1240,6 @@ class ReporteController extends Controller
             // por cada item del detalle
             //$cantConceptos = 0;
             foreach ($respuesta as $key => $item) {
-               // dd($item);
                 switch ($key) {
                     case 'detalle_universo':
                         $this->CargaDetalle($item, $itemArray);            
@@ -1488,7 +1254,6 @@ class ReporteController extends Controller
                 }
 
             }
-            //dd($itemArray);
             $detalleUniverso->push($itemArray);
             $detalleNacional->push($itemArrayNac);
             $detalleInternacional->push($itemArrayInt);                 
@@ -1961,7 +1726,4 @@ class ReporteController extends Controller
         return "ok";
     }    
     
-
-    
-
 }

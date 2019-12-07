@@ -300,6 +300,7 @@ class EncuestasController extends Controller
             }
 
         }
+        
         $toast = true;
 
         return redirect()->route('clonar.bancard')->with('toast', $toast);
@@ -399,7 +400,8 @@ class EncuestasController extends Controller
         ini_set('memory_limit', '500M');
         $periodoOriginal = $request->periodo_original;
         $periodoNuevo = $request->periodo_nuevo;
-        $empresas = [43, 110, 50, 106, 49, 48, 44, 32, 35, 125, 162, 51];
+        //$empresas = [43, 110, 50, 106, 49, 48, 44, 32, 35, 125, 162, 51];
+        $empresas = [30];
 
         $encuestas = Cabecera_encuesta::where('periodo', $periodoOriginal)
                                       ->where('rubro_id', 2)
@@ -448,6 +450,8 @@ class EncuestasController extends Controller
                 case 51:
                     $cabecera->empresa_id = 177;
                     break;
+                case 30:
+                    $cabecera->empresa_id = 178;
             }
             $cabecera->save();
             $encuestaCargo = $encuesta->encuestasCargo;

@@ -2561,7 +2561,7 @@ trait ReportTrait{
                 $tipoCambio = 5600;
             }
             
-
+            
             return view('report.report')->with('dbCargo', $dbCargo)
                                         ->with('dbEmpresa', $dbEmpresa)
                                         ->with('universo', $universo)
@@ -3436,6 +3436,40 @@ trait ReportTrait{
         })->export('xlsx');
     }
 
+    public function excelNivelClub($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro, $filename){
+
+        Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro) {
+            //Hoja Universo
+            $excel->sheet("Universo", function($sheet) use($detalleUniverso, $rubro){
+                
+                $this->cabeceraNivelExcelFactory($sheet, $rubro);
+                $sheet->rows($detalleUniverso);
+                $sheet->setFreeze('A7');
+
+            });
+
+            //Hoja Nacional
+            $excel->sheet("Nacional", function($sheet) use($detalleNacional, $rubro){
+    
+                $this->cabeceraNivelExcelFactory($sheet, $rubro);
+                $sheet->rows($detalleNacional);
+                $sheet->setFreeze('A7');
+
+            });
+
+            //Hoja Internacional
+            $excel->sheet("Internacional", function($sheet) use($detalleInternacional, $rubro){
+    
+                $this->cabeceraNivelExcelFactory($sheet, $rubro);
+                $sheet->rows($detalleInternacional);
+                $sheet->setFreeze('A7');
+
+            });
+            
+            $excel->setActiveSheetIndex(0);    
+        })->export('xlsx');
+    
+    }
     private function cabeceraExcelFactory($sheet, $rubro){
 
         $objDrawing = new PHPExcel_Worksheet_Drawing;
@@ -3952,5 +3986,93 @@ trait ReportTrait{
         }
 
         return $header;
+    }
+
+    private function cabeceraNivelExcelFactory($sheet, $rubro){
+        $objDrawing = new PHPExcel_Worksheet_Drawing;
+        $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+        $objDrawing->setCoordinates('A1');
+        $objDrawing->setWidthAndHeight(304,60);
+        $objDrawing->setWorksheet($sheet);  
+
+        $sheet->cell('A5', function($cell){
+            $cell->setValue('NIVEL');
+        });
+        $sheet->mergeCells('A5:D5');
+        $sheet->cells('A5:D5', function($cells){
+            $cells->setBackground('#00897b');
+            $cells->setFontColor("#FFFFFF");
+            $cells->setFontWeight("bold");
+           // $cells->setValignment('center');
+            $cells->setAlignment('center');
+        });
+        // Salario Base Header
+        $sheet->cell('E5', function($cell){
+            $cell->setValue('SALARIO BASE');
+        });
+        $sheet->mergeCells('E5:J5');
+        $sheet->cells('E5:J5', function($cells){
+            $cells->setBackground('#0288d1');
+            $cells->setFontColor("#FFFFFF");
+            $cells->setFontWeight("bold");
+           // $cells->setValignment('center');
+            $cells->setAlignment('center');
+        });                
+                        
+        // Bono Anual
+        $sheet->cell('K5', function($cell){
+            $cell->setValue('BONO ANUAL');
+        });
+        $sheet->mergeCells('K5:P5');
+        $sheet->cells('K5:P5', function($cells){
+            $cells->setBackground('#ffa000');
+            $cells->setFontColor("#FFFFFF");
+            $cells->setFontWeight("bold");
+           // $cells->setValignment('center');
+            $cells->setAlignment('center');
+        });
+
+        // Total efectivo anual
+        $sheet->cell('Q5', function($cell){
+            $cell->setValue('TOTAL EFECTIVO ANUAL');
+        });
+        $sheet->mergeCells('Q5:V5');
+        $sheet->cells('Q5:V5', function($cells){
+            $cells->setBackground('#4a148c');
+            $cells->setFontColor("#FFFFFF");
+            $cells->setFontWeight("bold");
+        // $cells->setValignment('center');
+            $cells->setAlignment('center');
+        });                                
+        $itemsHeader = ["SB Min", 
+                        "SB 25P", 
+                        "SB Prom", 
+                        "SB Med", 
+                        "SB 75P.", 
+                        "SB Max",
+                        "BA Min", 
+                        "BA 25P", 
+                        "BA Prom", 
+                        "BA Med", 
+                        "BA 75P.", 
+                        "BA Max",
+                        "TEA Min", 
+                        "TEA 25P", 
+                        "TEA Prom", 
+                        "TEA Med", 
+                        "TEA 75P.", 
+                        "TEA Max",
+                    ];
+        $cargoHeader = ["Cargo Company", "Oficial", "Ocupantes", "Casos"];
+        foreach ($itemsHeader as $key => $value) {
+            array_push($cargoHeader, $value);
+        }
+            
+        $sheet->row(6, $cargoHeader); 
+
+        $sheet->cells('A6:V6', function($cells){
+            $cells->setBackground('#a7ffeb');
+        });
+
     }
 }

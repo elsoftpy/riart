@@ -13,6 +13,7 @@
 
 Route::get('/', 'PollController@home')->name('home.page');
 Route::get('/home', 'HomeController@index')->name('home');
+
 // Languages
 Route::get('lang/{lang}', ['as' => 'lang.switch', 'uses' => 'LanguageController@switchLang']);
 
@@ -65,8 +66,6 @@ Route::group(["middleware"=>"auth"], function(){
 
 
 	Route::resource('usuarios', 'UsuariosController');
-
-	//Route::get('encuestas_report/{id}', 'EncuestasController@report' )->name('encuestas.report');
 
 	Route::post('preview', [
 				'uses'=>'EncuestasController@preview',
@@ -149,6 +148,7 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('admin_reportes_filter/cargos', 'Admin\ReportController@filterCargos')->name('admin.reporte.filter.cargos');
 	Route::post('admin_reportes_filter/periodos', 'Admin\ReportController@getPeriodosEmpresa')->name('admin.reporte.filter.periodos');
 	Route::post('admin_reportes_excel/niveles', 'ReporteController@nivelReportClubExcel')->name('reportes.nivelesClubExcel');	
+	Route::get('admin_reportes_excel/update_table', 'Admin\ReportController@updateTable')->name('reportes.update_niveles_table');
 	Route::post('admin_reportes_excel/cargos', 'ReporteController@cargosReportExcel')->name('reportes.cargosExcel');	
 	
 	Route::post('admin_ficha/contar_emergentes', 'FichasController@countEmergentes')->name('admin.ficha.contar');

@@ -8,7 +8,7 @@
 	        <div class="content">
 				<form class="col s12" action="{{route('reportes.nivelesClubExcel')}}" method="POST">
 					<div class="row">
-						<div class="input-field col s6">
+						<div class="input-field col s4">
 							<select id="rubro_id"  name="rubro_id">
 								@foreach($rubros as $id => $descripcion)
 									<option value = {{$id}}>{{$descripcion}}</option>
@@ -16,13 +16,19 @@
 							</select>
 							<label for="rubro_id" class="active">Rubro</label>
 						</div>																	
-						<div class="input-field col s6">
+						<div class="input-field col s4">
 							<select id="periodo"  name="periodo">
 								@foreach($periodos as $id => $descripcion)
 									<option value = {{$id}}>{{$descripcion}}</option>
 								@endforeach
 							</select>
 							<label for="periodo" class="active">Periodo</label>
+						</div>
+						<div class="input-field col s4">
+							<a href="{{route('reportes.update_niveles_table')}}" class="btn waves-effect waves-light" id="actulizar">
+								Actualizar Tabla
+								<i class="material-icons left">update</i>
+							</a>
 						</div>																	
 					</div>
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
@@ -33,6 +39,10 @@
 	        </div>
 		</div>
 	</div>
+	@if($toast)
+		<div id="toast"></div>
+	@endif
+
 @stop
 @push('scripts')
 	<script type="text/javascript">
@@ -59,6 +69,11 @@
 			);
 		});
 
-		
+		$("#actualizar").click(function(e){
+			e.preventDefault();
+		});
+		if($("#toast").length > 0){
+			M.toast({html: 'Tabla Actualizada'});	
+		}
 	</script>
 @endpush

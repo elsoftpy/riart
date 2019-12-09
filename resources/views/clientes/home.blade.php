@@ -59,9 +59,9 @@
 					                {{ method_field('PUT') }}
 								</form>
 								@if ($dbEmpresa->sub_rubro_id == 25)
-								<a href="#" class="btn waves-light waves-effect blue white-text" style="margin-bottom: 1em;" id="select_encuesta_esp">
-									<i class="material-icons left">dashboard</i>Reporte Especial
-								</a>
+									<a href="#" class="btn waves-light waves-effect blue white-text" style="margin-bottom: 1em;" id="select_encuesta_esp">
+										<i class="material-icons left">dashboard</i>Reporte Especial
+									</a>
 								@endif
                     		</td>
                 		</tr>

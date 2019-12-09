@@ -1150,7 +1150,7 @@ trait ReportTrait{
                                                        $item['gratificacion']+
                                                        $item['aguinaldo'];
                 return $item;
-            });   
+            }); 
             $efectivoMin = $detalle->pluck('efectivo_anual_garantizado')->min();
             $efectivoMax = $detalle->pluck('efectivo_anual_garantizado')->max();
             $efectivoProm = $detalle->pluck('efectivo_anual_garantizado')->avg();
@@ -1297,7 +1297,9 @@ trait ReportTrait{
             $beneficiosMed = $this->median($beneficiosResto);
             $beneficios25Per = $this->percentile(25, $beneficiosResto);
             $beneficios75Per = $this->percentile(75, $beneficiosResto);
-
+            
+           // dd($detalle);            
+            
             $this->pusher(  $collection, 
                             $countCasosBeneficios, 
                             Lang::get('reportReport.concept_total_benefits'),
@@ -1310,7 +1312,7 @@ trait ReportTrait{
                             $dbClienteEnc->beneficios_resto, 
                             $segmento, 
                             $dbCargo);
-            
+
             //Aguinaldo Impactado
             $aguinaldoImpMin = 0;
             $aguinaldoImpMax = 0;
@@ -1321,13 +1323,15 @@ trait ReportTrait{
             $aguinaldoImpEmpresa = 0;
 
             $detalle = $detalle->map(function($item){
-                $item['aguinaldo_impactado'] = (($item['salario_base'] * 12) + 
-                                                $item['gratificacion'] + 
-                                                $item['bono_anual'] +
-                                                $item['adicionales_resto'])/12;
+                $aguinaldoImp = (($item['salario_base'] * 12) + 
+                                  $item['gratificacion'] + 
+                                  $item['bono_anual'] +
+                                  $item['adicionales_resto'])/12;
+                $item['aguinaldo_impactado'] = $aguinaldoImp;
+                
                 return $item;
             });                                                
-
+            
             $aguinaldoImpMin = $detalle->pluck('aguinaldo_impactado')->min();
             $aguinaldoImpMax = $detalle->pluck('aguinaldo_impactado')->max();
             $aguinaldoImpProm = $detalle->pluck('aguinaldo_impactado')->avg();
@@ -1359,7 +1363,7 @@ trait ReportTrait{
             //Total Compensación anual
             $detalle = $detalle->map(function($item){
                 $item['total_comp_anual'] = $item['efectivo_total_anual'] +
-                                            $item['beneficios_resto'] * 12;
+                                            $item['beneficios_resto'];
                 return $item;
             });
             $totalCompAnualMin = $detalle->pluck('total_comp_anual')->min();
@@ -2384,8 +2388,9 @@ trait ReportTrait{
         $dbEncuestadas = Cabecera_encuesta::where('periodo', $periodo)
                                           ->where('rubro_id', $rubro)
                                           ->get();
-
+        
         $encuestadasIds = $dbEncuestadas->pluck("id");  // Ids de las encuestas para where in
+
         // conteo de encuestas según origen
         $dbNacionales = 0;
         $dbInternacionales = 0;
@@ -2745,6 +2750,7 @@ trait ReportTrait{
 
         // Recuperamos los datos de las encuestas
         $dbDetalle = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasIds)->get();
+
         // Datos de la encuesta llenada por el cliente
         $dbClienteEnc = $dbDetalle->where('cabecera_encuesta_id', $dbEncuesta->id)->first();
         if(empty($dbClienteEnc)){

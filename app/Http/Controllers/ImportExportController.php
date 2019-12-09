@@ -288,10 +288,6 @@ class ImportExportController extends Controller
                   
                     $reader->each(function($row){           
                         
-                        if(!$row->id_encuesta){
-                            dd($row->getRowNumber());
-                        }       
-                  
                         $encuesta = trim($row->id_encuesta);
                         $encCargoId = trim($row->id_cargo_cliente);
                         $cargoCliente = Encuestas_cargo::find($encCargoId);

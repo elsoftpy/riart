@@ -5,6 +5,12 @@
 		<div class="col l4">
 			<a href="{{ route('cargos.create') }}" class="btn waves-effect waves-light lighten-1 white-text"><i class="material-icons left">add</i>Cargo</a>
 		</div>
+		<form id="excel_form" action="{{ route('cargos.excel') }}" method="POST">	
+			{{ csrf_field() }}
+			<button class="btn waves-effect waves-light lighten-1 white-text" type="submit" name="submit_excel" id="btn_excel">
+				<i class="material-icons left">cloud_download</i>Excel
+			</button>
+		</form>	
 	</div>	
 		<div class="row">
 			<div class="browser-window">
@@ -89,5 +95,7 @@
 				return false;
 			}
 		}
+
+		
 	</script>
 @endpush

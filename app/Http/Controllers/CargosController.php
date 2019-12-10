@@ -10,7 +10,10 @@ use App\Cargos_rubro;
 use App\Area;
 use App\Nivel;
 use App\Rubro;
+use Carbon\Carbon;
+use PHPExcel_Worksheet_Drawing;
 use flash;
+use Excel;
 use DB;
 
 class CargosController extends Controller
@@ -143,6 +146,51 @@ class CargosController extends Controller
             $cargo = Cargo::find($request->id);
         }
         return $cargo->detalle;
+    }
+
+    public function excel(Request $request){
+        
+        $now = Carbon::now();
+        $filename = "cargos_".$now->format('diYHms');
+        $cargos = DB::table('cargos')
+                    ->leftJoin('areas', 'cargos.area_id', '=', 'areas.id')
+                    ->leftJoin('niveles', 'cargos.id', '=', 'niveles.id')
+                    ->leftJoin('cargos_en', 'cargos.id', '=', 'cargos_en.id')
+                    ->select(DB::raw(
+                                    'cargos.id, 
+                                    cargos.descripcion nombre_cargo,
+                                    cargos.detalle descripcion, 
+                                    cargos.area_id,
+                                    areas.descripcion area,
+                                    cargos.nivel_id, 
+                                    niveles.descripcion nivel, 
+                                    cargos_en.descripcion cargo_ingles, 
+                                    cargos_en.detalle detalle_ingles'
+                                    ))
+                    ->get();
+        $data = array();
+        foreach ($cargos as $cargo) {
+            $data[] = (array)$cargo;  
+        };
+        
+        Excel::create($filename, function($excel) use($data) {
+            $excel->sheet("Cargos", function($sheet) use($data){
+                $objDrawing = new PHPExcel_Worksheet_Drawing;
+                $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
+                $objDrawing->setCoordinates('A1');
+                $objDrawing->setWidthAndHeight(304,60);
+                $objDrawing->setWorksheet($sheet);     
+
+                $sheet->cells('A5:I5', function($cells){
+                    $cells->setBackground('#00897b');
+                    $cells->setFontColor("#FFFFFF");
+                    $cells->setFontWeight("bold");
+                // $cells->setValignment('center');
+                    $cells->setAlignment('center');
+                });
+                $sheet->fromArray($data, null, 'A5');
+            });
+        })->export('xlsx');
     }
 
 

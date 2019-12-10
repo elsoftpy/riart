@@ -25,6 +25,7 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::resource('empresas', 'EmpresasController');
 
 	Route::post('cargos_detalle', "CargosController@getDetalle")->name('cargos.detalle');
+	Route::post('cargos_excel', 'CargosController@excel')->name('cargos.excel');
 	Route::resource('cargos', 'CargosController');
 
 	Route::resource('cargos_clientes', 'CargosClientesController');

@@ -570,7 +570,8 @@ trait ReportTrait{
                 $item['aguinaldo_impactado'] = (($item['salario_base'] * 12) + 
                                                 $item['gratificacion'] + 
                                                 $item['bono_anual'] +
-                                                $item['adicionales_bancos'])/12;
+                                                $item['adicionales_bancos']+
+                                                $item['comision'] * 12)/12;
                 return $item;
             });                                                
            
@@ -608,6 +609,7 @@ trait ReportTrait{
                                              $item['gratificacion'] + 
                                              $item['bono_anual'] +
                                              $item['adicionales_bancos']+
+                                             $item['comision'] *12 +
                                              $item['aguinaldo'];
                 return $item;
             });                                                
@@ -985,6 +987,7 @@ trait ReportTrait{
                 $item['aguinaldo_impactado'] = (($item['salario_base'] * 12) + 
                                                 $item['gratificacion'] + 
                                                 $item['bono_anual'] +
+                                                $item["comision"] * 12 +
                                                 $item['adicionales_navieras'])/12;
                 return $item;
             });                                                
@@ -1256,6 +1259,7 @@ trait ReportTrait{
             $detalle = $detalle->map(function($item){
                 $item['efectivo_total_anual'] = $item['efectivo_anual_garantizado'] +
                                                 $item['adicionales_resto']+
+                                                $item['comision'] * 12 +
                                                 $item['bono_anual'];
                 return $item;
             });                                                
@@ -1326,6 +1330,7 @@ trait ReportTrait{
                 $aguinaldoImp = (($item['salario_base'] * 12) + 
                                   $item['gratificacion'] + 
                                   $item['bono_anual'] +
+                                  $item['comision'] * 12 +
                                   $item['adicionales_resto'])/12;
                 $item['aguinaldo_impactado'] = $aguinaldoImp;
                 
@@ -2435,6 +2440,7 @@ trait ReportTrait{
         $countCasos = $dbDetalle->where('cantidad_ocupantes', '>', '0')
                                 ->unique('cabecera_encuesta_id')
                                 ->count();
+
         $countOcupantes = $dbDetalle->sum('cantidad_ocupantes');
         $countCasosGratif = $dbDetalle->where('cantidad_ocupantes', '>', '0')
                                       ->where('gratificacion', '>', '0')

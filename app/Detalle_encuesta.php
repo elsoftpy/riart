@@ -104,7 +104,7 @@ class Detalle_encuesta extends Model
 	public function getAdicionalesBancosAttribute(){
 		$adicionales = $this->fallo_caja * 12 +
 					   $this->fallo_caja_ext * 12 +
-					   $this->comision * 12 +
+					   //$this->comision * 12 +
 					   $this->gratificacion_contrato * 12  +
 					   $this->adicional_nivel_cargo * 12 +
 					   $this->adicional_titulo * 12;
@@ -114,7 +114,7 @@ class Detalle_encuesta extends Model
 	public function getAdicionalesRestoAttribute(){
 		$adicionales = $this->fallo_caja * 12 +
 					   $this->fallo_caja_ext * 12 +
-					   $this->comision * 12 +
+					   //$this->comision * 12 +
 					   $this->gratificacion_contrato * 12  +
 					   $this->adicional_nivel_cargo * 12 +
 					   $this->adicional_titulo * 12;
@@ -126,7 +126,7 @@ class Detalle_encuesta extends Model
 	public function getAdicionalesNavierasAttribute(){
 		$adicionales = $this->fallo_caja * 12 +
 					   $this->fallo_caja_ext * 12 +
-					   $this->comision * 12 +
+					   //$this->comision * 12 +
 					   $this->gratificacion_contrato * 12  +
 					   $this->adicional_nivel_cargo * 12 +
 					   $this->adicional_titulo * 12 +

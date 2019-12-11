@@ -131,6 +131,8 @@ class ReportController extends Controller
 
     public function updateTable(){
 
+        ini_set('max_execution_time', 0);
+
         $rows = DB::delete('delete from detalle_encuestas_niveles');
 
         $sql = "INSERT INTO detalle_encuestas_niveles
@@ -140,7 +142,7 @@ class ReportController extends Controller
                             e.incluir, d.cantidad_ocupantes, em.id empresa_id, em.descripcion empresa,
                             d.salario_base, d.bono_anual, d.aguinaldo, d.gratificacion, 
                             (d.salario_base + d.aguinaldo + d.gratificacion) efectivo_anual_garantizado,
-                            (d.salario_base + d.aguinaldo + d.gratificacion + d.bono_anual +
+                            (d.salario_base * 12 + d.aguinaldo + d.gratificacion + d.bono_anual +
                             ((ifnull(d.fallo_caja, 0) + ifnull(d.fallo_caja_ext, 0) + 
                             ifnull(d.gratificacion_contrato, 0) + ifnull(adicional_nivel_cargo, 0) +
                             ifnull(adicional_titulo, 0) + ifnull(d.comision, 0))*12)) total_efectivo_anual

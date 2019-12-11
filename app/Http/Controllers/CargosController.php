@@ -154,7 +154,7 @@ class CargosController extends Controller
         $filename = "cargos_".$now->format('diYHms');
         $cargos = DB::table('cargos')
                     ->leftJoin('areas', 'cargos.area_id', '=', 'areas.id')
-                    ->leftJoin('niveles', 'cargos.id', '=', 'niveles.id')
+                    ->leftJoin('niveles', 'cargos.nivel_id', '=', 'niveles.id')
                     ->leftJoin('cargos_en', 'cargos.id', '=', 'cargos_en.id')
                     ->select(DB::raw(
                                     'cargos.id, 
@@ -168,6 +168,7 @@ class CargosController extends Controller
                                     cargos_en.detalle detalle_ingles'
                                     ))
                     ->get();
+
         $data = array();
         foreach ($cargos as $cargo) {
             $data[] = (array)$cargo;  

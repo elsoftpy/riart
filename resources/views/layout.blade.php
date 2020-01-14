@@ -34,8 +34,10 @@
           </ul>
           <ul id="dropdown2" class="dropdown-content">
             <li><a href="{{route('reset.form')}}">Cambiar Contraseña</a></li>
-            @if(Auth::user()->is_admin)
-              <li><a href="{{route('generate')}}">Generar contraseñas</a></li>
+            @if(Auth::check())
+              @if(Auth::user()->is_admin)
+                <li><a href="{{route('generate')}}">Generar contraseñas</a></li>
+              @endif
             @endif
             
           </ul>

@@ -163,6 +163,10 @@ Route::group(["middleware"=>"auth"], function(){
 
 	Route::resource('sub_rubros', 'SubRubrosController');
 
+	Route::get('tempdir', function(){
+		return sys_get_temp_dir (  );
+	});
+
 
 });
 

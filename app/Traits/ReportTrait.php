@@ -51,6 +51,7 @@ trait ReportTrait{
         $efectivoGarantizado = false;
         $salarioEmpresa = 0;
         $variableAnualEmp = 0;
+        
         foreach ($item as $key => $value) {
             switch ($value["Concepto"]) {
                 case "Comision":
@@ -80,6 +81,7 @@ trait ReportTrait{
                     break;
                 case Lang::get('reportReport.concept_annual_cash_total'):
                     $efectivoTotal = true;
+                    $efectivoTotalEmpresa = $value["Empresa"];
                     $this->cargador($value, $itemArray, false);
                     break;
                 
@@ -205,33 +207,45 @@ trait ReportTrait{
             // comparativo efectivo total anual
             if($itemArray[34] > 0){
                 $ratioSalBaseTotalEfectivoMin = round(($itemArray[4]*12)/$itemArray[34], 2);
+                $ratioSalEmpresaTotalEfectivoMin = round($efectivoTotalEmpresa/$itemArray[34], 2);
             }else{
                 $ratioSalBaseTotalEfectivoMin = 0;
+                $ratioSalEmpresaTotalEfectivoMin = 0;
             }
             if($itemArray[35] > 0){
                 $ratioSalBaseTotalEfectivo25 = round(($itemArray[5]*12)/$itemArray[35], 2);
+                $ratioSalEmpresaTotalEfectivo25 = round($efectivoTotalEmpresa/$itemArray[35], 2);
             }else{
                 $ratioSalBaseTotalEfectivo25 = 0;
+                $ratioSalEmpresaTotalEfectivo25 = 0;
             }
             if($itemArray[36] > 0){
                 $ratioSalBaseTotalEfectivoProm = round(($itemArray[6]*12)/$itemArray[36], 2);
+                $ratioSalEmpresaTotalEfectivoProm = round($efectivoTotalEmpresa/$itemArray[36], 2);
             }else{
                 $ratioSalBaseTotalEfectivoProm = 0;
+                $ratioSalEmpresaTotalEfectivoProm = 0;
             }
             if($itemArray[37] > 0){
                 $ratioSalBaseTotalEfectivoMed = round(($itemArray[7]*12)/$itemArray[37], 2);
+                $ratioSalEmpresaTotalEfectivoMed = round($efectivoTotalEmpresa/$itemArray[37], 2);
             }else{
                 $ratioSalBaseTotalEfectivoMed = 0;
+                $ratioSalEmpresaTotalEfectivoMed = 0;
             }
             if($itemArray[38] > 0){
                 $ratioSalBaseTotalEfectivo75 = round(($itemArray[8]*12)/$itemArray[38], 2);
+                $ratioSalEmpresaTotalEfectivo75 = round($efectivoTotalEmpresa/$itemArray[38], 2);
             }else{
                 $ratioSalBaseTotalEfectivo75 = 0;
+                $ratioSalEmpresaTotalEfectivo75 = 0;
             }
             if($itemArray[39] > 0){
                 $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[39], 2);
+                $ratioSalEmpresaTotalEfectivoMax = round($efectivoTotalEmpresa/$itemArray[39], 2);
             }else{
                 $ratioSalBaseTotalEfectivoMax = 0;
+                $ratioSalEmpresaTotalEfectivoMax = 0;
             }
             
             array_push( $itemArray, 
@@ -246,7 +260,14 @@ trait ReportTrait{
             $ratioSalBaseTotalEfectivoProm,
             $ratioSalBaseTotalEfectivoMed,
             $ratioSalBaseTotalEfectivo75,
-            $ratioSalBaseTotalEfectivoMax);            
+            $ratioSalBaseTotalEfectivoMax, 
+            $ratioSalEmpresaTotalEfectivoMin,
+            $ratioSalEmpresaTotalEfectivo25,
+            $ratioSalEmpresaTotalEfectivoProm,
+            $ratioSalEmpresaTotalEfectivoMed,
+            $ratioSalEmpresaTotalEfectivo75,
+            $ratioSalEmpresaTotalEfectivoMax,
+        );            
         }else{
 
             if($itemArray[10] > 0){
@@ -3724,8 +3745,9 @@ trait ReportTrait{
                 $cells->setAlignment('center');
             });
 
+
             $topeHeader = 10;
-            $rango = 'A6:BL6';
+            $rango = 'A6:BG6';
 
         }else{
             // Salario Efectivo Anual Garantizado
@@ -3830,8 +3852,21 @@ trait ReportTrait{
                 $cells->setAlignment('center');
             });
 
-            $topeHeader = 9;
-            $rango = 'A6:BF6';
+            // Total Efectivo Anual Empresa vs Mercado comp.
+            $sheet->cell('BG5', function($cell){
+                $cell->setValue('RATIO TOTAL EFECTIVO ANUAL EMPRESA / TOTAL EFECTIVO ANUAL MERCADO');
+            });
+            $sheet->mergeCells('BG5:BL5');
+            $sheet->cells('BG5:BL5', function($cells){
+                $cells->setBackground('#f57c00');
+                $cells->setFontColor("#FFFFFF");
+                $cells->setFontWeight("bold");
+            // $cells->setValignment('center');
+                $cells->setAlignment('center');
+            });
+
+            $topeHeader = 10;
+            $rango = 'A6:BL6';
         }
                
         $itemsHeader = array("Mínimo", "25 Perc.", "Promedio", "Mediana", "75 Perc.", "Máximo");

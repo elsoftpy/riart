@@ -1329,7 +1329,6 @@ class ReporteController extends Controller
                 $item->adicional_carga +
                 ( ( $item->fallo_caja + 
                 $item->fallo_caja_ext + 
-                $item->comision + 
                 $item->gratificacion_contrato + 
                 $item->adicional_nivel_cargo + 
                 $item->adicional_titulo) * 12);
@@ -1337,7 +1336,6 @@ class ReporteController extends Controller
             }elseif($rubro == 1){
                 $adicional = ( $item->fallo_caja + 
                 $item->fallo_caja_ext + 
-                $item->comision + 
                 $item->gratificacion_contrato + 
                 $item->adicional_nivel_cargo + 
                 $item->adicional_titulo) * 12;
@@ -1345,7 +1343,6 @@ class ReporteController extends Controller
             }else{
                 $adicional = ( $item->fallo_caja + 
                 $item->fallo_caja_ext + 
-                $item->comision + 
                 $item->gratificacion_contrato + 
                 $item->adicional_nivel_cargo + 
                 $item->adicional_titulo) * 12;
@@ -1359,6 +1356,7 @@ class ReporteController extends Controller
             }else{
                 $efectivoTotalAnual = $efectivoAnual + 
                                       $adicional + 
+                                      ( $item->comision * 12 ) +
                                       $item->bono_anual;
             }
             // Aguinaldo impactado
@@ -1366,16 +1364,19 @@ class ReporteController extends Controller
                 $aguinaldoImpactado = round( (  $item->salario_anual + 
                                                 $item->gratificacion + 
                                                 $adicional + 
+                                                ( $item->comision * 12 ) +
                                                 $item->bono_anual ) / 12, 0);
             }elseif($rubro == 4){
                 $aguinaldoImpactado = round( (  $item->salario_anual + 
                                                 $item->gratificacion + 
-                                                $adicional + 
+                                                $adicional +
+                                                ( $item->comision * 12 ) +
                                                 $item->bono_anual ) / 12, 0);
             }else{
                 $aguinaldoImpactado = round( (  $item->salario_anual + 
                                                 $item->gratificacion + 
                                                 $adicional + 
+                                                ( $item->comision * 12 ) +
                                                 $item->bono_anual ) / 12, 0);
             }
            

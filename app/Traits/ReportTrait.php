@@ -249,25 +249,25 @@ trait ReportTrait{
             }
             
             array_push( $itemArray, 
-            $compMinSal,
-            $comp25PercSal, 
-            $compPromSal, 
-            $compMedSal, 
-            $comp75PercSal, 
-            $compMaxSal, 
-            $ratioSalBaseTotalEfectivoMin,
-            $ratioSalBaseTotalEfectivo25,
-            $ratioSalBaseTotalEfectivoProm,
-            $ratioSalBaseTotalEfectivoMed,
-            $ratioSalBaseTotalEfectivo75,
-            $ratioSalBaseTotalEfectivoMax, 
-            $ratioSalEmpresaTotalEfectivoMin,
-            $ratioSalEmpresaTotalEfectivo25,
-            $ratioSalEmpresaTotalEfectivoProm,
-            $ratioSalEmpresaTotalEfectivoMed,
-            $ratioSalEmpresaTotalEfectivo75,
-            $ratioSalEmpresaTotalEfectivoMax,
-        );            
+                        $compMinSal,
+                        $comp25PercSal, 
+                        $compPromSal, 
+                        $compMedSal, 
+                        $comp75PercSal, 
+                        $compMaxSal, 
+                        $ratioSalBaseTotalEfectivoMin,
+                        $ratioSalBaseTotalEfectivo25,
+                        $ratioSalBaseTotalEfectivoProm,
+                        $ratioSalBaseTotalEfectivoMed,
+                        $ratioSalBaseTotalEfectivo75,
+                        $ratioSalBaseTotalEfectivoMax, 
+                        $ratioSalEmpresaTotalEfectivoMin,
+                        $ratioSalEmpresaTotalEfectivo25,
+                        $ratioSalEmpresaTotalEfectivoProm,
+                        $ratioSalEmpresaTotalEfectivoMed,
+                        $ratioSalEmpresaTotalEfectivo75,
+                        $ratioSalEmpresaTotalEfectivoMax,
+                    );            
         }else{
 
             if($itemArray[10] > 0){
@@ -377,7 +377,7 @@ trait ReportTrait{
                                 $segmento, 
                                 $dbCargo, 
                                 $muestraComision){
-        if($rubro == 1 ){ // Bancos
+        if($rubro == 1 || $rubro == 15 ){ // Bancos
             $salariosBase = $detalle->where('salario_base', '>', '0')->pluck('salario_base');
             $salarioMin = $salariosBase->min();
             $salarioMax = $salariosBase->max();

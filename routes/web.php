@@ -47,6 +47,10 @@ Route::group(["middleware"=>"auth"], function(){
 		'as'=> 'encuestas.clone'
 	]);
 
+	Route::get('clone_banca_nacional', 'EncuestasController@cloneBancosNacionales')->name('clonar.BancosNacionales');
+
+	Route::post('clone_banca_nacional', 'EncuestasController@clonarBancosNacionales')->name('clonar.BancosNacionalesAction');
+
 	Route::get('clone_bancard', 'EncuestasController@cloneBancard')->name('clonar.bancard');
 
 	Route::post('clone_bancard', 'EncuestasController@clonarBancard')->name('clonar.bancardAction');

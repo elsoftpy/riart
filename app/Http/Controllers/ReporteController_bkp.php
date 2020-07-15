@@ -196,7 +196,7 @@ class ReporteControllerBkp extends Controller
                 }else{
                     $cargos = 174;
                 }
-            }elseif($rubro == 1){
+            }elseif($rubro == 1 || $rubro == 15){
                 $cargos = 400;
             }elseif($rubro == 2){
                 $cargos = 172;
@@ -1400,7 +1400,7 @@ class ReporteControllerBkp extends Controller
                                 $segmento, 
                                 $dbCargo, 
                                 $muestraComision){
-        if($rubro == 1 ){ // Bancos
+        if($rubro == 1 || $rubro == 15){ // Bancos
             $salariosBase = $detalle->where('salario_base', '>', '0')->pluck('salario_base');
             $salarioMin = $salariosBase->min();
             $salarioMax = $salariosBase->max();

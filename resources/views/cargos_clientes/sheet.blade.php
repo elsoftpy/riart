@@ -20,7 +20,6 @@
 
 					<div class="row">
 						<div class="input-field col s12">
-							input.validate
 							<select name="area_id" id="area_id"> 
 						        <option value="" disabled selected>Elija una opción</option>
 						        @foreach($dbArea as $id=>$descripcion)	
@@ -300,13 +299,13 @@
 					<div class="row">
 						<div class="input-field col s12">
 							<select name="zona_id" id="zona_id"> 
-						      	<option value="" disabled selected>Elija una opción</option>
+						      	<option value="" disabled selected>@lang("cargosClientesEdit.select_label_choose")</option>
 						        @foreach($dbZona as $id=>$descripcion)	
 						        	<option value="{{$id}}">{{$descripcion}}</option>
 						        @endforeach
 
 						    </select>
-						    <label for="zona_id">Región</label><br>
+						    <label for="zona_id" class="active">@lang("cargosClientesEdit.form_label_region")</label><br>
 					    </div>
 					</div>
 					<div class="row">
@@ -329,7 +328,7 @@
 @push('scripts')
 	<script type="text/javascript">
 		$(document).ready(function() {
-   			 $('select').material_select();
+   			 $('select').select2();
 		});
 
 	 	$('#area_id').val('{{ $dbDetalle->area_id}}');
@@ -354,7 +353,7 @@
 	                                    .text(data[i].text));
 	          }
 
-	          selectModelos.material_select();
+	          selectModelos.select2();
 	        }
 	      );
 	    });

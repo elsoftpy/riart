@@ -473,4 +473,72 @@ class EncuestasController extends Controller
 
         return redirect()->route('clonar.industrial')->with('toast', $toast);
     }
+
+    public function cloneBancosNacionales()
+    {
+        return view('encuestas.clonar_bancos_nacional')->with('toast', false);
+    }
+
+    public function clonarBancosNacionales(Request $request){
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '500M');
+        $periodo = $request->periodo;
+
+        $encuestas = Cabecera_encuesta::where('periodo', $periodo)
+                                      ->where('rubro_id', 1)
+                                      ->whereIn('empresa_id', [1, 2, 5, 6, 8, 10, 53])
+                                      ->get();
+        foreach($encuestas as $encuesta){
+            $cabecera = $encuesta->replicate();
+            $cabecera->rubro_id = 12;
+
+            switch ($cabecera->empresa_id) {
+                case 1:
+                    $cabecera->empresa_id = 179;
+                    break;
+                case 2:
+                    $cabecera->empresa_id = 185;
+                    break;
+                case 5:
+                    $cabecera->empresa_id = 184;
+                    break;
+                
+                case 6:
+                    $cabecera->empresa_id = 180;
+                    break;
+                case 8:
+                    $cabecera->empresa_id = 183;
+                    break;
+                case 10:
+                    $cabecera->empresa_id = 182;
+                    break;
+                case 53:
+                    $cabecera->empresa_id = 181;
+                    break;
+                
+                default:
+                    $cabecera->empresa_id = 186;
+                    break;
+            }
+            $cabecera->save();
+            $encuestaCargo = $encuesta->encuestasCargo;
+            foreach($encuestaCargo as $cargo){
+                $newCargo = $cargo->replicate();
+                $newCargo->cabecera_encuesta_id = $cabecera->id;
+                $newCargo->save();
+                $detalle = $cargo->detalleEncuestas;
+                if($detalle){
+                    $newDetalle = $detalle->replicate();
+                    $newDetalle->cabecera_encuesta_id = $cabecera->id;
+                    $newDetalle->encuestas_cargo_id = $newCargo->id;
+                    $newDetalle->save();
+                }
+            }
+
+        }
+        
+        $toast = true;
+
+        return redirect()->route('clonar.bancard')->with('toast', $toast);
+    }
 }

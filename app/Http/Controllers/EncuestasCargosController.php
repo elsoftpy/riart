@@ -244,7 +244,7 @@ class EncuestasCargosController extends Controller
         //$dbCargos->prepend("Elija una opción", "0");
         $index = 0;
         $dbData = $dbData->map(function($item) use($dbCargos, $index){
-            $cargos = '';
+            $cargos = '<option value="">No homologado aun...</option>';
             foreach ($dbCargos as $id => $cargo) {
                 //dd($cargo, $item);
                 if($id == $item->cargo_id ){

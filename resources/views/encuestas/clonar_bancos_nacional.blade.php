@@ -3,10 +3,10 @@
 	<div class="row">
 		<div class="browser-window">
 			<div class="top-bar">
-	          <h4>Clonar Periodo Bancard</h4>
+	          <h4>Clonar Periodo Banca Nacional</h4>
 	        </div>
 	        <div class="content">
-				<form class="col s12" id="realForm" action="{{route('clonar.bancos.nacional.action')}}" method="POST">
+				<form class="col s12" id="realForm" action="{{route('clonar.bancos.nacionales.action')}}" method="POST">
 					<div class="row">
 						<div class="input-field col s6">
 							<input type="text" class="validate" id="periodo" name="periodo"/>

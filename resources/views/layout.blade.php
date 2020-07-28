@@ -197,6 +197,9 @@
                       </div>
                       <div class="row">
                         <ul class="right hide-on-med-and-down">
+                        <li>
+                            <a href="{{ route('clonar.bancos.nacionales') }}">Clonar Banca Nac.</a>
+                          </li>
                           <li>
                             <a href="{{ route('clonar.industrial') }}">Clonar Ind.</a>
                           </li>

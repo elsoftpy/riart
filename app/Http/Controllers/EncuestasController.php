@@ -488,9 +488,10 @@ class EncuestasController extends Controller
                                       ->where('rubro_id', 1)
                                       ->whereIn('empresa_id', [1, 2, 5, 6, 8, 10, 53])
                                       ->get();
+
         foreach($encuestas as $encuesta){
             $cabecera = $encuesta->replicate();
-            $cabecera->rubro_id = 12;
+            $cabecera->rubro_id = 15;
 
             switch ($cabecera->empresa_id) {
                 case 1:

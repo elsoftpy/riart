@@ -191,7 +191,12 @@ class BeneficiosAdminController extends Controller
                                 $tituloMult = $titulo.'('.$i.')';
                                 $item->$tituloMult = null;
                             }else{
-                                $item->$titulo = $respuesta->beneficiosOpcion->opcion;
+                                if(!$respuesta->beneficiosOpcion){
+                                    $item->$titulo = "N/A";
+                                }else{
+                                    $item->$titulo = $respuesta->beneficiosOpcion->opcion;
+                                }
+                                
                             }
                        }
                    }

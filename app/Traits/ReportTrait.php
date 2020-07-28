@@ -248,6 +248,7 @@ trait ReportTrait{
                 $ratioSalEmpresaTotalEfectivoMax = 0;
             }
             
+            // esto debe estar en la línea 251
             array_push( $itemArray, 
                         $compMinSal,
                         $comp25PercSal, 
@@ -266,7 +267,7 @@ trait ReportTrait{
                         $ratioSalEmpresaTotalEfectivoProm,
                         $ratioSalEmpresaTotalEfectivoMed,
                         $ratioSalEmpresaTotalEfectivo75,
-                        $ratioSalEmpresaTotalEfectivoMax,
+                        $ratioSalEmpresaTotalEfectivoMax
                     );            
         }else{
 

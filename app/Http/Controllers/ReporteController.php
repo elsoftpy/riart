@@ -327,7 +327,19 @@ class ReporteController extends Controller
             $per = Session::get('periodo');
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw("periodo = '". $per."'")->first();
         }else{
-            $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')->first();            
+            $dbFicha = Ficha_dato::activa()
+                                 ->where('rubro_id', $dbEmpresa->rubro_id)
+                                 ->first();
+            if($dbFicha){
+                $periodo = $dbFicha->periodo;
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                               ->where('periodo', $periodo)->first();    
+            }else{
+                $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
+                                               ->whereRaw('id = (select max(id) from cabecera_encuestas where empresa_id = '. $dbEmpresa->id.')')
+                                               ->first();
+            }
+            
         }
         $reporteEspecial = Session::get('especial');
         // periodo de la encuesta actual (semestral para navieras)

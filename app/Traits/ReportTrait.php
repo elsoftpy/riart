@@ -3396,6 +3396,7 @@ trait ReportTrait{
     }
 
     public function excelClubCargos($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro, $filename, $cubo = false){
+
         Excel::create($filename, function($excel) use($detalleUniverso, $detalleNacional, $detalleInternacional, $rubro, $cubo) {
             // hoja universo
             $excel->sheet("universo", function($sheet) use($detalleUniverso, $rubro, $cubo){       

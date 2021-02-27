@@ -45,7 +45,7 @@
 			</div>
 		</div>		
 		<div class="col s12">
-			<h4>Club {!! $club !!}</h4>
+			<h4> {!! $club !!}</h4>
 			<div class="hoverable bordered">
 				<ul class="collapsible" data-collapsible="expandable">
 					@foreach ($niveles as $element)

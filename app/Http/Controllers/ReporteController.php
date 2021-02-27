@@ -1241,6 +1241,7 @@ class ReporteController extends Controller
             $request->request->add(["cargo_id"=> $cargo->cargo_id, "empresa_id" => $empresa]);
             // procesamos el reporte
             $respuesta = $this->cargoReportAll($request, "clubExcel", true);
+            
             $filename = 'Cubo_Resultados_'.$periodo;
 
             // preparamos los datos para el array final del cargo
@@ -1252,6 +1253,7 @@ class ReporteController extends Controller
             // por cada item del detalle
             //$cantConceptos = 0;
             foreach ($respuesta as $key => $item) {
+
                 switch ($key) {
                     case 'detalle_universo':
                         $this->CargaDetalle($item, $itemArray);            

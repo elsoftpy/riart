@@ -46,12 +46,13 @@ trait ReportTrait{
             return $count;
     }
     public function cargaDetalle($item, &$itemArray){
+        
         $variableAnual = false;
         $efectivoTotal = false;
         $efectivoGarantizado = false;
         $salarioEmpresa = 0;
         $variableAnualEmp = 0;
-        
+        //dd($item, $itemArray);
         foreach ($item as $key => $value) {
             switch ($value["Concepto"]) {
                 case "Comision":
@@ -180,7 +181,13 @@ trait ReportTrait{
                 $ratioSalBaseTotalEfectivo75 = 0;
             }
             if($itemArray[39] > 0){
-                $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[39], 2);
+                
+                if($itemArray[9] > 0){
+                    $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[39], 2);
+                }else{
+                    $ratioSalBaseTotalEfectivoMax = 0;
+                }
+                
             }else{
                 $ratioSalBaseTotalEfectivoMax = 0;
             }
@@ -668,13 +675,14 @@ trait ReportTrait{
         }elseif ($rubro == 4) {  // Navieras
             // Salario Base
             $salariosBase = $detalle->where('salario_base', '>', '0')->pluck('salario_base');
+            
             $salarioMin = $salariosBase->min();
             $salarioMax = $salariosBase->max();
             $salarioProm = $salariosBase->avg();
             $salarioMed = $this->median($salariosBase);
             $salario25Per = $this->percentile(25,$salariosBase);
             $salario75Per = $this->percentile(75, $salariosBase);
-
+            //dd($salariosBase);
             $this->pusher(  $collection, 
                             $countCasos, 
                             Lang::get('reportReport.concept_salary'),
@@ -686,7 +694,9 @@ trait ReportTrait{
                             round($salario75Per, 0),
                             $dbClienteEnc->salario_base,
                             $segmento, 
-                            $dbCargo);        
+                            $dbCargo);   
+                            
+                            
             // Salario Base Anual     
             $salariosBaseAnual = $salariosBase->map(function($item){
                 return $item * 12;
@@ -976,6 +986,7 @@ trait ReportTrait{
 
             //Beneficios
             $beneficiosNavieras = $detalle->where('beneficios_navieras', '>', '0')->pluck('beneficios_navieras');
+            
             $beneficiosMin = $beneficiosNavieras->min();
             $beneficiosMax = $beneficiosNavieras->max();
             $beneficiosProm = $beneficiosNavieras->avg();
@@ -992,7 +1003,7 @@ trait ReportTrait{
                             round($beneficiosMed, 0), 
                             round($beneficios25Per, 0),
                             round($beneficios75Per, 0),
-                            $dbClienteEnc->beneficios_bancos,
+                            $dbClienteEnc->beneficios_navieras,
                             $segmento, 
                             $dbCargo);
 
@@ -2438,6 +2449,7 @@ trait ReportTrait{
                                             ->where('cargo_id', $cargo)
                                             ->where('incluir', 1)
                                             ->get();
+        
 
         $dbCargosEncuestasNac = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasNacIds)->where('cargo_id', $cargo)->where('incluir', 1)->get();
         $dbCargosEncuestasInter = Encuestas_cargo::whereIn('cabecera_encuesta_id', $encuestadasInterIds)->where('cargo_id', $cargo)->where('incluir', 1)->get();
@@ -2448,6 +2460,7 @@ trait ReportTrait{
 
         // Recuperamos los datos de las encuestas
         $dbDetalle = Detalle_encuesta::whereIn('encuestas_cargo_id', $cargosEncuestasIds)->get();
+        
         // Datos de la encuesta llenada por el cliente
         $dbClienteEnc = $dbDetalle->where('cabecera_encuesta_id', $dbEncuesta->id)->first();
         if(empty($dbClienteEnc)){
@@ -2462,7 +2475,7 @@ trait ReportTrait{
         $countCasos = $dbDetalle->where('cantidad_ocupantes', '>', '0')
                                 ->unique('cabecera_encuesta_id')
                                 ->count();
-
+        
         $countOcupantes = $dbDetalle->sum('cantidad_ocupantes');
         $countCasosGratif = $dbDetalle->where('cantidad_ocupantes', '>', '0')
                                       ->where('gratificacion', '>', '0')

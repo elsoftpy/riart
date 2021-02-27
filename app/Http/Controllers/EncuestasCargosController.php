@@ -236,7 +236,7 @@ class EncuestasCargosController extends Controller
     public function getCargos($id){
         ini_set('memory_limit', '1020M');
         ini_set('max_execution_time', 300);
-        $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $id)->get();
+        $dbData = Encuestas_cargo::where('cabecera_encuesta_id', $id)->with('detalleEncuestas')->get();
         $dbEncuesta = Cabecera_encuesta::find($id);
         $dbEmpresa = $dbEncuesta->empresa->descripcion;
         $dbPeriodo = $dbEncuesta->periodo;

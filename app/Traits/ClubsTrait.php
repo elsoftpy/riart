@@ -29,6 +29,10 @@ trait ClubsTrait{
                 case 8:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club de Empresas de Consumo Masivo"; 
+                    break;
+                case 16:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "AMX Especial"; 
                     break;                   
                 default:
                     $imagen = "images/caratula-bancos.PNG";
@@ -64,6 +68,10 @@ trait ClubsTrait{
                 case 14:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club Industrial Especial";
+                    break;
+                case 16:
+                    $imagen = "images/caratula-bancos.PNG";
+                    $club = "AMX Especial"; 
                     break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";

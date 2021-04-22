@@ -125,6 +125,7 @@ class ReporteController extends Controller
     }
 
     public function ficha($id){
+        
         $reporteEspecial = Session::get('especial');
         $dbEmpresa = $id;
         $empresa = Empresa::find($id);
@@ -1279,7 +1280,7 @@ class ReporteController extends Controller
     
 
     public function resultados(){
-        $dbData = Cabecera_encuesta::get();
+        $dbData = Cabecera_encuesta::with('rubro')->get();
         $dbData = $dbData->map(function($item){
             $rubro = $item->rubro->descripcion;
             $periodo = $item->periodo;
@@ -1312,19 +1313,27 @@ class ReporteController extends Controller
                          monto_comedor_interno, monto_curso_idioma, cobertura_curso_idioma, tipo_clase_idioma, 
                          monto_post_grado, cobertura_post_grado, monto_celular_corporativo, monto_vivienda, 
                          monto_colegiatura_hijos, condicion_ocupante
-                    FROM detalle_encuestas d, encuestas_cargos e, cabecera_encuestas c, cargos ca, rubros r, 
-                         areas a, niveles n, empresas em, niveles n1, areas a1
+                         FROM cabecera_encuestas c
+               left join detalle_encuestas d 
+                      on d.cabecera_encuesta_id = c.id 
+               left join encuestas_cargos e
+               		  on e.id = d.encuestas_cargo_id 
+               left join cargos ca
+               		  on ca.id = e.cargo_id 
+               left join rubros r
+               		  on r.id = c.rubro_id 
+               left join areas a
+               		  on a.id = d.area_id 
+               left join niveles n
+               		  on n.id = d.nivel_id 
+               left join empresas em 
+                      on em.id = c.empresa_id 
+               left join niveles n1
+                      on n1.id = ca.nivel_id 
+               left join areas a1
+               		  on a1.id = ca.area_id 
                    where c.periodo = :periodo
                      and c.rubro_id = :rubro
-                     and c.id = d.cabecera_encuesta_id
-                     and d.encuestas_cargo_id = e.id
-                     and e.cargo_id = ca.id
-                     and c.rubro_id = r.id
-                     and d.area_id = a.id
-                     and d.nivel_id = n.id
-                     and c.empresa_id = em.id
-                     and ca.nivel_id = n1.id
-                     and ca.area_id = a1.id
                    order by 1";
         $dbDetalle = DB::select($query, ["periodo" => $periodo, "rubro" => $rubro]);
         $detalle = array();

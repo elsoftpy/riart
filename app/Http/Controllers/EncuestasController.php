@@ -17,7 +17,7 @@ class EncuestasController extends Controller
      */
     public function index()
     {
-        $dbData = Cabecera_encuesta::all();
+        $dbData = Cabecera_encuesta::with('empresa')->get();
 
         return view('encuestas.list')->with('dbData', $dbData);
     }

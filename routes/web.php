@@ -62,6 +62,11 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('clone_industrial', 'EncuestasController@cloneIndustrial')->name('clonar.industrial');
 
 	Route::post('clone_industrial', 'EncuestasController@clonarIndustrial')->name('clonar.industrialAction');
+
+	Route::get('clone_cofco', 'CloneController@cloneCofcoForm')->name('clonar.cofco.form');
+	Route::post('clone_cofco', 'CloneController@cloneCofco')->name('clonar.cofco');
+	Route::get('clone_amx', 'CloneController@cloneAMXForm')->name('clonar.amx.form');
+	Route::post('clone_amx', 'CloneController@cloneAMX')->name('clonar.amx');
 	
 	Route::post('encuestas_new', [
 		'uses'=> 'EncuestasController@storeNew', 

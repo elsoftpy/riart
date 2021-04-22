@@ -69,6 +69,12 @@
                     <a href="{{ route('encuestas.index') }}">Encuestas</a>
                   </li>
                   <li>
+                    <a href="{{ route('import_export.index') }}">Clonar AMX</a>
+                  </li>
+                  <li>
+                    <a href="{{ route('import_export.index') }}">Clonar Cofco</a>
+                  </li>
+                  <li>
                     <a href="{{ route('import_export.index') }}">Clonar Bancard</a>
                   </li>
                   <li>
@@ -197,7 +203,13 @@
                       </div>
                       <div class="row">
                         <ul class="right hide-on-med-and-down">
-                        <li>
+                          <li>
+                            <a href="{{ route('clonar.amx.form') }}">Clonar AMX</a>
+                          </li>
+                          <li>
+                            <a href="{{ route('clonar.cofco.form') }}">Clonar Cofco</a>
+                          </li>
+                          <li>
                             <a href="{{ route('clonar.bancos.nacionales') }}">Clonar Banca Nac.</a>
                           </li>
                           <li>

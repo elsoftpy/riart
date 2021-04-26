@@ -76,6 +76,7 @@ trait ClubsTrait{
                 case 17:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "COFCO Especial";
+                    break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club de Bancos";

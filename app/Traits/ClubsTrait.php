@@ -70,7 +70,7 @@ trait ClubsTrait{
                     $club = "Club Industrial Especial";
                     break;
                 case 16:
-                    $imagen = "images/caratula-bancos.PNG";
+                    $imagen = "images/caratula-amx.png";
                     $club = "AMX Especial"; 
                     break;
                 case 17:

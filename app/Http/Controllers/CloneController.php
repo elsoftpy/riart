@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Cabecera_encuesta;
+use App\Empresa;
+use App\Rubro;
 use Illuminate\Http\Request;
 
 class CloneController extends Controller
@@ -281,7 +283,72 @@ class CloneController extends Controller
         return redirect()->route('clonar.amx.form')->with('toast', $toast);
     }
 
+    public function index(){
 
+        $rubros = Rubro::pluck('descripcion', 'id');
+        $empresas = Empresa::pluck('descripcion', 'id');
+
+        return view('encuestas.clone.index')->with('rubros', $rubros)
+                                            ->with('empresas', $empresas);
+                                            
+
+    }
+
+    public function cloneClub(Request $request)
+    {
+        ini_set('max_execution_time', 0);
+        ini_set('memory_limit', '1000M');
+        if(!$request->empresas){
+            return redirect()->route('clone.error.missing', 'Empresas origen y destino');
+        }
+
+        if(!$request->rubro_id){
+            return redirect()->route('clone.error.missing', 'CLUB DESTINO');
+        }
+
+        if(!$request->periodo){
+            return redirect()->route('clone.error.missing', 'PERIODO');
+        }
+
+        $empresas = json_decode($request->empresas);
+        foreach ($empresas as $empresa) {
+            //dd($empresa);
+            $encuesta = Cabecera_encuesta::find($empresa->encuesta);
+            if($encuesta){
+                $cabecera = $encuesta->replicate();
+                $cabecera->rubro_id = $request->rubro_id;
+                $cabecera->periodo = $request->periodo;
+                $cabecera->empresa_id = $empresa->id;
+                $cabecera->save();
+                $encuestaCargo = $encuesta->encuestasCargo;
+                foreach($encuestaCargo as $cargo){
+                    $newCargo = $cargo->replicate();
+                    $newCargo->cabecera_encuesta_id = $cabecera->id;
+                    $newCargo->save();
+                    $detalle = $cargo->detalleEncuestas;
+                    if($detalle){
+                        $newDetalle = $detalle->replicate();
+                        $newDetalle->cabecera_encuesta_id = $cabecera->id;
+                        $newDetalle->encuestas_cargo_id = $newCargo->id;
+                        $newDetalle->save();
+                    }
+                }
+            }
+        }
+        
+
+        return redirect()->route('clone.success');
+    }
+
+    public function success()
+    {
+        return view('encuestas.clone.success');
+    }
+
+    public function errorMissing($field)
+    {
+        return view('encuestas.clone.errors.error_missing')->with('field', $field);
+    }
 
 
 }

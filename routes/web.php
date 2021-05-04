@@ -68,6 +68,15 @@ Route::group(["middleware"=>"auth"], function(){
 	Route::get('clone_amx', 'CloneController@cloneAMXForm')->name('clonar.amx.form');
 	Route::post('clone_amx', 'CloneController@cloneAMX')->name('clonar.amx');
 	
+	Route::get('clone_club', 'CloneController@index')->name('clonar.club.form');
+	Route::post('clone_club', 'CloneController@cloneClub')->name('clonar.club');
+	Route::get('clone_success', 'CloneController@success')->name('clone.success');
+	Route::get('clone_missing/{field}', 'CloneController@errorMissing')->name('clone.error.missing');
+
+	Route::get('empresa_periodo/{empresa}', 'Actions\EmpresaEncuestaAction@getEncuesta')->name('empresa.encuesta.list');
+	Route::get('rubro_empresas/{rubro}', 'Actions\EmpresaRubroAction@getEmpresas')->name('rubro.empresas.list');
+	
+
 	Route::post('encuestas_new', [
 		'uses'=> 'EncuestasController@storeNew', 
 		'as'=> 'encuestas.storeNew'

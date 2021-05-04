@@ -204,6 +204,9 @@
                       <div class="row">
                         <ul class="right hide-on-med-and-down">
                           <li>
+                            <a href="{{ route('clonar.club.form') }}">Clonar Club</a>
+                          </li>
+                          <li>
                             <a href="{{ route('clonar.amx.form') }}">Clonar AMX</a>
                           </li>
                           <li>

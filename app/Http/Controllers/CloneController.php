@@ -318,7 +318,7 @@ class CloneController extends Controller
                 $cabecera = $encuesta->replicate();
                 $cabecera->rubro_id = $request->rubro_id;
                 $cabecera->periodo = $request->periodo;
-                $cabecera->empresa_id = $empresa->id;
+                $cabecera->empresa_id = $empresa->empresa_destino;
                 $cabecera->save();
                 $encuestaCargo = $encuesta->encuestasCargo;
                 foreach($encuestaCargo as $cargo){

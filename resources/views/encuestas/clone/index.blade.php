@@ -49,7 +49,7 @@
 						</div>
 					</div>
 
-					<input id="empresas" type="text" name="empresas">
+					<input id="empresas" type="hidden" name="empresas">
 					<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 					<div class="button-group">
 					<a class="btn waves-effect waves-light amber" href="#" id="add">Opción

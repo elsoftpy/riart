@@ -312,13 +312,12 @@ class CloneController extends Controller
 
         $empresas = json_decode($request->empresas);
         foreach ($empresas as $empresa) {
-            //dd($empresa);
             $encuesta = Cabecera_encuesta::find($empresa->encuesta);
             if($encuesta){
                 $cabecera = $encuesta->replicate();
                 $cabecera->rubro_id = $request->rubro_id;
                 $cabecera->periodo = $request->periodo;
-                $cabecera->empresa_id = $empresa->empresa_destino;
+                $cabecera->empresa_id = $empresa->destino;
                 $cabecera->save();
                 $encuestaCargo = $encuesta->encuestasCargo;
                 foreach($encuestaCargo as $cargo){

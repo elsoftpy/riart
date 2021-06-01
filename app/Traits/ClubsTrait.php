@@ -81,6 +81,10 @@ trait ClubsTrait{
                     $imagen = "images/caratula-general.png";
                     $club = "Encuestas de Compensaciones Mercado General";
                     break;
+                case 18:
+                    $imagen = "images/caratula-naviera.PNG";
+                    $club = "Cargill Especial - Navieras";
+                    break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club de Bancos";

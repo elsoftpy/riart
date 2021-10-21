@@ -1257,14 +1257,14 @@ class ReporteController extends Controller
 
                 switch ($key) {
                     case 'detalle_universo':
-                        $this->CargaDetalle($item, $itemArray);            
+                        $this->CargaDetalle($item, $itemArray, $empresa);            
                         break;
 
                     case 'detalle_nacional':
-                        $this->CargaDetalle($item, $itemArrayNac);            
+                        $this->CargaDetalle($item, $itemArrayNac, $empresa);            
                         break;
                     case 'detalleInternacional':
-                        $this->CargaDetalle($item, $itemArrayInt);            
+                        $this->CargaDetalle($item, $itemArrayInt, $empresa);            
                         break;                                                
                 }
 

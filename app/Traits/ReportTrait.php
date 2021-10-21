@@ -45,14 +45,14 @@ trait ReportTrait{
             }
             return $count;
     }
-    public function cargaDetalle($item, &$itemArray){
+    public function cargaDetalle($item, &$itemArray, $empresa){
         
         $variableAnual = false;
         $efectivoTotal = false;
         $efectivoGarantizado = false;
         $salarioEmpresa = 0;
         $variableAnualEmp = 0;
-        //dd($item, $itemArray);
+       // dd($item, $itemArray);
         foreach ($item as $key => $value) {
             switch ($value["Concepto"]) {
                 case "Comision":
@@ -65,6 +65,7 @@ trait ReportTrait{
                 case Lang::get('reportReport.concept_annual_cash'):
                     $efectivoGarantizado = true;
                     $this->cargador($value, $itemArray, false);
+                   
                     break;
                 case Lang::get('reportReport.concept_variable_pay'):
                     $variableAnual = true;
@@ -88,7 +89,9 @@ trait ReportTrait{
                 
             }
         }
-       
+        /* if($itemArray[0] == "ANALISTA DE SISTEMAS - BANCA DIGITAL - PLENO "){
+            dd($itemArray, $item, $empresa);
+        } */
         // comparativo salario base
         if($itemArray[4] > 0){
             $compMinSal = round($salarioEmpresa/$itemArray[4] - 1, 2); 
@@ -304,7 +307,12 @@ trait ReportTrait{
                 $ratioSalBaseTotalEfectivo75 = 0;
             }
             if($itemArray[15] > 0){
-                $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[15], 2);
+                if(!$itemArray[9] == ""){
+                    $ratioSalBaseTotalEfectivoMax = round(($itemArray[9]*12)/$itemArray[15], 2);
+                }else{
+                    $ratioSalBaseTotalEfectivoMax = 0;
+                }
+                
             }else{
                 $ratioSalBaseTotalEfectivoMax = 0;
             }
@@ -362,13 +370,18 @@ trait ReportTrait{
                 array_push($itemArray, $value["ocupantes"]);
                 array_push($itemArray, $value["Casos"]);            
             }
+            
             //array_push($itemArray, $value["Concepto"]);
             array_push($itemArray, $value["Min"]);
             array_push($itemArray, $value["25 Percentil"]);
             array_push($itemArray, round($value["Promedio"], 2));
             array_push($itemArray, $value["Mediana"]);
             array_push($itemArray, $value["75 Percentil"]);
-            array_push($itemArray, $value["Max"]);       
+            array_push($itemArray, $value["Max"]);
+            
+           /*  if($itemArray[0] == "ANALISTA DE SISTEMAS - BANCA DIGITAL - PLENO "){
+                dd($itemArray);
+            } */
     }
 
 

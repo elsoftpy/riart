@@ -45,7 +45,7 @@ trait ReportTrait{
             }
             return $count;
     }
-    public function cargaDetalle($item, &$itemArray, $empresa){
+    public function cargaDetalle($item, &$itemArray, $empresa = null){
         
         $variableAnual = false;
         $efectivoTotal = false;

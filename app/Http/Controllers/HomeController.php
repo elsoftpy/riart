@@ -96,7 +96,7 @@ class HomeController extends Controller
                             $dbEncuestaAnt = $dbEncuestas->get(2);
                         }
                     }
-                    $dbEncuestaOld = $dbEncuestas->get(3);
+                    $dbEncuestaOld = $dbEncuestas->get(2);
 
                     if(!$dbEncuestaOld){
                         

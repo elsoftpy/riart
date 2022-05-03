@@ -86,9 +86,12 @@ trait ClubsTrait{
                     $club = "Cargill Especial - Navieras";
                     break;
                 case 21:
-                        $imagen = "images/caratula-agro.PNG";
-                        $club = "BASF - Demo";
-                        break;
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "BASF - Demo";
+                    break;
+                case 22:
+                    $imagen = "images/caratula-autos.PNG";
+                    $club = "AGROBAY Especial";
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club de Bancos";

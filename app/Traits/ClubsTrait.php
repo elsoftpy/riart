@@ -97,6 +97,10 @@ trait ClubsTrait{
                         $imagen = "images/caratula-agro.PNG";
                         $club = "Club ALPACASA";
                         break;
+                case 25:
+                        $imagen = "images/caratula-agro.PNG";
+                        $club = "Club Viterra";
+                        break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "Club de Bancos";

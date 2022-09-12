@@ -101,7 +101,7 @@ trait ClubsTrait{
                         $imagen = "images/caratula-agro.PNG";
                         $club = "Club Viterra";
                         break;
-                case 25:
+                case 26:
                         $imagen = "images/caratula-naviera.PNG";
                         $club = "Navemar Especial";
                         break;

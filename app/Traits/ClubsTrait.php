@@ -33,7 +33,11 @@ trait ClubsTrait{
                 case 16:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "AMX Especial"; 
-                    break;                   
+                    break;   
+                case 25:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "Agribusiness Salary Market Survey - Viterra Paraguay S.A.";
+                    break;                
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "de Bancos";
@@ -99,7 +103,7 @@ trait ClubsTrait{
                         break;
                 case 25:
                         $imagen = "images/caratula-agro.PNG";
-                        $club = "Club Viterra";
+                        $club = "Encuesta Salarial Mercado Internacional Agronegocios- Viterra Paraguay S.A.";
                         break;
                 case 26:
                         $imagen = "images/caratula-naviera.PNG";

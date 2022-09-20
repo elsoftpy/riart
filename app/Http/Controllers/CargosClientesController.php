@@ -213,7 +213,10 @@ class CargosClientesController extends Controller
         }
         $dbDetalle->fill($fields->toArray());
         
-        $dbData->descripcion = $request->descripcion;
+        if($request->descripcion){
+            $dbData->descripcion = $request->descripcion;
+        }
+        
         
          //dd($dbDetalle);
         if($request->excluir){

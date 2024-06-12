@@ -32,7 +32,7 @@
 	                    		<tr>
 		                    		<td>{{ $est->id }}</td>
 									<td>{{ $est->descripcion }}</td>
-									<td>{{ $est->cargoEn->descripcion }}</td>
+									<td>{{ $est->cargoEn?->descripcion }}</td>
 		                    		<td><a href="{{ route('cargos.edit', $est->id) }}" class="btn waves-light waves-effect lighten-1 white-text ">
 		                    			<i class="material-icons left">edit</i>Editar
 		                    			</a>

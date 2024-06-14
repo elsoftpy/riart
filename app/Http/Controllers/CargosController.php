@@ -18,146 +18,173 @@ use DB;
 
 class CargosController extends Controller
 {
-    public function index(){
-    	$dbData = Cargo::get();
-    	return view('cargos.list')->with('dbData', $dbData);
+    public function index()
+    {
+        $dbData = Cargo::get();
+        return view('cargos.list')->with('dbData', $dbData);
     }
 
-    public function create(){
-		$dbNivel = Nivel::all()->pluck('descripcion', 'id');
+    public function create()
+    {
+        $dbNivel = Nivel::all()->pluck('descripcion', 'id');
         $dbArea = Area::all()->pluck('descripcion', 'id');
         $dbRubros = Rubro::get()->pluck('descripcion', 'id');
         return view('cargos.create')->with('dbNivel', $dbNivel)
-                                    ->with('dbRubros', $dbRubros)
-    								->with('dbArea', $dbArea);
+            ->with('dbRubros', $dbRubros)
+            ->with('dbArea', $dbArea);
     }
 
-    public function store(Request $request){
-        DB::transaction(function() use($request){
+    public function store(Request $request)
+    {
+        DB::transaction(function () use ($request) {
             $dbData = new Cargo($request->all());
-            if(!is_null($request->is_temporal)){
+            if (!is_null($request->is_temporal)) {
                 $dbData->is_temporal = 1;
-            }else{
+            } else {
                 $dbData->is_temporal = 0;
             }
-               
+
             $dbDataEn = new Cargo_en($request->all());
-            if(!is_null($request->is_temporal)){
+            if (!is_null($request->is_temporal)) {
                 $dbDataEn->is_temporal = 1;
-            }else{
+            } else {
                 $dbDataEn->is_temporal = 0;
             }
             $dbDataEn->descripcion = $request->descripcion_en;
             $dbDataEn->detalle = $request->detalle_en;
-            
+
             $dbData->save();
             $dbDataEn->save();
-            
-            if($request->rubros){
+
+            if ($request->rubros) {
                 foreach ($request->rubros as $key => $value) {
                     $dbRubro = new Cargos_rubro();
                     $dbRubro->cargo_id = $dbData->id;
                     $dbRubro->rubro_id = $value;
                     $dbRubro->save();
-                }   
+                }
             }
-            
-            
         });
-        
-    	return redirect()->route('cargos.index');
+
+        return redirect()->route('cargos.index');
     }
 
-     public function show($id)
+    public function show($id)
     {
         //
     }
 
-    public function edit($id){
-    	$dbData = Cargo::find($id);
+    public function edit($id)
+    {
+        $dbData = Cargo::find($id);
         $dbNivel = Nivel::all()->pluck('descripcion', 'id');
         $dbArea = Area::all()->pluck('descripcion', 'id');
         $dbRubros = Rubro::get()->pluck('descripcion', 'id');
-       	return view('cargos.edit')->with('dbData', $dbData)
-                                  ->with('dbNivel', $dbNivel)
-                                  ->with('dbRubros', $dbRubros)
-                                  ->with('dbArea', $dbArea);
+        return view('cargos.edit')->with('dbData', $dbData)
+            ->with('dbNivel', $dbNivel)
+            ->with('dbRubros', $dbRubros)
+            ->with('dbArea', $dbArea);
     }
 
-    public function update(Request $request, $id){
-        
+    public function update(Request $request, $id)
+    {
+
         //Cargo en español
         $dbData = Cargo::find($id);
         //Cargo en inglés
         $dbDataEn = Cargo_en::find($id);
-        DB::transaction(function() use($request, $id, $dbData, $dbDataEn){
+        DB::transaction(function () use ($request, $id, $dbData, $dbDataEn) {
             $dbRubros = Cargos_rubro::where('cargo_id', $id);
-            
-            if($request->rubros){
-                if($dbRubros->count() > 0){
+
+            if ($request->rubros) {
+                if ($dbRubros->count() > 0) {
                     $dbRubros->delete();
-                    
                 }
                 foreach ($request->rubros as $key => $value) {
                     $dbRubro = new Cargos_rubro();
                     $dbRubro->cargo_id = $id;
                     $dbRubro->rubro_id = $value;
                     $dbRubro->save();
-                }   
-            }else{
-                if($dbRubros->count() > 0){
+                }
+            } else {
+                if ($dbRubros->count() > 0) {
                     $dbRubros->delete();
                 }
-            }    
-            
-            $dbData->fill($request->all());
-            $dbDataEn->fill($request->all());
-            if(!is_null($request->is_temporal)){
-                $dbData->is_temporal = 1;
-                $dbDataEn->is_temporal = 1;
-            }else{
-                $dbData->is_temporal = 0;
-                $dbDataEn->is_temporal = 0;
             }
-            $dbDataEn->descripcion = $request->descripcion_en;
-            $dbDataEn->detalle = $request->detalle_en;
+
+            $dbData->fill($request->all());
+
+            if (!is_null($request->is_temporal)) {
+                $dbData->is_temporal = 1;
+            } else {
+                $dbData->is_temporal = 0;
+            }
 
             $dbData->save();
-            $dbDataEn->save();
-        });
-        
-        
 
-		return redirect()->route('cargos.index');
+            if ($dbDataEn) {
+                $dbDataEn->fill($request->all());
+                if (!is_null($request->is_temporal)) {
+
+                    $dbDataEn->is_temporal = 1;
+                } else {
+
+                    $dbDataEn->is_temporal = 0;
+                }
+                $dbDataEn->descripcion = $request->descripcion_en;
+                $dbDataEn->detalle = $request->detalle_en;
+                $dbDataEn->save();
+            }else{
+                if($request->descripcion_en || $request->detalle_en){
+                    $isTemporal = 0;
+                    if (!is_null($request->is_temporal)) {
+                        $isTemporal = 1;
+                    }
+                    $cargoEn = new Cargo_en();
+                    $cargoEn->id = $id;
+                    $cargoEn->descripcion = $request->descripcion_en;
+                    $cargoEn->detalle = $request->detalle_en;
+                    $cargoEn->is_temporal = $isTemporal;
+                    $cargoEn->save();
+                }
+            }
+        });
+
+
+
+        return redirect()->route('cargos.index');
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $dbData = Cargo::find($id);
         $dbDataEn = Cargo_en::find($id);
-        $dbData->delete();            
+        $dbData->delete();
 
-		return redirect()->route('cargos.index');    	
+        return redirect()->route('cargos.index');
     }
 
-    public function getDetalle(Request $request){
-        if(app()->getLocale() == "en"){
+    public function getDetalle(Request $request)
+    {
+        if (app()->getLocale() == "en") {
             $cargo = Cargo_en::find($request->id);
-        }else{
+        } else {
             $cargo = Cargo::find($request->id);
         }
         return $cargo->detalle;
     }
 
-    public function excel(Request $request){
-        
+    public function excel(Request $request)
+    {
+
         $now = Carbon::now();
-        $filename = "cargos_".$now->format('diYHms');
+        $filename = "cargos_" . $now->format('diYHms');
         $cargos = DB::table('cargos')
-                    ->leftJoin('areas', 'cargos.area_id', '=', 'areas.id')
-                    ->leftJoin('niveles', 'cargos.nivel_id', '=', 'niveles.id')
-                    ->leftJoin('cargos_en', 'cargos.id', '=', 'cargos_en.id')
-                    ->select(DB::raw(
-                                    'cargos.id, 
+            ->leftJoin('areas', 'cargos.area_id', '=', 'areas.id')
+            ->leftJoin('niveles', 'cargos.nivel_id', '=', 'niveles.id')
+            ->leftJoin('cargos_en', 'cargos.id', '=', 'cargos_en.id')
+            ->select(DB::raw(
+                'cargos.id, 
                                     cargos.descripcion nombre_cargo,
                                     cargos.detalle descripcion, 
                                     cargos.area_id,
@@ -166,33 +193,31 @@ class CargosController extends Controller
                                     niveles.descripcion nivel, 
                                     cargos_en.descripcion cargo_ingles, 
                                     cargos_en.detalle detalle_ingles'
-                                    ))
-                    ->get();
+            ))
+            ->get();
 
         $data = array();
         foreach ($cargos as $cargo) {
-            $data[] = (array)$cargo;  
+            $data[] = (array)$cargo;
         };
-        
-        Excel::create($filename, function($excel) use($data) {
-            $excel->sheet("Cargos", function($sheet) use($data){
+
+        Excel::create($filename, function ($excel) use ($data) {
+            $excel->sheet("Cargos", function ($sheet) use ($data) {
                 $objDrawing = new PHPExcel_Worksheet_Drawing;
                 $objDrawing->setPath(public_path('images/logo.jpg')); //your image path
                 $objDrawing->setCoordinates('A1');
-                $objDrawing->setWidthAndHeight(304,60);
-                $objDrawing->setWorksheet($sheet);     
+                $objDrawing->setWidthAndHeight(304, 60);
+                $objDrawing->setWorksheet($sheet);
 
-                $sheet->cells('A5:I5', function($cells){
+                $sheet->cells('A5:I5', function ($cells) {
                     $cells->setBackground('#00897b');
                     $cells->setFontColor("#FFFFFF");
                     $cells->setFontWeight("bold");
-                // $cells->setValignment('center');
+                    // $cells->setValignment('center');
                     $cells->setAlignment('center');
                 });
                 $sheet->fromArray($data, null, 'A5');
             });
         })->export('xlsx');
     }
-
-
 }

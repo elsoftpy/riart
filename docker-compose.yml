@@ -1,0 +1,54 @@
+version: '3'
+services:
+  app:
+    build: 
+      context: ./docker/app
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    
+    networks:
+      - laravel
+    depends_on:
+      - web
+      - mysql
+  web:
+    build:
+      context: ./docker/web
+      dockerfile: Dockerfile
+    ports:
+      - '${APP_PORT:-8080}:80'
+    volumes:
+      - .:/var/www
+    networks:
+      - laravel
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:5.6
+    volumes:
+      - 'dbdata:/var/lib/mysql'
+    environment:
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+    ports:
+        - '${FORWARD_DB_PORT:-3306}:3306'
+    networks:
+      - laravel
+    healthcheck:
+      test:
+          - CMD
+          - mysqladmin
+          - ping
+          - '-p${DB_PASSWORD}'
+      retries: 3
+      timeout: 5s
+networks:
+  laravel:
+    driver: bridge
+volumes:
+  dbdata:
+    driver: local

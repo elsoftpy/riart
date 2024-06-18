@@ -1294,7 +1294,7 @@ class ReporteController extends Controller
 
     public function resultadosExcel(Request $request){
         ini_set('max_execution_time', 0);
-        ini_set('memory_limit', '512M');
+        ini_set('memory_limit', '1024M');
         $periodo_array = explode('-', $request->periodo);
         $periodo = $periodo_array[0];
         $rubro = $periodo_array[1];
@@ -1660,6 +1660,7 @@ class ReporteController extends Controller
                         $cells->setAlignment('center');
                     });
                 }
+
                 $sheet->fromArray($detalle, null, 'A1');                
 
             });

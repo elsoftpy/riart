@@ -37,7 +37,31 @@ trait ClubsTrait{
                 case 25:
                     $imagen = "images/caratula-agro.PNG";
                     $club = "Agribusiness Salary Market Survey - Viterra Paraguay S.A.";
-                    break;                
+                    break;     
+                case 26:
+                    $imagen = "images/caratula-naviera.PNG";
+                    $club = "Navemar Especial";
+                    break;
+                case 27:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "Syngenta Especial";
+                    break;
+                case 28:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "Club de Prueba";
+                    break;
+                case 29:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "CARSA";
+                    break;        
+                case 30:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "CARSA - sin svr";
+                    break;   
+                case 31:
+                    $imagen = "images/tech.jpg";
+                    $club = "Clube de Bancos - TECH";
+                    break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "de Bancos";
@@ -112,6 +136,22 @@ trait ClubsTrait{
                 case 27:
                     $imagen = "images/caratula-agro.PNG";
                     $club = "Syngenta Especial";
+                    break;
+                case 28:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "Club de Prueba";
+                    break;
+                case 29:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "CARSA";
+                    break;
+                case 30:
+                    $imagen = "images/caratula-agro.PNG";
+                    $club = "CARSA - sin svr";
+                    break;
+                case 31:
+                    $imagen = "images/tech.jpg";
+                    $club = "Club de Bancos - TECH";
                     break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";

@@ -42,7 +42,7 @@ class HomeController extends Controller
             $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                             ->orderBy('id', 'DESC')
                                             ->get();
-                                            $dbEncuestaAnt = $dbEncuestas->get(1);
+            $dbEncuestaAnt = $dbEncuestas->get(1);
             
             $club = $this->club($dbEmpresa->rubro_id);
                 return view('clientes.home')->with('dbEmpresa', $dbEmpresa)

@@ -133,8 +133,9 @@ class Detalle_encuesta extends Model
 					   $this->adicional_amarre +
 					   $this->adicional_tipo_combustible +
 					   $this->adicional_embarque + 
-					   $this->adicional_carga;
-
+					   $this->adicional_carga +
+					   $this->plus_rendimiento; 
+					   
 		return $adicionales;
 
 	}	

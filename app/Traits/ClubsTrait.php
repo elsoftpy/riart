@@ -55,7 +55,7 @@ trait ClubsTrait{
                     $club = "CARSA";
                     break;        
                 case 30:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/logo-carsa.png";
                     $club = "CARSA - sin svr";
                     break;   
                 case 31:
@@ -146,7 +146,7 @@ trait ClubsTrait{
                     $club = "CARSA";
                     break;
                 case 30:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/logo-carsa.png";
                     $club = "CARSA - sin svr";
                     break;
                 case 31:

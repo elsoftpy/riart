@@ -1350,6 +1350,7 @@ class ReporteController extends Controller
                 $item->adicional_tipo_combustible + 
                 $item->adicional_embarque + 
                 $item->adicional_carga +
+                $item->plus_rendimiento +
                 ( ( $item->fallo_caja + 
                 $item->fallo_caja_ext + 
                 $item->gratificacion_contrato + 
@@ -1375,7 +1376,10 @@ class ReporteController extends Controller
             // Efectivo Total Anual
             if($rubro == 4){
                 $efectivoTotalAnual = $item->salario_anual +
-                                      $item->aguinaldo; 
+                                      $item->aguinaldo +
+                                      $adicional +
+                                      $item->bono_anual + 
+                                      $item->incentivo_largo_plazo; 
             }else{
                 $efectivoTotalAnual = $efectivoAnual + 
                                       $adicional + 

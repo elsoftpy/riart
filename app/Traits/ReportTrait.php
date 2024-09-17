@@ -964,7 +964,10 @@ trait ReportTrait{
             // Efectivo Total Anual
             $detalle = $detalle->map(function($item){
                 $item['efectivo_total_anual'] =  $item['salario_base'] * 12 +
-                                                 $item['aguinaldo'];
+                                                 $item['aguinaldo'] +
+                                                 $item['adicionales_naviera'] +
+                                                 $item['bono_anual'] +
+                                                 $item['incentivo_largo_plazo'];
                 return $item;
             });                                                
            

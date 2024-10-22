@@ -1,4 +1,4 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/mabelriart/public_html/
+    - export DEPLOYPATH=/home/mabelriart/public_html/encuesta
     - /bin/cp -R * $DEPLOYPATH

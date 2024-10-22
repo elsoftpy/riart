@@ -174,7 +174,7 @@ class ReporteControllerBkp extends Controller
                                  ->where('periodo', $per)
                                  ->first();
         }else{
-            $dbFicha = Ficha_dato::activa()->where('rubro_id', $rubro)->first();
+            $dbFicha = Ficha_dato::where('activo', 1)->where('rubro_id', $rubro)->first();
             if($dbFicha){
                 $periodo = $dbFicha->periodo;
                 $dbEncuesta = Cabecera_encuesta::where('empresa_id', $id)->where('periodo', $periodo)->first();    
@@ -3069,7 +3069,7 @@ class ReporteControllerBkp extends Controller
                                                ->first();
                 //dd($dbEncuesta, $request->periodo);
             }else{
-                $ficha = Ficha_dato::activa()->where('rubro_id', $dbEmpresa->rubro_id)->first();
+                $ficha = Ficha_dato::where('activo', 1)->where('rubro_id', $dbEmpresa->rubro_id)->first();
                 if($ficha){
                     $per = $ficha->periodo;
                 }else{

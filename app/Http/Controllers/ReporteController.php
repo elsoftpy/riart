@@ -149,7 +149,7 @@ class ReporteController extends Controller
             }
             
         }else{
-            $dbFicha = Ficha_dato::activa()
+            $dbFicha = Ficha_dato::where('activo', 1)
                                  ->where('rubro_id', $rubro)
                                  ->first();
             
@@ -328,7 +328,7 @@ class ReporteController extends Controller
             $per = Session::get('periodo');
             $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->whereRaw("periodo = '". $per."'")->first();
         }else{
-            $dbFicha = Ficha_dato::activa()
+            $dbFicha = Ficha_dato::where('activo', 1)
                                  ->where('rubro_id', $dbEmpresa->rubro_id)
                                  ->first();
             if($dbFicha){

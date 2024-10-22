@@ -2399,7 +2399,7 @@ trait ReportTrait{
                                                ->whereRaw("periodo = '". $request->periodo."'")
                                                ->first();
             }else{
-                $ficha = Ficha_dato::activa()->where('rubro_id', $dbEmpresa->rubro_id)->first();
+                $ficha = Ficha_dato::where('activo', 1)->where('rubro_id', $dbEmpresa->rubro_id)->first();
                 if($ficha){
                     $per = $ficha->periodo;
                 }else{
@@ -2731,7 +2731,7 @@ trait ReportTrait{
                                                ->whereRaw("periodo = '". $request->periodo."'")
                                                ->first();
             }else{
-                $ficha = Ficha_dato::activa()->where('rubro_id', $dbEmpresa->rubro_id)->first();
+                $ficha = Ficha_dato::where('activo', 1)->where('rubro_id', $dbEmpresa->rubro_id)->first();
                 if($ficha){
                     $per = $ficha->periodo;
                 }else{

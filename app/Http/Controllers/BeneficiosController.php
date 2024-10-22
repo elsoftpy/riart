@@ -148,7 +148,7 @@ class BeneficiosController extends Controller
         $dbDetalle = beneficios_pregunta::where('rubro_id', $rubro)
                                         ->orWhere('rubro_id', null)
                                         ->orderBy('orden')
-                                        ->activa()
+                                        ->where('activo', 1)
                                         ->get();
         $dbMarca = Autos_marca::pluck('descripcion', 'id');
         $opcioneses = collect();

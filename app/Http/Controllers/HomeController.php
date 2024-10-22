@@ -70,7 +70,7 @@ class HomeController extends Controller
 
             }else{
                 $dbEmpresa = $user->empresa;
-                $ficha = Ficha_dato::where('rubro_id', $dbEmpresa->rubro_id)->activa()->first();
+                $ficha = Ficha_dato::where('rubro_id', $dbEmpresa->rubro_id)->where('activo', 1)->first();
                 
                 if($ficha){
                     $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)

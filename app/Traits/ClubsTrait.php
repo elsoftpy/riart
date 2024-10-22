@@ -35,7 +35,7 @@ trait ClubsTrait{
                     $club = "AMX Especial"; 
                     break;   
                 case 25:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "Agribusiness Salary Market Survey - Viterra Paraguay S.A.";
                     break;     
                 case 26:
@@ -43,15 +43,15 @@ trait ClubsTrait{
                     $club = "Navemar Especial";
                     break;
                 case 27:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "Syngenta Especial";
                     break;
                 case 28:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "Club de Prueba";
                     break;
                 case 29:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "CARSA";
                     break;        
                 case 30:
@@ -74,7 +74,7 @@ trait ClubsTrait{
                     $club = "Club - Bancos de Paraguay";
                     break;
                 case 2:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "Club - Empresas de Agronegocios - Paraguay";
                     break;
                 case 3:
@@ -114,7 +114,7 @@ trait ClubsTrait{
                     $club = "Cargill Especial - Navieras";
                     break;
                 case 21:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "BASF - Demo";
                     break;
                 case 23:
@@ -122,11 +122,11 @@ trait ClubsTrait{
                     $club = "Club Automotriz, Maquinarias y Utilitarios";
                     break;
                 case 24:
-                        $imagen = "images/caratula-agro.PNG";
+                        $imagen = "images/caratula-agro_ok.PNG";
                         $club = "Club ALPACASA";
                         break;
                 case 25:
-                        $imagen = "images/caratula-agro.PNG";
+                        $imagen = "images/caratula-agro_ok.PNG";
                         $club = "Encuesta Salarial Mercado Internacional Agronegocios- Viterra Paraguay S.A.";
                         break;
                 case 26:
@@ -134,15 +134,15 @@ trait ClubsTrait{
                         $club = "Navemar Especial";
                         break;
                 case 27:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "Syngenta Especial";
                     break;
                 case 28:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "Club de Prueba";
                     break;
                 case 29:
-                    $imagen = "images/caratula-agro.PNG";
+                    $imagen = "images/caratula-agro_ok.PNG";
                     $club = "CARSA";
                     break;
                 case 30:

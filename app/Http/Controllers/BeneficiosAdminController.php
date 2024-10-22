@@ -322,7 +322,7 @@ class BeneficiosAdminController extends Controller
                 $club = "- Bancos de Paraguay";
                 break;
             case 2:
-                $imagen = "images/caratula-agro.PNG";
+                $imagen = "images/caratula-agro_ok.PNG";
                 $club = "- Empresas de Agronegocios - Paraguay";
                 break;
             case 3:

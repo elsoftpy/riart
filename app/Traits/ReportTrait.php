@@ -970,7 +970,7 @@ trait ReportTrait{
                                                  $item['incentivo_largo_plazo'];
                 return $item;
             });                                                
-           
+            // git check
             $efectivoTotalMin = $detalle->pluck('efectivo_total_anual')->min();
             $efectivoTotalMax = $detalle->pluck('efectivo_total_anual')->max();
             $efectivoTotalProm = $detalle->pluck('efectivo_total_anual')->avg();

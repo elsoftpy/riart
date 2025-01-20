@@ -965,7 +965,7 @@ trait ReportTrait{
             $detalle = $detalle->map(function($item){
                 $item['efectivo_total_anual'] =  $item['salario_base'] * 12 +
                                                  $item['aguinaldo'] +
-                                                 $item['adicionales_naviera'] +
+                                                 $item['adicionales_navieras'] +
                                                  $item['bono_anual'] +
                                                  $item['incentivo_largo_plazo'];
                 return $item;
@@ -2521,7 +2521,7 @@ trait ReportTrait{
                           $segmento, 
                           $dbCargo, 
                           $muestraComision);
-
+  
         // conteo de casos encontrados nacionales
         $countCasosNac = $encuestadasNacIds->count();
         // buscamos los detalles de las encuestas
@@ -2622,7 +2622,6 @@ trait ReportTrait{
             }else{
                 $tipoCambio = 5600;
             }
-            
             
             return view('report.report')->with('dbCargo', $dbCargo)
                                         ->with('dbEmpresa', $dbEmpresa)
@@ -2947,7 +2946,6 @@ trait ReportTrait{
             }else{
                 $tipoCambio = 5600;
             }
-            
 
             return view('report.report')->with('dbCargo', $dbCargo)
                                         ->with('dbEmpresa', $dbEmpresa)

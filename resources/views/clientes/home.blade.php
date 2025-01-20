@@ -54,6 +54,7 @@
 								<a href="{{ route('encuestas.update', $dbEncuesta->id) }}" class="btn waves-effect waves-light lighten-1 red white-text" style="margin-bottom: 1em;" onclick="update_row({{$dbEncuesta->id}})" data-step="29" data-intro="<p class='intro-title'><strong>FINALIZAR</strong></p>Realizar click cuando haya finalizado la carga de todos los cargos. No admite posteriores ediciones para el periodo.">
 									<i class="material-icons left">exit_to_app</i>@lang('homepage.button_done')
 								</a>
+
 								<form id="update-form{{$dbEncuesta->id}}" action="{{ route('encuestas.update', $dbEncuesta->id) }}" method="POST" style="display: none;">
 					                {{ csrf_field() }}
 					                {{ method_field('PUT') }}

@@ -75,10 +75,11 @@ class HomeController extends Controller
                 if($ficha){
                     $dbEncuesta = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                                     ->where('periodo', $ficha->periodo)
-                                                    ->first();                    
+                                                    ->first();   
+
                     $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)
                                                     ->orderBy('id', 'DESC')
-                                                    ->get();                                                    
+                                                    ->get();  
                 }else{
                     $dbEncuestas = Cabecera_encuesta::where('empresa_id', $dbEmpresa->id)->orderBy('id', 'DESC')->get();
                     $dbEncuesta = $dbEncuestas->first();
@@ -108,13 +109,12 @@ class HomeController extends Controller
                         
                     }
                 }else{
-                    
                     $dbEncuestaOld = null;
                 }
 
                 //dd($dbEncuestaOld);                
                 $club = $this->club($dbEmpresa->rubro_id);
-                
+
                 return view('clientes.home')->with('dbEmpresa', $dbEmpresa)
                                             ->with('club', $club)
                                             ->with('dbEncuesta', $dbEncuesta)

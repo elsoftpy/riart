@@ -5,5 +5,6 @@ return [
     "title_list"            => "List of Indicators",
     "button_sample"         => "Universe Composition",
     "breadcrumb_complete"   => "Survey",
-    "title_date"            => "Date:"
+    "title_date"            => "Date:",
+    "search_question"       => "Search question...",
 ];

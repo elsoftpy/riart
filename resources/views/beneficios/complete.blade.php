@@ -15,13 +15,26 @@
   </nav>
 @endsection
 @section('content')
-<h5><strong>@lang('beneficiosReportIndex.title_date')</strong> {{$dbData->periodo}}</h5>
+<h5>
+  <strong>@lang('beneficiosReportIndex.title_date')</strong> {{$dbData->periodo}}
+</h5>
+<div class="search-container">
+  <input type="text" 
+         id="searchInput" 
+         placeholder="@lang('beneficiosReportIndex.search_question')">
+  <div id="searchResults" class="search-results"></div>
+</div>
   <div class="content">
     <form  name="cuestionario" id="cuestionario" action="{{route('beneficios.update', $dbData->id)}}" method="POST" >
       <div class="row">
         <div class="hoverable col s12">
           @foreach ($dbDetalle as $detalle)
-            <div class="row">
+            <div class="row question-container" id="{{$detalle->id}}">
+              @if(App::isLocale('en'))
+                <span class="anchor-tag" style="display:none">#{{ str_slug($detalle->pregunta_en) }}</span>
+              @else
+                <span class="anchor-tag" style="display:none">#{{ str_slug($detalle->pregunta) }}</span>
+              @endif
               <p style="padding-left: 1em;">
                 @if (App::isLocale('en'))
                   <strong>{{$detalle->orden}} ) {{$detalle->pregunta_en}}</strong>
@@ -233,6 +246,86 @@
       }
 
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        
+        // Get all questions
+        const questions = Array.from(document.querySelectorAll('.question-container')).map(container => ({
+            id: container.id,
+            text: container.querySelector('strong').textContent,
+            tag: container.querySelector('.anchor-tag').textContent
+        }));
+
+        // Search functionality
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            searchResults.innerHTML = '';
+            
+            if (searchTerm.trim() === '') {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            const matches = questions.filter(question => 
+                question.text.toLowerCase().includes(searchTerm) ||
+                question.tag.toLowerCase().includes(searchTerm)
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    const div = document.createElement('div');
+                    div.className = 'search-result-item';
+                    div.textContent = match.text;
+                    div.addEventListener('click', () => scrollToQuestion(match.id));
+                    searchResults.appendChild(div);
+                });
+                searchResults.style.display = 'block';
+            } else {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Improved scroll to question function
+        function scrollToQuestion(questionId) {
+            const element = document.getElementById(questionId);
+            if (element) {
+                // Get the navbar height (if you have a fixed navbar)
+                const navbarHeight = document.querySelector('nav') ? document.querySelector('nav').offsetHeight : 0;
+                
+                // Calculate the element's position relative to the viewport
+                const elementPosition = element.getBoundingClientRect().top;
+                
+                // Calculate the offset from the top of the page
+                const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20; // 20px extra padding
+                
+                // Smooth scroll to the element
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // Add highlight effect
+                element.classList.add('highlight');
+                setTimeout(() => {
+                    element.classList.remove('highlight');
+                }, 2000);
+
+                // Clear search
+                searchInput.value = '';
+                searchResults.style.display = 'none';
+            }
+        }
+
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.style.display = 'none';
+            }
+        });
+    });
+
 
 
 

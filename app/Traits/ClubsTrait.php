@@ -63,7 +63,7 @@ trait ClubsTrait{
                     $club = "Club de Bancos - TECH";
                     break;
                 case 32:
-                    $imagen = "images/insuquim.png";
+                    $imagen = "images/insuquim1.png";
                     $club = "Club Insuquim Especial";
                     break;
                 default:
@@ -158,7 +158,7 @@ trait ClubsTrait{
                     $club = "Club de Bancos - TECH";
                     break;
                 case 32:
-                    $imagen = "images/insuquim.png";
+                    $imagen = "images/insuquim1.png";
                     $club = "Club Insuquim Especial";
                     break;
                 default:

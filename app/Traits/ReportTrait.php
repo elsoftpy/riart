@@ -1106,6 +1106,7 @@ trait ReportTrait{
                             $segmento, 
                             $dbCargo);            
         }else{ // Los otros rubros son iguales
+            
             // Salario Base
             $salariosBase = $detalle->where('salario_base', '>', '0')->pluck('salario_base');
             $salarioMin = $salariosBase->min();
@@ -1202,7 +1203,8 @@ trait ReportTrait{
                                                        $item['gratificacion']+
                                                        $item['aguinaldo'];
                 return $item;
-            }); 
+            });
+            //dd($detalle, $detalle->pluck('efectivo_anual_garantizado')->min()); 
             $efectivoMin = $detalle->pluck('efectivo_anual_garantizado')->min();
             $efectivoMax = $detalle->pluck('efectivo_anual_garantizado')->max();
             $efectivoProm = $detalle->pluck('efectivo_anual_garantizado')->avg();

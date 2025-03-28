@@ -106,8 +106,39 @@
 	<div class="modal" id="modal-options-esp">
 		<div class="modal-content">
 			<h5> @lang('homepage.modal_survey') </h5>
+			@php
+				$showPeriodoAnt = false;
+				if($dbEncuestaAnt){
+					$periodoString = $dbEncuestaAnt->periodo;
+					// extract last four characters
+					$periodoAnt = substr($periodoString, -4);
+					// convert $periodoAnt to integer
+					if( (int) $periodoAnt > 2023){
+						$showPeriodoAnt = true;
+					}
+				} 
+			@endphp
 			@if($dbEncuesta)
 				@if($dbEncuestaAnt)
+					@if($showPeriodoAnt)
+
+						<a class="waves-light waves-effect btn lime darken-3" id="encuesta-anterior_esp" >
+							{{$dbEncuestaAnt->periodo}}
+						</a>	
+						<a class="waves-light waves-effect btn green" id="encuesta-actual_esp" periodo="{{$dbEncuesta->periodo}}">
+							{{$dbEncuesta->periodo}}
+						</a>	
+						<input type="hidden" id="periodo_ant_esp" name="periodo_anterior" value="{{$dbEncuestaAnt->periodo}}"/>
+						<input type="hidden" id="periodo_esp" name="periodo" value="{{$dbEncuesta->periodo}}"/>
+					@else	
+						<a class="waves-light waves-effect btn green" id="encuesta-actual_esp" periodo="{{$dbEncuesta->periodo}}">
+							{{$dbEncuesta->periodo}}
+						</a>	
+						<input type="hidden" id="periodo_esp" name="periodo" value="{{$dbEncuesta->periodo}}"/>
+					@endif
+				@endif
+
+				{{-- @if($dbEncuestaAnt)
 					@if ($dbEncuestaOld)
 						<a class="waves-light waves-effect btn blue darken-3" id="encuesta-vieja_esp" >
 							{{$dbEncuestaOld->periodo}}
@@ -127,7 +158,7 @@
 						{{$dbEncuesta->periodo}}
 					</a>				
 					<input type="hidden" id="periodo_esp" name="periodo" value="{{$dbEncuesta->periodo}}"/>				
-				@endif
+				@endif --}}
 			@endif
 		</div>
 		<div class="modal-footer">

@@ -1346,10 +1346,10 @@ class ReporteController extends Controller
 
             // Total Adicional Anual
             if($rubro == 4){
-                $adicional = $item->adicional_amarre + 
+                $adicional = /* $item->adicional_amarre + 
                 $item->adicional_tipo_combustible + 
                 $item->adicional_embarque + 
-                $item->adicional_carga +
+                $item->adicional_carga + */
                 $item->plus_rendimiento +
                 ( ( $item->fallo_caja + 
                 $item->fallo_caja_ext + 
@@ -1525,7 +1525,7 @@ class ReporteController extends Controller
                                     "Variable Anual (plus_rendimiento)" => $item->plus_rendimiento,
                                     "Variable por Viaje" => $item->variable_viaje,
                                     "Adicional Amarre"=>$item->adicional_amarre, 
-                                    "Adicional Tipo Combustible"=>$item->adicional_tipo_combustible, 
+                                    "Adicional Limpieza Barcaza"=>$item->adicional_tipo_combustible, 
                                     "Adicional Embarque"=>$item->adicional_embarque, 
                                     "Adicional Tipo Carga"=>$item->adicional_carga,
                                     "Fallo Caja"=> $item->fallo_caja,

@@ -130,10 +130,10 @@ class Detalle_encuesta extends Model
 					   $this->gratificacion_contrato * 12  +
 					   $this->adicional_nivel_cargo * 12 +
 					   $this->adicional_titulo * 12 +
-					   $this->adicional_amarre +
+					   /* $this->adicional_amarre +
 					   $this->adicional_tipo_combustible +
 					   $this->adicional_embarque + 
-					   $this->adicional_carga +
+					   $this->adicional_carga + */
 					   $this->plus_rendimiento; 
 					   
 		return $adicionales;

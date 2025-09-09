@@ -40,7 +40,7 @@ return [
     "concept_variable_pay"      => "Variable Anual",
     "concept_variable_pay_trip" => "Variable por Viaje",
     "concept_mooring"           => "Adicional por Amarre",
-    "concept_fuel_type"         => "Adicional por Tipo de Combustible",
+    "concept_fuel_type"         => "Adicional por Limpieza de Barcaza",
     "concept_shipping"          => "Adicional por Disponibilidad/Embarque",
     "concept_load"              => "Adicional por Carga",
     "concept_total_benefits"    => "Total Beneficios Anual",

@@ -197,7 +197,7 @@ class ImportExportController extends Controller
                                 "VariableAnual" => $item->plus_rendimiento,
                                 "VariableViaje" => $item->variable_viaje,
                                 "AdicionalAmarre"=>$item->adicional_amarre, 
-                                "AdicionalTipoCombustible"=>$item->adicional_tipo_combustible, 
+                                "AdicionalLimpiezaBarcaza"=>$item->adicional_tipo_combustible, 
                                 "AdicionalEmbarque"=>$item->adicional_embarque, 
                                 "AdicionalTipoCarga"=>$item->adicional_carga,
                                 "FalloCaja"=> $item->fallo_caja,
@@ -328,7 +328,7 @@ class ImportExportController extends Controller
                             $detalle->variable_viaje = $row->variableviaje;
                             $detalle->salario_base = $row->salariobase;
                             $detalle->adicional_amarre = $row->adicionalamarre;
-                            $detalle->adicional_tipo_combustible = $row->adicionaltipocombustible;
+                            $detalle->adicional_tipo_combustible = $row->adicionallimpiezabarcaza;
                             $detalle->adicional_embarque = $row->adicionalembarque;
                             $detalle->adicional_carga = $row->adicionaltipocarga;
                             $detalle->adicional_titulo = $row->adicionaltitulo;

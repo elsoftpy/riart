@@ -66,6 +66,10 @@ trait ClubsTrait{
                     $imagen = "images/insuquim1.png";
                     $club = "Club Insuquim Especial";
                     break;
+                case 33:
+                    $imagen = "images/caratula-agro_ok.PNG";
+                    $club = "Club de GPESA - Especial";
+                    break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
                     $club = "de Bancos";
@@ -160,6 +164,10 @@ trait ClubsTrait{
                 case 32:
                     $imagen = "images/insuquim1.png";
                     $club = "Club Insuquim Especial";
+                    break;
+                case 33:
+                    $imagen = "images/caratula-agro_ok.PNG";
+                    $club = "Club de GPESA - Especial";
                     break;
                 default:
                     $imagen = "images/caratula-bancos.PNG";
